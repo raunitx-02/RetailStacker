@@ -94,12 +94,12 @@ export default function TrendingProducts() {
     setError(null);
     try {
       const categoryMap: any = {
-        "All": "electronics",
-        "Electronics": "electronics",
-        "Home Office": "home-and-kitchen",
-        "Sports": "sports",
-        "Cameras": "electronics",
-        "Tools": "tools-and-home-improvement"
+        "All": "976419031", // Electronics
+        "Electronics": "976419031",
+        "Home Office": "976442031", // Home & Kitchen
+        "Sports": "1983396031",
+        "Cameras": "1389441031",
+        "Tools": "3704992031"
       };
       const response = await fetch(`/api/amazon/trending?category=${categoryMap[cat]}`);
       const data = await response.json();

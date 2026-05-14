@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const categoryId = searchParams.get("category") || "electronics";
+  const categoryId = searchParams.get("category") || "976419031"; // Default to Electronics (India)
   const apiKey = process.env.RAINFOREST_API_KEY;
 
   if (!apiKey || apiKey === "YOUR_API_KEY") {
