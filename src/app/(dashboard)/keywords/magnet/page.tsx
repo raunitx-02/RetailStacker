@@ -3,21 +3,13 @@ import { useState } from "react";
 import { Target, Download, TrendingUp, TrendingDown } from "lucide-react";
 
 const magnetResults = [
-  { keyword: "bamboo cutting board", volume: 48200, iqScore: 92, competition: "Low", cpc: "$0.82", growth: "+12%", trend: "up" },
-  { keyword: "bamboo cutting board large", volume: 31400, iqScore: 88, competition: "Low", cpc: "$0.74", growth: "+8%", trend: "up" },
-  { keyword: "bamboo kitchen board", volume: 18700, iqScore: 85, competition: "Low", cpc: "$0.61", growth: "+21%", trend: "up" },
-  { keyword: "bamboo board for cutting", volume: 14200, iqScore: 81, competition: "Medium", cpc: "$0.89", growth: "+5%", trend: "up" },
-  { keyword: "bamboo cutting board set of 3", volume: 11800, iqScore: 79, competition: "Low", cpc: "$1.02", growth: "+18%", trend: "up" },
-  { keyword: "best bamboo cutting board", volume: 9400, iqScore: 76, competition: "High", cpc: "$1.34", growth: "+2%", trend: "up" },
-  { keyword: "bamboo chopping board", volume: 8900, iqScore: 74, competition: "Medium", cpc: "$0.71", growth: "+9%", trend: "up" },
-  { keyword: "eco cutting board bamboo", volume: 6800, iqScore: 71, competition: "Low", cpc: "$0.56", growth: "+31%", trend: "up" },
-  { keyword: "bamboo board kitchen", volume: 5400, iqScore: 68, competition: "Low", cpc: "$0.48", growth: "+14%", trend: "up" },
-  { keyword: "wood cutting board", volume: 24100, iqScore: 67, competition: "High", cpc: "$1.18", growth: "-3%", trend: "down" },
-  { keyword: "cutting board bamboo non slip", volume: 4200, iqScore: 65, competition: "Low", cpc: "$0.93", growth: "+27%", trend: "up" },
-  { keyword: "bamboo cutting board with juice groove", volume: 3800, iqScore: 62, competition: "Low", cpc: "$1.05", growth: "+19%", trend: "up" },
-  { keyword: "large bamboo chopping board", volume: 3100, iqScore: 60, competition: "Medium", cpc: "$0.79", growth: "+6%", trend: "up" },
-  { keyword: "sustainable cutting board", volume: 2900, iqScore: 58, competition: "Low", cpc: "$0.67", growth: "+44%", trend: "up" },
-  { keyword: "bamboo food board", volume: 1800, iqScore: 54, competition: "Low", cpc: "$0.41", growth: "+11%", trend: "down" },
+  { keyword: "bamboo cutting board", volume: 48200, iqScore: 92, competition: "Low", cpc: "₹68", growth: "+12%", trend: "up" },
+  { keyword: "bamboo cutting board large", volume: 31400, iqScore: 88, competition: "Low", cpc: "₹55", growth: "+8%", trend: "up" },
+  { keyword: "bamboo kitchen board", volume: 18700, iqScore: 85, competition: "Low", cpc: "₹45", growth: "+21%", trend: "up" },
+  { keyword: "bamboo board for cutting", volume: 14200, iqScore: 81, competition: "Medium", cpc: "₹72", growth: "+5%", trend: "up" },
+  { keyword: "bamboo cutting board set of 3", volume: 11800, iqScore: 79, competition: "Low", cpc: "₹85", growth: "+18%", trend: "up" },
+  { keyword: "best bamboo cutting board", volume: 9400, iqScore: 76, competition: "High", cpc: "₹110", growth: "+2%", trend: "up" },
+  { keyword: "bamboo chopping board", volume: 8900, iqScore: 74, competition: "Medium", cpc: "₹58", growth: "+9%", trend: "up" },
 ];
 
 const compColors: Record<string, string> = { "Low": "badge-success", "Medium": "badge-warning", "High": "badge-danger" };

@@ -19,7 +19,7 @@ export async function GET(request: Request) {
       bsr: Math.floor(Math.random() * 1000) + 1,
       category: "Electronics > Headphones",
       velocity: "+12.5%",
-      price: "$149.99"
+      price: "₹12,499"
     });
   }
 

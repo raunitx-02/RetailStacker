@@ -9,8 +9,8 @@ export async function GET(request: Request) {
     return NextResponse.json({
       isMock: true,
       products: [
-        { asin: "MOCK1", name: "Mock Tablet Pro", bsr: 1, price: "$499", change: "+45", category: "Electronics", img: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400" },
-        { asin: "MOCK2", name: "Mock Smart Watch", bsr: 2, price: "$199", change: "+120", category: "Electronics", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400" }
+        { asin: "MOCK1", name: "Mock Tablet Pro", bsr: 1, price: "₹45,999", change: "+45", category: "Electronics", img: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400" },
+        { asin: "MOCK2", name: "Mock Smart Watch", bsr: 2, price: "₹18,199", change: "+120", category: "Electronics", img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400" }
       ]
     });
   }

@@ -29,16 +29,16 @@ const plData = [
 ];
 
 const topProducts = [
-  { asin: "B08XYZ123", name: "Premium Bamboo Cutting Board Set", sales: 1842, revenue: "$54,280", profit: "$18,940", margin: "34.9%", trend: "up" },
-  { asin: "B09ABC456", name: "Stainless Steel Water Bottle 32oz", sales: 2341, revenue: "$42,180", profit: "$14,720", margin: "34.9%", trend: "up" },
-  { asin: "B07DEF789", name: "Silicone Kitchen Utensil Set (6pc)", sales: 1109, revenue: "$38,820", profit: "$12,310", margin: "31.7%", trend: "down" },
-  { asin: "B0AGHI012", name: "Yoga Mat Non-Slip Extra Thick", sales: 987, revenue: "$34,650", profit: "$11,440", margin: "33.0%", trend: "up" },
-  { asin: "B0CJKL345", name: "LED Desk Lamp with USB Charging", sales: 765, revenue: "$29,840", profit: "$9,680", margin: "32.4%", trend: "up" },
+  { asin: "B08XYZ123", name: "Premium Bamboo Cutting Board Set", sales: 1842, revenue: "₹4,54,280", profit: "₹1,58,940", margin: "34.9%", trend: "up" },
+  { asin: "B09ABC456", name: "Stainless Steel Water Bottle 32oz", sales: 2341, revenue: "₹3,42,180", profit: "₹1,14,720", margin: "34.9%", trend: "up" },
+  { asin: "B07DEF789", name: "Silicone Kitchen Utensil Set (6pc)", sales: 1109, revenue: "₹2,38,820", profit: "₹82,310", margin: "31.7%", trend: "down" },
+  { asin: "B0AGHI012", name: "Yoga Mat Non-Slip Extra Thick", sales: 987, revenue: "₹2,34,650", profit: "₹71,440", margin: "33.0%", trend: "up" },
+  { asin: "B0CJKL345", name: "LED Desk Lamp with USB Charging", sales: 765, revenue: "₹1,29,840", profit: "₹49,680", margin: "32.4%", trend: "up" },
 ];
 
 const stats = [
-  { label: "Total Revenue", value: "$287,400", change: "+24.8%", up: true, icon: DollarSign, color: "var(--accent)" },
-  { label: "Net Profit", value: "$129,100", change: "+31.2%", up: true, icon: TrendingUp, color: "var(--success)" },
+  { label: "Total Revenue", value: "₹24,87,400", change: "+24.8%", up: true, icon: DollarSign, color: "var(--accent)" },
+  { label: "Net Profit", value: "₹8,29,100", change: "+31.2%", up: true, icon: TrendingUp, color: "var(--success)" },
   { label: "Total Orders", value: "7,044", change: "+18.6%", up: true, icon: ShoppingCart, color: "var(--blue)" },
   { label: "Units Sold", value: "9,218", change: "+21.3%", up: true, icon: Package, color: "var(--purple)" },
   { label: "Refunds", value: "142", change: "-8.4%", up: false, icon: RefreshCcw, color: "var(--danger)" },
@@ -52,7 +52,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <p style={{ color: "var(--text-secondary)", fontSize: 12, marginBottom: 8 }}>{label}</p>
         {payload.map((p: any) => (
           <p key={p.name} style={{ color: p.color, fontSize: 13, fontWeight: 600 }}>
-            {p.name}: ${p.value.toLocaleString()}
+            {p.name}: ₹{p.value.toLocaleString()}
           </p>
         ))}
       </div>
@@ -139,7 +139,7 @@ export default function DashboardPage() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="date" tick={{ fill: "var(--text-muted)", fontSize: 11 }} tickLine={false} axisLine={false} interval={4} />
-              <YAxis tick={{ fill: "var(--text-muted)", fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={v => `$${(v/1000).toFixed(0)}k`} />
+              <YAxis tick={{ fill: "var(--text-muted)", fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={v => `₹${(v/1000).toFixed(0)}k`} />
               <Tooltip content={<CustomTooltip />} />
               <Area type="monotone" dataKey="revenue" stroke="var(--accent)" strokeWidth={2} fill="url(#colorRev)" name="Revenue" />
               <Area type="monotone" dataKey="profit" stroke="var(--success)" strokeWidth={2} fill="url(#colorProfit)" name="Profit" />
@@ -156,7 +156,7 @@ export default function DashboardPage() {
               <div key={item.name}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                   <span style={{ fontSize: 13, color: "var(--text-secondary)", fontWeight: 500 }}>{item.name}</span>
-                  <span style={{ fontSize: 13, color: item.color, fontWeight: 700 }}>${item.value.toLocaleString()}</span>
+                  <span style={{ fontSize: 13, color: item.color, fontWeight: 700 }}>₹{item.value.toLocaleString()}</span>
                 </div>
                 <div className="progress-bar">
                   <div className="progress-bar-fill" style={{

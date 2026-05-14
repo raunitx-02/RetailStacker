@@ -281,7 +281,7 @@ export default function TrendingProducts() {
                   <button 
                     className="btn-ghost" 
                     style={{ padding: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}
-                    onClick={() => window.open(`https://www.amazon.com/dp/${product.asin}`, "_blank")}
+                    onClick={() => window.open(`https://www.amazon.in/dp/${product.asin}`, "_blank")}
                   >
                     <ExternalLink size={14} />
                   </button>
