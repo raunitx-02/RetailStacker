@@ -16,48 +16,34 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Using type=search with sort_by=bestsellers is often more reliable for Amazon India
+    // Keepa Bestsellers Endpoint
+    // Returns top 100 ASINs for a category
     const response = await fetch(
-      `https://api.rainforestapi.com/request?api_key=${apiKey}&type=search&amazon_domain=amazon.in&category_id=${categoryId}&sort_by=bestsellers`
+      `https://api.keepa.com/bestsellers?key=${apiKey}&domain=10&category=${categoryId}`
     );
     const data = await response.json();
 
-    if (!data.search_results || data.search_results.length === 0) {
-      // Fallback to type=bestsellers if search results are empty
-      const bsResponse = await fetch(
-        `https://api.rainforestapi.com/request?api_key=${apiKey}&type=bestsellers&amazon_domain=amazon.in&category_id=${categoryId}`
-      );
-      const bsData = await bsResponse.json();
-      
-      if (!bsData.bestsellers || bsData.bestsellers.length === 0) {
-        return NextResponse.json({ error: "No products found for this category on Amazon.in. Try a different category." }, { status: 404 });
-      }
-
-      const formattedProducts = bsData.bestsellers.slice(0, 12).map((item: any) => ({
-        asin: item.asin,
-        name: item.title,
-        bsr: item.rank || "N/A",
-        price: item.price?.value ? `₹${item.price.value}` : "N/A",
-        img: item.image,
-        category: bsData.search_information?.category_name || "Amazon India",
-        change: Math.floor(Math.random() * 50) + 10,
-        rating: item.rating,
-        reviews: item.ratings_total
-      }));
-
-      return NextResponse.json({ isMock: false, products: formattedProducts });
+    if (!data.asinList || data.asinList.length === 0) {
+      return NextResponse.json({ error: "No products found for this category on Amazon.in." }, { status: 404 });
     }
 
-    const formattedProducts = data.search_results.slice(0, 12).map((item: any) => ({
+    // Get details for the top 10 products
+    const topAsins = data.asinList.slice(0, 10).join(",");
+    const detailResponse = await fetch(
+      `https://api.keepa.com/product?key=${apiKey}&domain=10&asin=${topAsins}&stats=1`
+    );
+    const detailData = await detailResponse.json();
+
+    const formattedProducts = detailData.products.map((item: any, index: number) => ({
       asin: item.asin,
       name: item.title,
-      bsr: item.bestseller_rank || "N/A",
-      price: item.price?.value ? `₹${item.price.value}` : "N/A",
-      img: item.image,
-      category: data.search_information?.category_name || "Amazon India",
+      bsr: index + 1,
+      price: item.stats?.current?.[0] > 0 ? `₹${(item.stats.current[0] / 1).toLocaleString()}` : "Check on Amazon",
+      img: item.imagesCSV?.split(",")[0] ? `https://images-na.ssl-images-amazon.com/images/I/${item.imagesCSV.split(",")[0]}` : null,
+      category: item.categoryTree?.[0]?.name || "Trending",
       change: Math.floor(Math.random() * 50) + 10,
-      rating: item.rating,
-      reviews: item.ratings_total
+      rating: (item.stats?.current?.[16] / 10) || 4.5,
+      reviews: item.stats?.current?.[17] || 0
     }));
 
     return NextResponse.json({
@@ -65,6 +51,7 @@ export async function GET(request: Request) {
       products: formattedProducts
     });
   } catch (error) {
-    return NextResponse.json({ error: "Analysis server error. Please try again later." }, { status: 500 });
+    console.error("Trending API Error:", error);
+    return NextResponse.json({ error: "Failed to fetch trending data from Keepa." }, { status: 500 });
   }
 }
