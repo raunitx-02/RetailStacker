@@ -13,7 +13,7 @@ const products = [
     prevBsr: 45,
     change: +45,
     category: "Electronics",
-    price: "$49.99",
+    price: "₹4,199",
     rating: 4.8,
     reviews: 12402,
     img: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&h=400&fit=crop"
@@ -25,7 +25,7 @@ const products = [
     prevBsr: 165,
     change: +120,
     category: "Home Office",
-    price: "$29.99",
+    price: "₹2,499",
     rating: 4.6,
     reviews: 3512,
     img: "https://images.unsplash.com/photo-1534073828943-f801091bb18c?w=400&h=400&fit=crop"
@@ -37,7 +37,7 @@ const products = [
     prevBsr: 299,
     change: +210,
     category: "Sports",
-    price: "$34.50",
+    price: "₹1,250",
     rating: 4.9,
     reviews: 890,
     img: "https://images.unsplash.com/photo-1602143307185-83e312e9556d?w=400&h=400&fit=crop"
@@ -49,7 +49,7 @@ const products = [
     prevBsr: 13,
     change: +8,
     category: "Electronics",
-    price: "$299.00",
+    price: "₹24,900",
     rating: 4.9,
     reviews: 21500,
     img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop"
@@ -61,7 +61,7 @@ const products = [
     prevBsr: 450,
     change: +300,
     category: "Cameras",
-    price: "$129.00",
+    price: "₹10,900",
     rating: 4.4,
     reviews: 1205,
     img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=400&fit=crop"
@@ -73,7 +73,7 @@ const products = [
     prevBsr: 890,
     change: +650,
     category: "Tools",
-    price: "$55.00",
+    price: "₹4,500",
     rating: 4.7,
     reviews: 4320,
     img: "https://images.unsplash.com/photo-1589131008136-23910c2c6225?w=400&h=400&fit=crop"

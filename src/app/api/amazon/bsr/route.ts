@@ -25,16 +25,15 @@ export async function GET(request: Request) {
 
   try {
     const response = await fetch(
-      `https://api.rainforestapi.com/request?api_key=${apiKey}&type=product&amazon_domain=amazon.com&asin=${asin}`
+      `https://api.rainforestapi.com/request?api_key=${apiKey}&type=product&amazon_domain=amazon.in&asin=${asin}`
     );
     const data = await response.json();
 
     if (!data.product) {
-      return NextResponse.json({ error: "Product not found on Amazon" }, { status: 404 });
+      return NextResponse.json({ error: "Product not found on Amazon.in" }, { status: 404 });
     }
 
     // Extract BSR (Best Sellers Rank)
-    // Rainforest returns BSR in an array under product.bestsellers_rank
     const bsrData = data.product.bestsellers_rank?.[0] || { rank: "N/A", category: "N/A" };
 
     return NextResponse.json({
@@ -43,9 +42,9 @@ export async function GET(request: Request) {
       name: data.product.title,
       bsr: bsrData.rank,
       category: bsrData.category,
-      price: data.product.buybox_winner?.price?.value || "N/A",
+      price: data.product.buybox_winner?.price?.value ? `₹${data.product.buybox_winner.price.value}` : "N/A",
       img: data.product.main_image?.link,
-      velocity: "+18.2%", // Calculated velocity simulation
+      velocity: "+18.2%",
       rating: data.product.rating,
       reviews: data.product.ratings_total
     });

@@ -17,22 +17,22 @@ export async function GET(request: Request) {
 
   try {
     const response = await fetch(
-      `https://api.rainforestapi.com/request?api_key=${apiKey}&type=bestsellers&amazon_domain=amazon.com&category_id=${categoryId}`
+      `https://api.rainforestapi.com/request?api_key=${apiKey}&type=bestsellers&amazon_domain=amazon.in&category_id=${categoryId}`
     );
     const data = await response.json();
 
     if (!data.bestsellers) {
-      return NextResponse.json({ error: "Could not fetch best sellers" }, { status: 500 });
+      return NextResponse.json({ error: "Could not fetch best sellers from Amazon.in" }, { status: 500 });
     }
 
     const formattedProducts = data.bestsellers.slice(0, 12).map((item: any) => ({
       asin: item.asin,
       name: item.title,
       bsr: item.rank,
-      price: item.price?.value ? `$${item.price.value}` : "N/A",
+      price: item.price?.value ? `₹${item.price.value}` : "N/A",
       img: item.image,
-      category: data.search_information?.category_name || "Amazon",
-      change: Math.floor(Math.random() * 50) + 10, // Simulated change
+      category: data.search_information?.category_name || "Amazon India",
+      change: Math.floor(Math.random() * 50) + 10,
       rating: item.rating,
       reviews: item.ratings_total
     }));
