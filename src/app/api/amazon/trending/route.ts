@@ -28,7 +28,11 @@ export async function GET(request: Request) {
       throw new Error(`Keepa API Error: ${searchData.error.message || "Unknown API Error"}`);
     }
     
+    // Support both 'result' (ASIN list) and 'products' (Full data) response types
     let asins = searchData.result || [];
+    if (asins.length === 0 && searchData.products) {
+      asins = searchData.products.map((p: any) => p.asin);
+    }
     
     // If search is empty, return raw response for debugging
     if (asins.length === 0) {
