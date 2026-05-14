@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { KEEPA_INDICES } from "@/lib/keepaUtils";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
@@ -25,17 +26,27 @@ export async function GET(request: Request) {
 
     let asins = data.asinList?.slice(0, 10) || [];
 
-    // 2. Fallback: If bestsellers are empty, try a broad product search in that category
+    // 2. Ultra-Robust Fallback: If bestsellers are empty, search for ANY products in that category sorted by sales rank
     if (asins.length === 0) {
+      // type=product with sort=[[7,0]] (Sales Rank, ASC)
       const searchResponse = await fetch(
-        `https://api.keepa.com/search?key=${apiKey}&domain=10&type=product&term=bestsellers&category=${categoryId}`
+        `https://api.keepa.com/search?key=${apiKey}&domain=10&type=product&category=${categoryId}&sort=[[7,0]]`
       );
       const searchData = await searchResponse.json();
       asins = searchData.result?.slice(0, 10) || [];
     }
 
     if (asins.length === 0) {
-      return NextResponse.json({ error: "No trending products found for this category on Amazon.in. Try Electronics or Home." }, { status: 404 });
+      // Last ditch effort: Search broad trending term
+      const finalResponse = await fetch(
+        `https://api.keepa.com/search?key=${apiKey}&domain=10&type=product&term=trending`
+      );
+      const finalData = await finalResponse.json();
+      asins = finalData.result?.slice(0, 10) || [];
+    }
+
+    if (asins.length === 0) {
+      return NextResponse.json({ error: "Amazon India data is currently restricted. Please try another category or check back in a few minutes." }, { status: 404 });
     }
 
     // 3. Get Details for these ASINs
@@ -44,14 +55,14 @@ export async function GET(request: Request) {
     );
     const detailData = await detailResponse.json();
 
-    if (!detailData.products) {
-      return NextResponse.json({ error: "Could not retrieve product details." }, { status: 500 });
+    if (!detailData.products || detailData.products.length === 0) {
+      return NextResponse.json({ error: "Could not retrieve product details from Keepa." }, { status: 500 });
     }
 
     const formattedProducts = detailData.products.map((item: any, index: number) => ({
       asin: item.asin,
-      name: item.title || "Amazon Product",
-      bsr: index + 1,
+      name: item.title || "Amazon India Product",
+      bsr: (item.stats?.current?.[KEEPA_INDICES?.SALES_RANK] || index + 1),
       price: item.stats?.current?.[0] > 0 ? `₹${(item.stats.current[0] / 1).toLocaleString()}` : "Check Price",
       img: item.imagesCSV?.split(",")[0] ? `https://images-na.ssl-images-amazon.com/images/I/${item.imagesCSV.split(",")[0]}` : "https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=200",
       category: item.categoryTree?.[0]?.name || "Trending",
@@ -63,6 +74,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ isMock: false, products: formattedProducts });
   } catch (error) {
     console.error("Trending API Error:", error);
-    return NextResponse.json({ error: "Keepa connection error. Please try again." }, { status: 500 });
+    return NextResponse.json({ error: "Keepa API Gateway Error. Please try again later." }, { status: 500 });
   }
 }
