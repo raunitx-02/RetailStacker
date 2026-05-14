@@ -20,7 +20,6 @@ export async function GET(request: Request) {
     const term = encodeURIComponent(catTerms[categoryId] || "trending products");
     
     // Step 1: Direct Search for high-ranking products
-    // Using type=product with our term
     const searchUrl = `https://api.keepa.com/search?key=${apiKey}&domain=10&type=product&term=${term}`;
     const searchResponse = await fetch(searchUrl);
     const searchData = await searchResponse.json();
@@ -31,16 +30,13 @@ export async function GET(request: Request) {
     
     let asins = searchData.result || [];
     
-    // If search is empty, try a broad trending search
+    // If search is empty, return raw response for debugging
     if (asins.length === 0) {
-      const broadUrl = `https://api.keepa.com/search?key=${apiKey}&domain=10&type=product&term=trending`;
-      const broadResponse = await fetch(broadUrl);
-      const broadData = await broadResponse.json();
-      asins = broadData.result || [];
-    }
-
-    if (asins.length === 0) {
-      throw new Error("No products found in Keepa search results for Amazon India.");
+      return NextResponse.json({ 
+        error: "Keepa Search returned 0 ASINs for Vercel.",
+        debug: JSON.stringify(searchData).substring(0, 500),
+        url_used: searchUrl.replace(apiKey, "HIDDEN")
+      }, { status: 404 });
     }
 
     // Step 2: Fetch details for top 10 ASINs
