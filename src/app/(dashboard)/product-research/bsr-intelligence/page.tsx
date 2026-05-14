@@ -263,7 +263,7 @@ export default function BsrIntelligence() {
           {trendingProducts.map((product) => (
             <div key={product.asin} className="stat-card" style={{ padding: 0 }}>
               <div style={{ position: "relative" }}>
-                <img src={product.img} alt={product.name} style={{ width: "100%", height: "160px", objectFit: "crop" }} />
+                <img src={product.img} alt={product.name} style={{ width: "100%", height: "160px", objectFit: "cover" }} />
                 <div style={{ position: "absolute", top: 12, right: 12 }}>
                   <div className="badge badge-success" style={{ background: "rgba(48, 209, 88, 0.9)", color: "white" }}>
                     #{product.bsr} Rank
