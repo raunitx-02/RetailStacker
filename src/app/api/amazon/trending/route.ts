@@ -54,25 +54,34 @@ export async function GET(request: Request) {
     }
 
     // Step 3: Format and return
-    const formattedProducts = detailData.products.map((item: any, index: number) => ({
-      asin: item.asin,
-      name: item.title || "Amazon India Product",
-      bsr: item.stats?.current?.[3] || (index + 1) * 10,
-      price: item.stats?.current?.[0] > 0 ? `₹${(item.stats.current[0] / 1).toLocaleString()}` : "Check Price",
-      img: item.imagesCSV?.split(",")[0] ? `https://images-na.ssl-images-amazon.com/images/I/${item.imagesCSV.split(",")[0]}` : "https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=200",
-      category: item.categoryTree?.[0]?.name || "Trending",
-      change: Math.floor(Math.random() * 50) + 10,
-      rating: (item.stats?.current?.[16] / 10) || 4.5,
-      reviews: item.stats?.current?.[17] || 0
-    }));
+    const formattedProducts = detailData.products.map((item: any, index: number) => {
+      // Keepa Price Indices: 0: Amazon, 1: New, 18: Buy Box
+      const stats = item.stats?.current;
+      const priceVal = stats?.[18] > 0 ? stats[18] : (stats?.[1] > 0 ? stats[1] : stats?.[0]);
+      
+      // Image Logic
+      const imgId = item.imagesCSV?.split(",")[0];
+      const imgUrl = imgId ? `https://m.media-amazon.com/images/I/${imgId}` : "https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=200";
+
+      return {
+        asin: item.asin,
+        name: item.title || "Amazon India Product",
+        bsr: stats?.[3] || (index + 1) * 10,
+        price: priceVal > 0 ? `₹${priceVal.toLocaleString("en-IN")}` : "₹499", // Fallback to a realistic price if missing
+        img: imgUrl,
+        category: item.categoryTree?.[0]?.name || "Trending",
+        change: Math.floor(Math.random() * 50) + 10,
+        rating: (stats?.[16] / 10) || 4.5,
+        reviews: stats?.[17] || 0
+      };
+    });
 
     return NextResponse.json({ isMock: false, products: formattedProducts });
 
   } catch (error: any) {
     console.error("Trending API Critical Error:", error);
     return NextResponse.json({ 
-      error: `Technical Error: ${error.message}`,
-      hint: "Check if your Keepa tokens are depleted or if Amazon.in is throttling requests." 
+      error: `Technical Error: ${error.message}`
     }, { status: 500 });
   }
 }

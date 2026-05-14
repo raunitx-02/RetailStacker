@@ -190,40 +190,18 @@ export default function TrendingProducts() {
         display: "grid", 
         gridTemplateColumns: error ? "1fr" : "repeat(auto-fill, minmax(400px, 1fr))", 
         gap: "24px",
-        minHeight: "400px"
-      }}>
+      <div style={{ minHeight: "400px" }}>
         {loading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="glass-card" style={{ height: "200px", background: "var(--bg-secondary)", opacity: 0.5, animation: "pulse 1.5s infinite" }} />
-          ))
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "24px" }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="glass-card" style={{ height: "350px", background: "var(--bg-secondary)", opacity: 0.5, animation: "pulse 1.5s infinite" }} />
+            ))}
+          </div>
         ) : error ? (
           <div className="glass-card" style={{ padding: "40px", textAlign: "center", border: "1px dashed var(--error)" }}>
              <div style={{ fontSize: "16px", fontWeight: 600, color: "var(--error)", marginBottom: 8 }}>Analysis Error</div>
-             <p style={{ color: "var(--text-muted)", fontSize: "14px", marginBottom: "24px" }}>
-              {error}
-            </p>
-            {debugInfo && (
-              <div style={{ 
-                background: "rgba(0,0,0,0.2)", 
-                padding: "12px", 
-                borderRadius: "8px", 
-                fontSize: "11px", 
-                fontFamily: "monospace", 
-                color: "var(--accent)", 
-                marginBottom: "20px",
-                maxWidth: "100%",
-                overflowX: "auto" 
-              }}>
-                <strong>Technical Detail:</strong> {debugInfo}
-              </div>
-            )}
-             <button 
-               className="btn-accent" 
-               style={{ marginTop: 20 }}
-               onClick={() => fetchTrending(activeFilter)}
-             >
-               Try Again
-             </button>
+             <p style={{ color: "var(--text-muted)", fontSize: "14px", marginBottom: "24px" }}>{error}</p>
+             <button className="btn-accent" style={{ marginTop: 20 }} onClick={() => fetchTrending(activeFilter)}>Try Again</button>
           </div>
         ) : liveProducts.length === 0 ? (
           <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "40px" }}>
