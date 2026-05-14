@@ -61,12 +61,8 @@ export async function GET(request: Request) {
       let priceVal = stats?.[18] > 0 ? stats[18] : (stats?.[1] > 0 ? stats[1] : stats?.[0]);
       const displayPrice = priceVal > 0 ? `₹${(priceVal / (priceVal > 5000 ? 100 : 1)).toLocaleString("en-IN")}` : "₹499";
 
-      // Ultimate Amazon India Image Logic
-      const imgIds = item.imagesCSV?.split(",") || [];
-      const primaryImgId = imgIds[0];
-      const imgUrl = primaryImgId 
-        ? `https://m.media-amazon.com/images/I/${primaryImgId}.jpg`
-        : `https://images-eu.ssl-images-amazon.com/images/I/${item.asin}.jpg`; // Direct ASIN fallback for EU/IN servers
+      // Official Amazon India Image Service (Guaranteed unique for each ASIN)
+      const imgUrl = `https://ws-in.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&MarketPlace=IN&ASIN=${item.asin}&Operation=GetImage&ServiceVersion=20070822&TemplateId=MobileImage&Region=IN`;
 
       // Stats Logic
       const rawRating = stats?.[16];

@@ -117,13 +117,7 @@ export default function TrendingProducts() {
                     alt={product.name} 
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
-                      if (target.src.includes("m.media-amazon.com")) {
-                        target.src = target.src.replace("m.media-amazon.com", "images-na.ssl-images-amazon.com");
-                      } else if (target.src.includes("images-na.ssl-images-amazon.com")) {
-                        target.src = `https://images-eu.ssl-images-amazon.com/images/I/${product.asin}.01._SCLZZZZZZZ_.jpg`;
-                      } else {
-                        target.src = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400";
-                      }
+                      target.src = `https://images.amazon.com/images/P/${product.asin}.01._SCLZZZZZZZ_.jpg`;
                     }}
                     style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} 
                   />
