@@ -186,10 +186,6 @@ export default function TrendingProducts() {
       </div>
 
       {/* Grid */}
-      <div style={{ 
-        display: "grid", 
-        gridTemplateColumns: error ? "1fr" : "repeat(auto-fill, minmax(400px, 1fr))", 
-        gap: "24px",
       <div style={{ minHeight: "400px" }}>
         {loading ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "24px" }}>
@@ -204,51 +200,52 @@ export default function TrendingProducts() {
              <button className="btn-accent" style={{ marginTop: 20 }} onClick={() => fetchTrending(activeFilter)}>Try Again</button>
           </div>
         ) : liveProducts.length === 0 ? (
-          <div style={{ gridColumn: "1/-1", textAlign: "center", padding: "40px" }}>
+          <div style={{ textAlign: "center", padding: "40px" }}>
             <p style={{ color: "var(--text-secondary)" }}>No trending products found for this category.</p>
           </div>
         ) : (
-          liveProducts.map((product) => (
-            <div key={product.asin} className="glass-card" style={{ 
-              display: "flex", 
-              padding: 0, 
-              overflow: "hidden", 
-              height: "200px" 
-            }}>
-              {/* Image side */}
-              <div style={{ width: "160px", flexShrink: 0, position: "relative" }}>
-                <img 
-                  src={product.img || "https://images.unsplash.com/photo-1560393464-5c69a73c5770?w=200"} 
-                  alt={product.name} 
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }} 
-                />
-                <div style={{ 
-                  position: "absolute", 
-                  top: 8, 
-                  left: 8, 
-                  background: "rgba(0,0,0,0.7)", 
-                  backdropFilter: "blur(4px)",
-                  color: "white",
-                  padding: "2px 8px",
-                  borderRadius: 4,
-                  fontSize: 10,
-                  fontWeight: 700
-                }}>
-                  #{product.bsr}
-                </div>
-              </div>
-
-              {/* Content side */}
-              <div style={{ flex: 1, padding: "20px", display: "flex", flexDirection: "column" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4 }}>
-                  <span style={{ fontSize: 11, color: "var(--accent)", fontWeight: 700, textTransform: "uppercase" }}>{product.category}</span>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4, color: "var(--success)", fontSize: 12, fontWeight: 700 }}>
-                    <ArrowUpRight size={14} /> +{product.change}%
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "24px" }}>
+            {liveProducts.map((product, idx) => (
+              <div key={product.asin || idx} className="glass-card" style={{ padding: 0, overflow: "hidden", display: "flex", flexDirection: "column", transition: "transform 0.3s ease" }}>
+                <div style={{ position: "relative", height: "220px", background: "#fff", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+                  <img 
+                    src={product.img} 
+                    alt={product.name} 
+                    style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} 
+                  />
+                  <div style={{ position: "absolute", top: "12px", left: "12px", background: "rgba(0,0,0,0.7)", color: "#fff", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold" }}>
+                    #{product.bsr}
                   </div>
                 </div>
-
-                <h3 style={{ 
-                  fontSize: 15, 
+                
+                <div style={{ padding: "20px", flex: 1, display: "flex", flexDirection: "column" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                    <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--accent)", textTransform: "uppercase", letterSpacing: "1px" }}>{product.category}</span>
+                    <span style={{ fontSize: "12px", fontWeight: 600, color: "#10b981" }}>↑ {product.change}%</span>
+                  </div>
+                  
+                  <h3 style={{ fontSize: "15px", fontWeight: 600, color: "var(--text-main)", marginBottom: "12px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", lineHeight: "1.4" }}>
+                    {product.name}
+                  </h3>
+                  
+                  <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+                    <div>
+                      <div style={{ fontSize: "20px", fontWeight: 700, color: "var(--text-main)" }}>{product.price}</div>
+                      <div style={{ fontSize: "12px", color: "var(--text-muted)", marginTop: "2px" }}>
+                        ⭐ {product.rating} ({product.reviews.toLocaleString()})
+                      </div>
+                    </div>
+                    
+                    <button className="btn-accent" style={{ padding: "8px 16px", fontSize: "13px" }}>
+                      Analysis
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>                  fontSize: 15, 
                   fontWeight: 700, 
                   color: "var(--text-primary)", 
                   marginBottom: 8,
