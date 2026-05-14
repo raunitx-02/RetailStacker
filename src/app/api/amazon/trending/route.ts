@@ -61,8 +61,11 @@ export async function GET(request: Request) {
       let priceVal = stats?.[18] > 0 ? stats[18] : (stats?.[1] > 0 ? stats[1] : stats?.[0]);
       const displayPrice = priceVal > 0 ? `₹${(priceVal / (priceVal > 5000 ? 100 : 1)).toLocaleString("en-IN")}` : "₹499";
 
-      // Standard Amazon Image Format (Highly Reliable)
-      const imgUrl = `https://images.amazon.com/images/P/${item.asin}.01._SCLZZZZZZZ_.jpg`;
+      // Double-Layer Image Logic (Max Reliability)
+      const imgId = item.imagesCSV?.split(",")[0];
+      const imgUrl = imgId 
+        ? `https://m.media-amazon.com/images/I/${imgId}${imgId.includes(".") ? "" : ".jpg"}`
+        : `https://images.amazon.com/images/P/${item.asin}.01._SCLZZZZZZZ_.jpg`;
 
       // Stats Logic
       const rawRating = stats?.[16];

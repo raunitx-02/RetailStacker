@@ -115,6 +115,14 @@ export default function TrendingProducts() {
                   <img 
                     src={product.img} 
                     alt={product.name} 
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      if (!target.src.includes("images.amazon.com")) {
+                        target.src = `https://images.amazon.com/images/P/${product.asin}.01._SCLZZZZZZZ_.jpg`;
+                      } else {
+                        target.src = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400";
+                      }
+                    }}
                     style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} 
                   />
                   <div style={{ position: "absolute", top: "12px", left: "12px", background: "rgba(0,0,0,0.7)", color: "#fff", padding: "4px 10px", borderRadius: "6px", fontSize: "12px", fontWeight: "bold" }}>
