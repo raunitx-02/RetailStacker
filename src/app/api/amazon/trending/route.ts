@@ -33,8 +33,8 @@ export async function GET(request: Request) {
       throw new Error(`Keepa Error: ${JSON.stringify(bsData.error)}`);
     }
 
-    // bestsellers.bestSellersList[0].asinList has the ranked ASINs
-    const rankedAsins: string[] = bsData.bestSellersList?.[0]?.asinList || [];
+    // bsData.bestSellersList.asinList has the ranked ASINs
+    const rankedAsins: string[] = bsData.bestSellersList?.asinList || [];
 
     if (rankedAsins.length === 0) {
       return NextResponse.json({
