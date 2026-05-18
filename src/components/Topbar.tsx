@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { Bell, Search, HelpCircle, X, MessageCircle, Send, Check, CheckCheck, ArrowRight, Package, TrendingUp, AlertCircle, Zap, User } from "lucide-react";
+import { Bell, Search, HelpCircle, X, Send, Check, CheckCheck, ArrowRight, ChevronDown } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import Link from "next/link";
 
@@ -161,6 +161,7 @@ function ContactModal({ onClose }: { onClose: () => void }) {
 export default function Topbar({ title, user = "User", plan = "Starter" }: { title?: string; user?: string; plan?: string }) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [market, setMarket] = useState("amazon");
   const unreadCount = NOTIFICATIONS.filter(n => !n.read).length;
 
   const initials = user?.split("@")[0]?.slice(0, 2).toUpperCase() || "U";
@@ -205,6 +206,26 @@ export default function Topbar({ title, user = "User", plan = "Starter" }: { tit
               placeholder="Search tools, keywords, ASINs..."
               style={{ background: "none", border: "none", outline: "none", color: "var(--text-primary)", fontSize: 13, width: "100%", fontFamily: "Inter, sans-serif" }}
             />
+          </div>
+
+          {/* Marketplace Switcher */}
+          <div style={{ display: "flex", alignItems: "center", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 10, padding: 4, gap: 2 }}>
+            {[
+              { id: "amazon", label: "🛒 Amazon", color: "#FF9900" },
+              { id: "flipkart", label: "🛍️ Flipkart", color: "#047BD5" },
+              { id: "meesho", label: "🏪 Meesho", color: "#9B30FF" },
+            ].map(m => (
+              <button
+                key={m.id}
+                onClick={() => setMarket(m.id)}
+                style={{
+                  padding: "6px 12px", borderRadius: 7, border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700,
+                  background: market === m.id ? m.color : "transparent",
+                  color: market === m.id ? "white" : "var(--text-muted)",
+                  transition: "all 0.15s",
+                }}
+              >{m.label}</button>
+            ))}
           </div>
         </div>
 

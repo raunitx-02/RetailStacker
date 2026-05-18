@@ -6,7 +6,8 @@ import {
   LayoutDashboard, Search, KeyRound, FileText, Settings, BarChart3,
   Wrench, ChevronRight, ChevronLeft, Bell, Package, TrendingUp,
   ShieldCheck, RefreshCcw, Mail, Boxes, Zap, Cpu, QrCode, Link2,
-  Sparkles, Target, BookOpen, FlaskConical, IndianRupee, Truck, ScanLine, Lock, UserCircle
+  Sparkles, Target, BookOpen, FlaskConical, IndianRupee, Truck, ScanLine, Lock, UserCircle,
+  Upload, Store, Image as ImageIcon
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -19,7 +20,9 @@ const PLAN_ACCESS: Record<string, string[]> = {
     "/tools/gst-calculator",
     "/tools/logistics-estimator",
     "/tools/url-builder",
-    "/tools/qr-generator"
+    "/tools/qr-generator",
+    "/tools/meesho-optimizer",
+    "/publish",
   ],
   Growth: [
     "/dashboard", "/profile",
@@ -33,7 +36,9 @@ const PLAN_ACCESS: Record<string, string[]> = {
     "/tools/url-builder",
     "/tools/qr-generator",
     "/tools/scanner",
-    "/tools/copilot"
+    "/tools/copilot",
+    "/tools/meesho-optimizer",
+    "/publish",
   ],
   Diamond: [] // Diamond has everything
 };
@@ -48,6 +53,11 @@ const nav = [
     label: "My Profile",
     icon: UserCircle,
     href: "/profile",
+  },
+  {
+    label: "Publish Products",
+    icon: Upload,
+    href: "/publish",
   },
   {
     label: "Product Research",
@@ -106,6 +116,7 @@ const nav = [
     children: [
       { label: "AI Seller Scanner", href: "/tools/scanner", icon: ScanLine },
       { label: "AI Seller Copilot", href: "/tools/copilot", icon: Sparkles },
+      { label: "🎁 Meesho Shipping Optimizer", href: "/tools/meesho-optimizer", icon: Package },
       { label: "GST & Customs Duty", href: "/tools/gst-calculator", icon: IndianRupee },
       { label: "Logistics Estimator", href: "/tools/logistics-estimator", icon: Truck },
       { label: "URL Builder", href: "/tools/url-builder", icon: Link2 },
