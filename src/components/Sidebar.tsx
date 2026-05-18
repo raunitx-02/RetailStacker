@@ -125,8 +125,16 @@ const nav = [
   },
 ];
 
-export default function Sidebar({ plan = "Starter" }: { plan?: string }) {
+export default function Sidebar({ plan = "Starter", user = "" }: { plan?: string; user?: string }) {
   const pathname = usePathname();
+  // Derive display name: if email, take part before @; capitalize
+  const displayName = user
+    ? user.includes("@")
+      ? user.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, c => c.toUpperCase())
+      : user
+    : "Account";
+  const initials = displayName.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
+
   const [collapsed, setCollapsed] = useState(false);
   const [openGroups, setOpenGroups] = useState<string[]>(["Product Research", "Keywords", "Listing Optimization", "Operations", "Analytics & Ads", "Tools"]);
 
@@ -363,9 +371,9 @@ export default function Sidebar({ plan = "Starter" }: { plan?: string }) {
               display: "flex", alignItems: "center", justifyContent: "center",
               flexShrink: 0, fontWeight: 700, fontSize: 14, color: "white",
               boxShadow: "0 0 0 2px var(--accent-muted)",
-            }}>R</div>
+            }}>{initials}</div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>Raunit Jha</div>
+              <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{displayName}</div>
               <div style={{ fontSize: 11, color: "var(--text-muted)" }}>{plan} Plan · Manage Profile</div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-end" }}>

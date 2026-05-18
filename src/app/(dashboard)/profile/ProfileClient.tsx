@@ -63,8 +63,13 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const showToast = (message: string, type: "success" | "error" = "success") => setToast({ message, type });
 
-  const [firstName, setFirstName] = useState(initialEmail === "admin@admin.com" ? "Admin" : "");
-  const [lastName, setLastName] = useState(initialEmail === "admin@admin.com" ? "Neon10" : "");
+  const derivedName = initialEmail.includes("@")
+    ? initialEmail.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, c => c.toUpperCase())
+    : initialEmail;
+  const nameParts = derivedName.split(" ");
+
+  const [firstName, setFirstName] = useState(nameParts[0] || "");
+  const [lastName, setLastName] = useState(nameParts.slice(1).join(" ") || "");
   const [mobile, setMobile] = useState("");
   const [editEmail, setEditEmail] = useState("");
   const [editOtp, setEditOtp] = useState("");

@@ -164,7 +164,12 @@ export default function Topbar({ title, user = "User", plan = "Starter" }: { tit
   const [market, setMarket] = useState("amazon");
   const unreadCount = NOTIFICATIONS.filter(n => !n.read).length;
 
-  const initials = user?.split("@")[0]?.slice(0, 2).toUpperCase() || "U";
+  const displayName = user
+    ? user.includes("@")
+      ? user.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, c => c.toUpperCase())
+      : user
+    : "Account";
+  const initials = displayName.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
 
   // Close notification panel on outside click
   const panelRef = useRef<HTMLDivElement>(null);
