@@ -1,93 +1,117 @@
 import { NextResponse } from "next/server";
-import { KEEPA_INDICES } from "@/lib/keepaUtils";
 export const dynamic = "force-dynamic";
+
+// Amazon India (domain=10) BSR Category Node IDs
+// These are real Amazon India browse node IDs for bestseller lists
+const CATEGORY_NODES: Record<string, { nodeId: string; name: string }> = {
+  "976442031":  { nodeId: "976442031",  name: "Home & Kitchen" },
+  "976419031":  { nodeId: "976419031",  name: "Electronics" },
+  "1983396031": { nodeId: "1983396031", name: "Sports & Fitness" },
+  "1389441031": { nodeId: "1389441031", name: "Cameras & Photography" },
+  "3704992031": { nodeId: "3704992031", name: "Power Tools" },
+  "1951044031": { nodeId: "1951044031", name: "Clothing" },
+  "2454178031": { nodeId: "2454178031", name: "Beauty" },
+  "1571274031": { nodeId: "1571274031", name: "Books" },
+  "2061109031": { nodeId: "2061109031", name: "Toys & Games" },
+};
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const categoryId = searchParams.get("category") || "976442031"; 
-  const apiKey = "pa8osmtpo6bq3bbf3vgfqmp78p0ifbouv34flbvs51hsjqkb7kg6qjgddpspinlp";
+  const categoryId = searchParams.get("category") || "976442031";
+  const apiKey = process.env.KEEPA_API_KEY || "pa8osmtpo6bq3bbf3vgfqmp78p0ifbouv34flbvs51hsjqkb7kg6qjgddpspinlp";
+
+  const node = CATEGORY_NODES[categoryId] || CATEGORY_NODES["976442031"];
 
   try {
-    // Determine search term based on category
-    const catTerms: any = {
-      "976442031": "home kitchen bestsellers",
-      "976419031": "electronics bestsellers",
-      "1983396031": "sports fitness",
-      "1389441031": "camera accessories",
-      "3704992031": "power tools"
-    };
-    
-    const term = encodeURIComponent(catTerms[categoryId] || "trending products");
-    
-    // Step 1: Direct Search for high-ranking products
-    const searchUrl = `https://api.keepa.com/search?key=${apiKey}&domain=10&type=product&term=${term}`;
-    const searchResponse = await fetch(searchUrl);
-    const searchData = await searchResponse.json();
-    
-    if (searchData.error) {
-      throw new Error(`Keepa API Error: ${searchData.error.message || "Unknown API Error"}`);
+    // Step 1: Get actual Amazon India bestseller ASINs for this category node
+    // Keepa /bestsellers endpoint returns the current top-100 ASINs for any browse node
+    const bsUrl = `https://api.keepa.com/bestsellers?key=${apiKey}&domain=10&category=${node.nodeId}`;
+    const bsRes = await fetch(bsUrl, { next: { revalidate: 1800 } }); // Cache 30 min
+    const bsData = await bsRes.json();
+
+    if (bsData.error) {
+      throw new Error(`Keepa Error: ${JSON.stringify(bsData.error)}`);
     }
-    
-    // Support both 'result' (ASIN list) and 'products' (Full data) response types
-    let asins = searchData.result || [];
-    if (asins.length === 0 && searchData.products) {
-      asins = searchData.products.map((p: any) => p.asin);
-    }
-    
-    // If search is empty, return raw response for debugging
-    if (asins.length === 0) {
-      return NextResponse.json({ 
-        error: "Keepa Search returned 0 ASINs for Vercel.",
-        debug: JSON.stringify(searchData).substring(0, 500),
-        url_used: searchUrl.replace(apiKey, "HIDDEN")
+
+    // bestsellers.bestSellersList[0].asinList has the ranked ASINs
+    const rankedAsins: string[] = bsData.bestSellersList?.[0]?.asinList || [];
+
+    if (rankedAsins.length === 0) {
+      return NextResponse.json({
+        error: "No bestseller data returned from Keepa for this category. The category node may need updating.",
+        nodeUsed: node.nodeId,
+        categoryName: node.name,
       }, { status: 404 });
     }
 
-    // Step 2: Fetch FULL details for top 10 ASINs (Never rely on search data for stats/images)
-    const topAsins = asins.slice(0, 10).join(",");
-    const detailUrl = `https://api.keepa.com/product?key=${apiKey}&domain=10&asin=${topAsins}&stats=1`;
-    const detailResponse = await fetch(detailUrl);
-    const detailData = await detailResponse.json();
+    // Step 2: Take top 12 ASINs and fetch full product details
+    const top12 = rankedAsins.slice(0, 12).join(",");
+    const detailUrl = `https://api.keepa.com/product?key=${apiKey}&domain=10&asin=${top12}&stats=1`;
+    const detailRes = await fetch(detailUrl, { next: { revalidate: 1800 } });
+    const detailData = await detailRes.json();
 
-    if (!detailData.products || detailData.products.length === 0) {
-      throw new Error("Could not retrieve full product details from Keepa.");
+    if (!detailData.products?.length) {
+      throw new Error("Could not retrieve product details from Keepa.");
     }
 
-    // Step 3: Format and return
-    const formattedProducts = detailData.products.map((item: any, index: number) => {
-      const stats = item.stats?.current;
-      
-      // Price logic for India
-      let priceVal = stats?.[18] > 0 ? stats[18] : (stats?.[1] > 0 ? stats[1] : stats?.[0]);
-      const displayPrice = priceVal > 0 ? `₹${(priceVal / (priceVal > 5000 ? 100 : 1)).toLocaleString("en-IN")}` : "₹499";
+    // Step 3: Sort by actual BSR rank (ascending = better rank)
+    const formatted = detailData.products
+      .map((item: any, idx: number) => {
+        const stats = item.stats?.current;
 
-      // Official Amazon India Image Service (Guaranteed unique for each ASIN)
-      const imgUrl = `https://ws-in.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&MarketPlace=IN&ASIN=${item.asin}&Operation=GetImage&ServiceVersion=20070822&TemplateId=MobileImage&Region=IN`;
+        // BSR: stats[3] is the current BSR in root category
+        const bsr: number = stats?.[3] > 0 ? stats[3] : rankedAsins.indexOf(item.asin) + 1;
 
-      // Stats Logic
-      const rawRating = stats?.[16];
-      const displayRating = rawRating > 0 ? (rawRating / 10).toFixed(1) : "4.2";
-      const displayReviews = stats?.[17] > 0 ? stats[17] : Math.floor(Math.random() * 1000) + 100;
+        // Price in Indian Rupees: Keepa stores prices in cents
+        // For India domain, prices are stored as paise (×100), so divide by 100
+        const priceRaw = stats?.[18] > 0 ? stats[18] : (stats?.[1] > 0 ? stats[1] : stats?.[0]);
+        const price = priceRaw > 0 ? `₹${Math.round(priceRaw / 100).toLocaleString("en-IN")}` : "N/A";
 
-      return {
-        asin: item.asin,
-        name: item.title || "Amazon India Product",
-        bsr: stats?.[3] > 0 ? stats[3] : (index + 1) * 10,
-        price: displayPrice,
-        img: imgUrl,
-        category: item.categoryTree?.[0]?.name || "Trending",
-        change: Math.floor(Math.random() * 50) + 10,
-        rating: displayRating,
-        reviews: displayReviews
-      };
+        // Rating: Keepa stores as e.g. 43 meaning 4.3 stars
+        const ratingRaw = stats?.[16];
+        const rating = ratingRaw > 0 ? (ratingRaw / 10).toFixed(1) : null;
+
+        // Review count
+        const reviews = stats?.[17] > 0 ? stats[17] : null;
+
+        // Image: use Keepa's own CDN for reliable images
+        // Format: https://images-na.ssl-images-amazon.com/images/P/{ASIN}.01.LZZZZZZZ.jpg
+        const img = `https://images-na.ssl-images-amazon.com/images/P/${item.asin}.01.LZZZZZZZ.jpg`;
+
+        // Category name from product's category tree
+        const catName = item.categoryTree?.[item.categoryTree.length - 1]?.name
+          || item.categoryTree?.[0]?.name
+          || node.name;
+
+        // Rank position in the bestseller list
+        const rankPosition = rankedAsins.indexOf(item.asin) + 1;
+
+        return {
+          asin: item.asin,
+          name: item.title || "Amazon India Product",
+          bsr,
+          rankPosition,
+          price,
+          img,
+          category: catName,
+          rating,
+          reviews,
+          isRealData: true,
+        };
+      })
+      // Sort by their actual position in the bestseller list
+      .sort((a: any, b: any) => a.rankPosition - b.rankPosition);
+
+    return NextResponse.json({
+      products: formatted,
+      categoryName: node.name,
+      totalRanked: rankedAsins.length,
+      lastUpdated: new Date().toISOString(),
+      source: "Keepa Bestsellers API — Amazon India Live Rankings",
     });
 
-    return NextResponse.json({ isMock: false, products: formattedProducts });
-
   } catch (error: any) {
-    console.error("Trending API Critical Error:", error);
-    return NextResponse.json({ 
-      error: `Technical Error: ${error.message}`
-    }, { status: 500 });
+    console.error("Trending API Error:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
