@@ -77,8 +77,16 @@ export default function URLBuilderPage() {
           <div className="glass-card" style={{ padding: 24 }}>
             <h2 style={{ fontWeight: 700, fontSize: 16, color: "var(--text-primary)", marginBottom: 4 }}>Search URL</h2>
             <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 16 }}>Use this URL in your external traffic campaigns (Facebook, TikTok, email)</p>
-            <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: 10, padding: 16, border: "1px solid var(--border)", marginBottom: 12, wordBreak: "break-all" }}>
-              <code style={{ fontSize: 12, color: "var(--success)", lineHeight: 1.6 }}>{generated}</code>
+            <div style={{
+              background: "#0d1117",
+              borderRadius: 10,
+              padding: "14px 16px",
+              border: "1px solid rgba(255,107,53,0.35)",
+              marginBottom: 12,
+              wordBreak: "break-all"
+            }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#f97316", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>SEARCH URL</div>
+              <code style={{ fontSize: 12, color: "#7ee787", lineHeight: 1.7, fontFamily: "monospace" }}>{generated}</code>
             </div>
             <button className="btn-accent" onClick={() => copy(generated)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", justifyContent: "center" }}>
               {copied ? <><Check size={15} />Copied!</> : <><Copy size={15} />Copy Search URL</>}
@@ -88,13 +96,22 @@ export default function URLBuilderPage() {
           <div className="glass-card" style={{ padding: 24 }}>
             <h2 style={{ fontWeight: 700, fontSize: 16, color: "var(--text-primary)", marginBottom: 4 }}>Direct Product URL</h2>
             <p style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 16 }}>Direct link to your product listing page</p>
-            <div style={{ background: "rgba(0,0,0,0.3)", borderRadius: 10, padding: 16, border: "1px solid var(--border)", marginBottom: 12, wordBreak: "break-all" }}>
-              <code style={{ fontSize: 12, color: "var(--blue)", lineHeight: 1.6 }}>{landingUrl}</code>
+            <div style={{
+              background: "#0d1117",
+              borderRadius: 10,
+              padding: "14px 16px",
+              border: "1px solid rgba(59,130,246,0.35)",
+              marginBottom: 12,
+              wordBreak: "break-all"
+            }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: "#60a5fa", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>PRODUCT URL</div>
+              <code style={{ fontSize: 12, color: "#79c0ff", lineHeight: 1.7, fontFamily: "monospace" }}>{landingUrl}</code>
             </div>
-            <button className="btn-ghost" onClick={() => copy(landingUrl)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", justifyContent: "center" }}>
+            <button className="btn-accent" onClick={() => copy(landingUrl)} style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", justifyContent: "center", background: "rgba(59,130,246,0.18)", border: "1px solid rgba(59,130,246,0.4)", color: "#60a5fa" }}>
               <Copy size={15} />Copy Product URL
             </button>
           </div>
+
 
           <div className="glass-card" style={{ padding: 20, background: "rgba(255,107,53,0.04)", border: "1px solid var(--accent-muted)" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>

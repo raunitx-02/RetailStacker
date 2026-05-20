@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
-import { QrCode, Download, Copy, Check } from "lucide-react";
+import { QrCode, Download, Copy, Check, Pipette } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 
 const presets = [
@@ -10,13 +10,81 @@ const presets = [
   { label: "Coupon Page", url: "https://www.amazon.com/dp/B08XYZ1234?th=1&psc=1" },
 ];
 
-const fgColors = ["#FFFFFF", "var(--accent)", "var(--success)", "var(--blue)", "var(--purple)", "var(--warning)", "#000000"];
-const bgColors = ["#000000", "#0b0e1a", "#1e293b", "#FFFFFF", "var(--text-primary)"];
+// All real hex values — no CSS vars (canvas can't resolve them)
+const fgPresets = [
+  { label: "Black",   hex: "#000000" },
+  { label: "White",   hex: "#FFFFFF" },
+  { label: "Orange",  hex: "#ff6b35" },
+  { label: "Emerald", hex: "#22c55e" },
+  { label: "Blue",    hex: "#3b82f6" },
+  { label: "Purple",  hex: "#8b5cf6" },
+  { label: "Amber",   hex: "#f59e0b" },
+  { label: "Rose",    hex: "#f43f5e" },
+  { label: "Teal",    hex: "#14b8a6" },
+];
+
+const bgPresets = [
+  { label: "Black",       hex: "#000000" },
+  { label: "Dark Navy",   hex: "#0b0e1a" },
+  { label: "Slate",       hex: "#1e293b" },
+  { label: "White",       hex: "#FFFFFF" },
+  { label: "Cream",       hex: "#fef9ef" },
+  { label: "Light Grey",  hex: "#f1f5f9" },
+  { label: "Deep Purple", hex: "#1e1b4b" },
+  { label: "Forest",      hex: "#14532d" },
+];
+
+function ColorSwatch({
+  hex,
+  label,
+  selected,
+  onSelect,
+}: {
+  hex: string;
+  label: string;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      title={`${label} (${hex})`}
+      onClick={onSelect}
+      style={{
+        width: 36,
+        height: 36,
+        borderRadius: 8,
+        background: hex,
+        border: selected ? "3px solid #ff6b35" : "2px solid rgba(128,128,128,0.3)",
+        cursor: "pointer",
+        transition: "all 0.15s",
+        boxShadow: selected
+          ? "0 0 0 2px rgba(255,107,53,0.4), 0 4px 12px rgba(0,0,0,0.3)"
+          : "0 2px 6px rgba(0,0,0,0.15)",
+        transform: selected ? "scale(1.12)" : "scale(1)",
+        flexShrink: 0,
+        position: "relative",
+      }}
+    >
+      {selected && (
+        <span style={{
+          position: "absolute", top: "50%", left: "50%",
+          transform: "translate(-50%, -50%)",
+          fontSize: 14, fontWeight: 900,
+          color: hex === "#FFFFFF" || hex === "#fef9ef" || hex === "#f1f5f9" || hex === "#cream" ? "#000" : "#fff",
+          textShadow: "0 1px 2px rgba(0,0,0,0.5)",
+          lineHeight: 1,
+        }}>✓</span>
+      )}
+    </button>
+  );
+}
 
 export default function QRGeneratorPage() {
   const [url, setUrl] = useState("https://www.amazon.com/dp/B08XYZ1234");
-  const [fgColor, setFgColor] = useState("#FFFFFF");
-  const [bgColor, setBgColor] = useState("#000000");
+  const [fgColor, setFgColor] = useState("#000000");
+  const [bgColor, setBgColor] = useState("#FFFFFF");
+  const [fgCustom, setFgCustom] = useState("#000000");
+  const [bgCustom, setBgCustom] = useState("#FFFFFF");
   const [size, setSize] = useState(220);
   const [includeMargin, setIncludeMargin] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -37,6 +105,15 @@ export default function QRGeneratorPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Determine if color is light (for checkmark contrast)
+  const isLight = (hex: string) => {
+    const c = hex.replace("#", "");
+    const r = parseInt(c.substring(0, 2), 16);
+    const g = parseInt(c.substring(2, 4), 16);
+    const b = parseInt(c.substring(4, 6), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 > 128;
+  };
+
   return (
     <div>
       <div className="page-header">
@@ -46,7 +123,7 @@ export default function QRGeneratorPage() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 400px", gap: 24 }}>
         {/* Settings Panel */}
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           {/* URL Input */}
@@ -79,59 +156,123 @@ export default function QRGeneratorPage() {
           {/* Styling */}
           <div className="glass-card" style={{ padding: 24 }}>
             <h2 style={{ fontWeight: 700, fontSize: 15, color: "var(--text-primary)", marginBottom: 20 }}>Styling Options</h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+
               {/* FG Color */}
               <div>
-                <label style={{ display: "block", fontSize: 12, color: "var(--text-muted)", fontWeight: 600, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                  QR Color
-                </label>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {fgColors.map(c => (
-                    <button
-                      key={c}
-                      onClick={() => setFgColor(c)}
-                      style={{
-                        width: 32, height: 32, borderRadius: 8, background: c,
-                        border: fgColor === c ? "3px solid var(--accent)" : "2px solid rgba(255,255,255,0.15)",
-                        cursor: "pointer", transition: "all 0.2s",
-                        boxShadow: fgColor === c ? "0 0 12px rgba(255,107,53,0.5)" : "none",
-                      }}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                  <label style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                    QR Code Color
+                  </label>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ width: 20, height: 20, borderRadius: 4, background: fgColor, border: "2px solid var(--border)", flexShrink: 0 }} />
+                    <code style={{ fontSize: 12, color: "var(--text-primary)", fontFamily: "monospace", fontWeight: 700 }}>{fgColor}</code>
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: 12 }}>
+                  {fgPresets.map(c => (
+                    <ColorSwatch
+                      key={c.hex}
+                      hex={c.hex}
+                      label={c.label}
+                      selected={fgColor === c.hex}
+                      onSelect={() => { setFgColor(c.hex); setFgCustom(c.hex); }}
                     />
                   ))}
-                  <input type="color" value={fgColor} onChange={e => setFgColor(e.target.value)}
-                    style={{ width: 32, height: 32, borderRadius: 8, border: "2px solid rgba(255,255,255,0.15)", cursor: "pointer", padding: 2, background: "transparent" }} />
+                </div>
+                {/* Custom color picker */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "var(--bg-secondary)", borderRadius: 10, border: "1px solid var(--border)" }}>
+                  <Pipette size={14} color="var(--text-muted)" />
+                  <span style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600 }}>Custom</span>
+                  <input
+                    type="color"
+                    value={fgCustom}
+                    onChange={e => { setFgCustom(e.target.value); setFgColor(e.target.value); }}
+                    style={{ width: 28, height: 28, borderRadius: 6, border: "none", cursor: "pointer", padding: 0, background: "none" }}
+                  />
+                  <input
+                    type="text"
+                    value={fgCustom}
+                    maxLength={7}
+                    onChange={e => {
+                      const v = e.target.value;
+                      setFgCustom(v);
+                      if (/^#[0-9A-Fa-f]{6}$/.test(v)) setFgColor(v);
+                    }}
+                    placeholder="#000000"
+                    style={{ flex: 1, background: "transparent", border: "none", outline: "none", fontSize: 13, color: "var(--text-primary)", fontFamily: "monospace", fontWeight: 600 }}
+                  />
+                  <button
+                    onClick={() => setFgColor(fgCustom)}
+                    style={{ fontSize: 11, padding: "4px 10px", borderRadius: 6, background: "var(--accent)", color: "#fff", border: "none", cursor: "pointer", fontWeight: 700 }}
+                  >
+                    Apply
+                  </button>
                 </div>
               </div>
 
               {/* BG Color */}
               <div>
-                <label style={{ display: "block", fontSize: 12, color: "var(--text-muted)", fontWeight: 600, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                  Background Color
-                </label>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                  {bgColors.map(c => (
-                    <button
-                      key={c}
-                      onClick={() => setBgColor(c)}
-                      style={{
-                        width: 32, height: 32, borderRadius: 8, background: c,
-                        border: bgColor === c ? "3px solid var(--accent)" : "2px solid rgba(255,255,255,0.15)",
-                        cursor: "pointer", transition: "all 0.2s",
-                        boxShadow: bgColor === c ? "0 0 12px rgba(255,107,53,0.5)" : "none",
-                      }}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+                  <label style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                    Background Color
+                  </label>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ width: 20, height: 20, borderRadius: 4, background: bgColor, border: "2px solid var(--border)", flexShrink: 0 }} />
+                    <code style={{ fontSize: 12, color: "var(--text-primary)", fontFamily: "monospace", fontWeight: 700 }}>{bgColor}</code>
+                  </div>
+                </div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: 12 }}>
+                  {bgPresets.map(c => (
+                    <ColorSwatch
+                      key={c.hex}
+                      hex={c.hex}
+                      label={c.label}
+                      selected={bgColor === c.hex}
+                      onSelect={() => { setBgColor(c.hex); setBgCustom(c.hex); }}
                     />
                   ))}
-                  <input type="color" value={bgColor} onChange={e => setBgColor(e.target.value)}
-                    style={{ width: 32, height: 32, borderRadius: 8, border: "2px solid rgba(255,255,255,0.15)", cursor: "pointer", padding: 2, background: "transparent" }} />
+                </div>
+                {/* Custom color picker */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "var(--bg-secondary)", borderRadius: 10, border: "1px solid var(--border)" }}>
+                  <Pipette size={14} color="var(--text-muted)" />
+                  <span style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600 }}>Custom</span>
+                  <input
+                    type="color"
+                    value={bgCustom}
+                    onChange={e => { setBgCustom(e.target.value); setBgColor(e.target.value); }}
+                    style={{ width: 28, height: 28, borderRadius: 6, border: "none", cursor: "pointer", padding: 0, background: "none" }}
+                  />
+                  <input
+                    type="text"
+                    value={bgCustom}
+                    maxLength={7}
+                    onChange={e => {
+                      const v = e.target.value;
+                      setBgCustom(v);
+                      if (/^#[0-9A-Fa-f]{6}$/.test(v)) setBgColor(v);
+                    }}
+                    placeholder="#FFFFFF"
+                    style={{ flex: 1, background: "transparent", border: "none", outline: "none", fontSize: 13, color: "var(--text-primary)", fontFamily: "monospace", fontWeight: 600 }}
+                  />
+                  <button
+                    onClick={() => setBgColor(bgCustom)}
+                    style={{ fontSize: 11, padding: "4px 10px", borderRadius: 6, background: "var(--accent)", color: "#fff", border: "none", cursor: "pointer", fontWeight: 700 }}
+                  >
+                    Apply
+                  </button>
                 </div>
               </div>
 
               {/* Size */}
               <div>
-                <label style={{ display: "block", fontSize: 12, color: "var(--text-muted)", fontWeight: 600, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                <label style={{ display: "block", fontSize: 12, color: "var(--text-muted)", fontWeight: 700, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" }}>
                   Size — {size}px × {size}px
                 </label>
-                <input type="range" min={150} max={400} step={10} value={size} onChange={e => setSize(Number(e.target.value))} />
+                <input type="range" min={150} max={500} step={10} value={size} onChange={e => setSize(Number(e.target.value))} style={{ width: "100%", accentColor: "#ff6b35" }} />
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: "var(--text-muted)", marginTop: 4 }}>
+                  <span>150px</span><span>500px</span>
+                </div>
               </div>
 
               {/* Margin toggle */}
@@ -165,7 +306,7 @@ export default function QRGeneratorPage() {
 
         {/* QR Preview Panel */}
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          <div className="glass-card" style={{ padding: 32, display: "flex", flexDirection: "column", alignItems: "center", gap: 24 }}>
+          <div className="glass-card" style={{ padding: 32, display: "flex", flexDirection: "column", alignItems: "center", gap: 24, position: "sticky", top: 20 }}>
             <h2 style={{ fontWeight: 700, fontSize: 15, color: "var(--text-primary)", alignSelf: "flex-start" }}>Live Preview</h2>
 
             {/* QR Code Display */}
@@ -175,34 +316,47 @@ export default function QRGeneratorPage() {
                 padding: 20,
                 background: bgColor,
                 borderRadius: 16,
-                boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
-                border: "1px solid rgba(255,255,255,0.08)",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+                border: "1px solid rgba(128,128,128,0.2)",
               }}
             >
               <QRCodeCanvas
                 value={url || "https://neon10.com"}
-                size={size}
+                size={Math.min(size, 300)}
                 fgColor={fgColor}
                 bgColor={bgColor}
                 includeMargin={includeMargin}
+                level="M"
               />
+            </div>
+
+            {/* Color preview pills */}
+            <div style={{ display: "flex", gap: 10, alignSelf: "stretch", justifyContent: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 20, background: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
+                <div style={{ width: 12, height: 12, borderRadius: "50%", background: fgColor, border: "1px solid rgba(128,128,128,0.3)" }} />
+                <span style={{ fontSize: 11, fontFamily: "monospace", color: "var(--text-secondary)", fontWeight: 700 }}>{fgColor}</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 20, background: "var(--bg-secondary)", border: "1px solid var(--border)" }}>
+                <div style={{ width: 12, height: 12, borderRadius: "50%", background: bgColor, border: "1px solid rgba(128,128,128,0.3)" }} />
+                <span style={{ fontSize: 11, fontFamily: "monospace", color: "var(--text-secondary)", fontWeight: 700 }}>{bgColor}</span>
+              </div>
             </div>
 
             {/* URL Preview */}
             <div style={{
               width: "100%",
-              background: "rgba(0,0,0,0.2)",
+              background: "#0d1117",
               borderRadius: 10,
               padding: "10px 14px",
-              border: "1px solid var(--border)",
+              border: "1px solid rgba(255,107,53,0.2)",
               display: "flex",
               alignItems: "center",
               gap: 10,
             }}>
-              <QrCode size={14} color="var(--text-muted)" style={{ flexShrink: 0 }} />
+              <QrCode size={14} color="#7ee787" style={{ flexShrink: 0 }} />
               <span style={{
                 fontSize: 11,
-                color: "var(--text-muted)",
+                color: "#7ee787",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
@@ -244,9 +398,9 @@ export default function QRGeneratorPage() {
                 { label: "Format", value: "PNG / Canvas" },
                 { label: "Error Correction", value: "Level M" },
               ].map(info => (
-                <div key={info.label} style={{ background: "rgba(0,0,0,0.2)", borderRadius: 8, padding: "10px 12px", textAlign: "center", border: "1px solid var(--border)" }}>
-                  <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 4 }}>{info.label}</div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)" }}>{info.value}</div>
+                <div key={info.label} style={{ background: "var(--bg-secondary)", borderRadius: 8, padding: "10px 12px", textAlign: "center", border: "1px solid var(--border)" }}>
+                  <div style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 4, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>{info.label}</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-primary)" }}>{info.value}</div>
                 </div>
               ))}
             </div>

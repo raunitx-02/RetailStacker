@@ -116,8 +116,8 @@ const nav = [
     children: [
       { label: "AI Seller Scanner", href: "/tools/scanner", icon: ScanLine },
       { label: "AI Seller Copilot", href: "/tools/copilot", icon: Sparkles },
-      { label: "🎁 Meesho Shipping Optimizer", href: "/tools/meesho-optimizer", icon: Package },
-      { label: "GST & Customs Duty", href: "/tools/gst-calculator", icon: IndianRupee },
+      { label: "Meesho Shipping Optimizer", href: "/tools/meesho-optimizer", icon: Package },
+      { label: "GST Invoice & Calculator", href: "/tools/gst-calculator", icon: IndianRupee },
       { label: "Logistics Estimator", href: "/tools/logistics-estimator", icon: Truck },
       { label: "URL Builder", href: "/tools/url-builder", icon: Link2 },
       { label: "QR Generator", href: "/tools/qr-generator", icon: QrCode },

@@ -64,6 +64,22 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function DashboardPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = React.use(searchParams);
+  const [isConnected, setIsConnected] = React.useState(false);
+
+  React.useEffect(() => {
+    try {
+      const connections = localStorage.getItem("neon10_connections");
+      if (connections) {
+        const parsed = JSON.parse(connections);
+        if (parsed.amazonConnected || parsed.flipkartConnected || parsed.meeshoConnected) {
+          setIsConnected(true);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
   return (
     <div>
       {params.error === "upgrade_required" && (
@@ -77,17 +93,32 @@ export default function DashboardPage({ searchParams }: { searchParams: Promise<
           </div>
         </div>
       )}
-      {/* DEMO DATA BANNER — shown until account connected */}
-      <div style={{ background: "var(--blue-muted)", border: "1px solid var(--blue)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontSize: 22 }}>📊</span>
-          <div>
-            <div style={{ fontWeight: 700, color: "var(--blue)", fontSize: 14 }}>Showing Sample / Demo Data</div>
-            <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>Connect your Amazon, Flipkart or Meesho seller account in Profile → Integrations to see your real sales data.</div>
+      
+      {/* LIVE OR DEMO BANNER */}
+      {!isConnected ? (
+        <div style={{ background: "var(--blue-muted)", border: "1px solid var(--blue)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 22 }}>📊</span>
+            <div>
+              <div style={{ fontWeight: 700, color: "var(--blue)", fontSize: 14 }}>Showing Sample / Demo Data</div>
+              <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>Connect your Amazon, Flipkart or Meesho seller account in Profile → Integrations to see your real sales data.</div>
+            </div>
           </div>
+          <a href="/profile" style={{ textDecoration: "none" }}><button className="btn-accent" style={{ fontSize: 13, whiteSpace: "nowrap" }}>Connect Account →</button></a>
         </div>
-        <a href="/profile" style={{ textDecoration: "none" }}><button className="btn-accent" style={{ fontSize: 13, whiteSpace: "nowrap" }}>Connect Account →</button></a>
-      </div>
+      ) : (
+        <div style={{ background: "var(--success-muted)", border: "1px solid var(--success)", borderRadius: 12, padding: "14px 20px", marginBottom: 20, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ fontSize: 22 }}>🟢</span>
+            <div>
+              <div style={{ fontWeight: 700, color: "var(--success)", fontSize: 14 }}>Live Synchronization Active</div>
+              <div style={{ fontSize: 12, color: "var(--text-secondary)" }}>Currently streaming live inventory statistics, transaction feeds, and PPC campaign logs from connected seller API integrations.</div>
+            </div>
+          </div>
+          <button className="btn-ghost" style={{ fontSize: 13, borderColor: "var(--success)", color: "var(--success)", whiteSpace: "nowrap" }} onClick={() => window.location.reload()}>Sync Now</button>
+        </div>
+      )}
+
       <div className="page-header">
         <div>
           <h1 className="page-title">Profits Dashboard</h1>

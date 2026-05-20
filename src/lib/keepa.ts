@@ -158,8 +158,7 @@ export function calculateOpportunity(
 
 // ─── Core API fetcher ────────────────────────────────────────────────────────
 export async function keepaFetch(endpoint: string, params: Record<string, string>): Promise<any> {
-  const apiKey = process.env.KEEPA_API_KEY;
-  if (!apiKey) throw new Error("KEEPA_API_KEY environment variable is not set");
+  const apiKey = process.env.KEEPA_API_KEY || "pa8osmtpo6bq3bbf3vgfqmp78p0ifbouv34flbvs51hsjqkb7kg6qjgddpspinlp";
   const url = new URL(`https://api.keepa.com/${endpoint}`);
   url.searchParams.set("key", apiKey);
   url.searchParams.set("domain", KEEPA_DOMAIN);

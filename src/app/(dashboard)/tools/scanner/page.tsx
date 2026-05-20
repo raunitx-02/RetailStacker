@@ -74,7 +74,7 @@ export default function ScannerPage() {
         <div>
           <h1 className="page-title">AI Seller Health Scanner</h1>
           <p className="page-subtitle">
-            Storefront link, ASIN ya brand name paste karo → AI complete account analysis dega with growth predictions
+            Enter any Amazon Storefront URL, ASIN, or Brand Name to execute a comprehensive diagnostic audit and generate actionable AI growth forecasts.
           </p>
         </div>
         {data && (
@@ -93,7 +93,7 @@ export default function ScannerPage() {
       {/* Input */}
       <div className="glass-card" style={{ padding: 24, marginBottom: 24 }}>
         <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 12 }}>
-          Amazon storefront URL, ASIN, ya brand name — kuch bhi paste karo
+          Input an Amazon merchant URL, a specific product ASIN, or a brand name to initiate the diagnostic scan.
         </p>
         <div style={{ display: "flex", gap: 12 }}>
           <input className="input-field"

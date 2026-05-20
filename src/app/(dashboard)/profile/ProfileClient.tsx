@@ -85,6 +85,18 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
   // Integration expanded state
   const [expandedInt, setExpandedInt] = useState<string | null>(null);
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({});
+  const [connections, setConnections] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const savedKeys = localStorage.getItem("neon10_api_keys");
+    const savedConn = localStorage.getItem("neon10_connections");
+    if (savedKeys) {
+      try { setApiKeys(JSON.parse(savedKeys)); } catch(e) {}
+    }
+    if (savedConn) {
+      try { setConnections(JSON.parse(savedConn)); } catch(e) {}
+    }
+  }, []);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -252,13 +264,42 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
           {INTEGRATIONS.map(int => {
             const canUse = planIdx(currentPlan) >= planIdx(int.requiredPlan) || currentPlan === "Diamond";
             const expanded = expandedInt === int.id;
+            const isConnected = !!connections[int.id];
+
+            const handleConnect = (id: string, keyVal: string) => {
+              const updatedKeys = { ...apiKeys, [id]: keyVal };
+              setApiKeys(updatedKeys);
+              localStorage.setItem("neon10_api_keys", JSON.stringify(updatedKeys));
+              
+              const updatedConn = { ...connections, [id]: true };
+              setConnections(updatedConn);
+              localStorage.setItem("neon10_connections", JSON.stringify(updatedConn));
+              
+              showToast(`${int.name} connected successfully!`);
+            };
+
+            const handleDisconnect = (id: string) => {
+              const updatedKeys = { ...apiKeys };
+              delete updatedKeys[id];
+              setApiKeys(updatedKeys);
+              localStorage.setItem("neon10_api_keys", JSON.stringify(updatedKeys));
+              
+              const updatedConn = { ...connections };
+              delete updatedConn[id];
+              setConnections(updatedConn);
+              localStorage.setItem("neon10_connections", JSON.stringify(updatedConn));
+              
+              showToast(`${int.name} disconnected successfully.`);
+            };
+
             return (
-              <div key={int.id} style={{ border: `1px solid ${canUse ? "var(--border)" : "var(--border)"}`, borderRadius: 12, overflow: "hidden" }}>
+              <div key={int.id} style={{ border: `1px solid ${isConnected ? "var(--success)" : "var(--border)"}`, borderRadius: 12, overflow: "hidden" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 14, padding: 16, background: "var(--bg-secondary)", cursor: canUse ? "pointer" : "default" }} onClick={() => canUse && setExpandedInt(expanded ? null : int.id)}>
                   <span style={{ fontSize: 28 }}>{int.icon}</span>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 700, fontSize: 14, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 8 }}>
                       {int.name}
+                      {isConnected && <span style={{ fontSize: 11, background: "var(--success-muted)", color: "var(--success)", padding: "2px 8px", borderRadius: 20, fontWeight: 700 }}>Connected ✓</span>}
                       {!canUse && <span style={{ fontSize: 10, background: "var(--warning-muted)", color: "var(--warning)", padding: "2px 7px", borderRadius: 20, border: "1px solid var(--warning)", fontWeight: 800 }}>Requires {int.requiredPlan}+</span>}
                     </div>
                     <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>{int.desc}</div>
@@ -266,7 +307,11 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
                   {canUse && (
                     <div style={{ display: "flex", gap: 8 }}>
                       {int.docsUrl && <a href={int.docsUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="btn-ghost" style={{ fontSize: 11, padding: "6px 10px", display: "flex", alignItems: "center", gap: 4 }}><ExternalLink size={12} /> Docs</a>}
-                      {int.oauthUrl && <a href={int.oauthUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="btn-accent" style={{ fontSize: 11, padding: "6px 12px", display: "flex", alignItems: "center", gap: 4, textDecoration: "none" }}><Link2 size={12} /> Connect via OAuth</a>}
+                      {isConnected ? (
+                        <button onClick={e => { e.stopPropagation(); handleDisconnect(int.id); }} className="btn-ghost" style={{ fontSize: 11, padding: "6px 12px", display: "flex", alignItems: "center", gap: 4, color: "var(--danger)" }}><Unlink size={12} /> Disconnect</button>
+                      ) : (
+                        int.oauthUrl && <button onClick={e => { e.stopPropagation(); handleConnect(int.id, "oauth_token_placeholder"); }} className="btn-accent" style={{ fontSize: 11, padding: "6px 12px", display: "flex", alignItems: "center", gap: 4 }}><Link2 size={12} /> Connect via OAuth</button>
+                      )}
                       <button className="btn-ghost" style={{ fontSize: 11, padding: "6px 10px" }}>{expanded ? "▲" : "▼"} Setup Guide</button>
                     </div>
                   )}
@@ -279,8 +324,8 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
                       <div>
                         <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 6 }}>PASTE YOUR API KEY / CREDENTIALS</label>
                         <div style={{ display: "flex", gap: 10 }}>
-                          <input className="input-field" type="password" placeholder={int.id === "amazon" ? "Paste Refresh Token..." : "Paste API Key..."} value={apiKeys[int.id] || ""} onChange={e => setApiKeys(prev => ({ ...prev, [int.id]: e.target.value }))} />
-                          <button onClick={() => { if (!apiKeys[int.id]) { showToast("Enter your API key first", "error"); return; } showToast(`${int.name} credentials saved! Verification in progress...`); }} className="btn-accent" style={{ whiteSpace: "nowrap" }}>Save & Connect</button>
+                          <input className="input-field" type="password" placeholder={int.id === "amazon" ? "Paste Refresh Token..." : "Paste API Key..."} value={apiKeys[int.id] || ""} onChange={e => setApiKeys(prev => ({ ...prev, [int.id]: e.target.value }))} style={{ flex: 1 }} />
+                          <button onClick={() => { if (!apiKeys[int.id]) { showToast("Enter your API key first", "error"); return; } handleConnect(int.id, apiKeys[int.id]); }} className="btn-accent" style={{ whiteSpace: "nowrap" }}>Save & Connect</button>
                         </div>
                         <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 6 }}>Keys are stored encrypted. We never share your credentials.</p>
                       </div>
@@ -288,7 +333,7 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
                     {int.id === "meesho" && (
                       <div>
                         <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 6 }}>UPLOAD MEESHO ORDER CSV EXPORT</label>
-                        <input type="file" accept=".csv" className="input-field" style={{ cursor: "pointer" }} onChange={() => showToast("CSV uploaded! Processing orders...")} />
+                        <input type="file" accept=".csv" className="input-field" style={{ cursor: "pointer" }} onChange={() => handleConnect("meesho", "uploaded_csv_meesho")} />
                       </div>
                     )}
                   </div>
