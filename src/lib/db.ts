@@ -18,7 +18,12 @@ export const findUser = (email: string) => {
 
 export const saveUser = (user: any) => {
   const db = getDB();
-  db.users.push(user);
+  const idx = db.users.findIndex((u: any) => u.email === user.email);
+  if (idx >= 0) {
+    db.users[idx] = { ...db.users[idx], ...user }; // update existing
+  } else {
+    db.users.push(user); // insert new
+  }
   saveDB(db);
 };
 
