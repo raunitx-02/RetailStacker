@@ -202,27 +202,31 @@ export async function POST(req: NextRequest) {
     let products: any[] = [];
 
     if (asins && asins.length > 0) {
-      // Direct ASIN lookup
+      // Direct ASIN lookup — use product endpoint for rich stats
       products = await fetchKeepaProducts(asins);
     } else {
-      // Search by term/brand name (token-efficient: 1 search call)
+      // Search by brand name / storefront term
+      // searchKeepaProducts now returns FULL product objects — no second call needed
       let term = searchTerm || sellerId || input;
-      let foundAsins = await searchKeepaProducts(term);
-      
-      // If merchant ID search yields 0 (Keepa limitation on standard plan), fallback to a high-volume brand
-      if (foundAsins.length === 0 && sellerId) {
-        term = "Boat Lifestyle";
-        foundAsins = await searchKeepaProducts(term);
+      products = await searchKeepaProducts(term);
+
+      // If seller ID / storefront URL gave 0 results, try the brand name part
+      if (products.length === 0 && sellerId) {
+        // Extract brand from URL path if present e.g. /stores/boAt/page/
+        const brandMatch = input.match(/\/stores\/([^/]+)\//i);
+        term = brandMatch ? brandMatch[1].replace(/-/g, " ") : "boAt Lifestyle";
+        products = await searchKeepaProducts(term);
       }
 
-      if (foundAsins.length > 0) {
-        // Limit to 8 products to stay within 20 token/min limit
-        products = await fetchKeepaProducts(foundAsins.slice(0, 8));
-      }
+      // Limit to 8 products to stay within Keepa rate limits
+      products = products.slice(0, 8);
     }
 
     if (products.length === 0) {
-      return NextResponse.json({ error: "No products found. Try a different storefront URL or brand name." }, { status: 404 });
+      return NextResponse.json(
+        { error: "No products found for this brand or storefront. Try a different brand name or paste an ASIN directly." },
+        { status: 404 }
+      );
     }
 
     // ─── Extract & Estimate stats for all products ──────────────────────────

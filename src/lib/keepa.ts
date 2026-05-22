@@ -194,13 +194,14 @@ export async function fetchKeepaProducts(asins: string[]): Promise<KeepaProduct[
   return data.products || [];
 }
 
-// ─── Search Keepa for products ───────────────────────────────────────────────
-export async function searchKeepaProducts(term: string): Promise<string[]> {
+// ─── Search Keepa for products (returns full product objects) ────────────────
+export async function searchKeepaProducts(term: string): Promise<KeepaProduct[]> {
   const data = await keepaFetch("search", {
     type: "product",
     term: encodeURIComponent(term),
   });
-  return data.result || (data.products || []).map((p: any) => p.asin);
+  // Keepa search returns full product objects in data.products
+  return (data.products || []) as KeepaProduct[];
 }
 
 // ─── Category ID map for Amazon India ───────────────────────────────────────

@@ -78,7 +78,8 @@ export async function GET(req: NextRequest) {
       ? target.title.split(" ").slice(0, 3).join(" ") // Use first 3 words
       : categoryName;
 
-    const competitorAsins = await searchKeepaProducts(searchTerm);
+    const competitorProducts = await searchKeepaProducts(searchTerm);
+    const competitorAsins = competitorProducts.map(p => p.asin).filter(Boolean);
     const allAsins = [...new Set([asin, ...competitorAsins.slice(0, 15)])];
 
     // ─── Step 3: Fetch all products (target + competitors) ──────────────────
