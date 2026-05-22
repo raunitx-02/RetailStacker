@@ -156,30 +156,46 @@ export function calculateOpportunity(
   return "Low";
 }
 
-// ─── Core API fetcher ────────────────────────────────────────────────────────
+// ─── Core API fetcher ────────────────────────────────────────────────────────────
+const KEEPA_TIMEOUT_MS = 20000; // 20s timeout per request
+
 export async function keepaFetch(endpoint: string, params: Record<string, string>): Promise<any> {
   const apiKey = process.env.KEEPA_API_KEY || "pa8osmtpo6bq3bbf3vgfqmp78p0ifbouv34flbvs51hsjqkb7kg6qjgddpspinlp";
   const url = new URL(`https://api.keepa.com/${endpoint}`);
   url.searchParams.set("key", apiKey);
   url.searchParams.set("domain", KEEPA_DOMAIN);
   for (const [k, v] of Object.entries(params)) {
-    url.searchParams.set(k, v);
+    url.searchParams.set(k, v); // URLSearchParams handles encoding — do NOT pre-encode values
   }
 
-  const res = await fetch(url.toString(), {
-    next: { revalidate: 1800 }, // Cache 30 mins
-  });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), KEEPA_TIMEOUT_MS);
 
-  if (!res.ok) {
-    throw new Error(`Keepa HTTP ${res.status}: ${res.statusText}`);
+  try {
+    const res = await fetch(url.toString(), {
+      signal: controller.signal,
+      cache: "no-store", // always fresh — avoids conflicts with force-dynamic routes
+    });
+
+    clearTimeout(timer);
+
+    if (!res.ok) {
+      throw new Error(`Keepa HTTP ${res.status}: ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    if (data.error) {
+      throw new Error(`Keepa API Error: ${data.error.message || data.error.type}`);
+    }
+
+    return data;
+  } catch (err: any) {
+    clearTimeout(timer);
+    if (err.name === "AbortError") {
+      throw new Error("Keepa API timed out after 20s. Please try again.");
+    }
+    throw err;
   }
-
-  const data = await res.json();
-  if (data.error) {
-    throw new Error(`Keepa API Error: ${data.error.message || data.error.type}`);
-  }
-
-  return data;
 }
 
 // ─── Fetch product details by ASINs ─────────────────────────────────────────
@@ -198,7 +214,7 @@ export async function fetchKeepaProducts(asins: string[]): Promise<KeepaProduct[
 export async function searchKeepaProducts(term: string): Promise<KeepaProduct[]> {
   const data = await keepaFetch("search", {
     type: "product",
-    term: encodeURIComponent(term),
+    term, // Do NOT encodeURIComponent here — searchParams.set does it automatically
   });
   // Keepa search returns full product objects in data.products
   return (data.products || []) as KeepaProduct[];
