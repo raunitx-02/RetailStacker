@@ -4,7 +4,11 @@ import { cookies } from "next/headers";
 import crypto from "crypto";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy getter — never crashes at module load time if key is missing
+function getResend() {
+  if (!process.env.RESEND_API_KEY) return null;
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 function hashPassword(password: string) {
   return crypto.createHash("sha256").update(password).digest("hex");
@@ -12,9 +16,10 @@ function hashPassword(password: string) {
 
 // ─── Shared email sender ──────────────────────────────────────────────────────
 async function sendOtpEmail(email: string, otp: string, subject: string, heading: string, body: string) {
-  if (!process.env.RESEND_API_KEY) {
+  const resend = getResend();
+  if (!resend) {
     // Dev fallback: print OTP to terminal
-    console.warn("⚠️  RESEND_API_KEY not set — OTP printed below for dev use:");
+    console.warn("⚠️  RESEND_API_KEY not set — OTP printed below:");
     console.log(`\n🔑  OTP for ${email}: ${otp}\n`);
     return;
   }
