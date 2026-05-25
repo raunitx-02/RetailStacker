@@ -352,6 +352,27 @@ function buildGrowthPredictions(products: any[], statsList: ExtractedStats[]): {
   });
 }
 
+async function fetchKeepaSellerAsins(sellerId: string): Promise<string[]> {
+  const apiKey = process.env.KEEPA_API_KEY || "pa8osmtpo6bq3bbf3vgfqmp78p0ifbouv34flbvs51hsjqkb7kg6qjgddpspinlp";
+  const url = `https://api.keepa.com/query?key=${apiKey}&domain=10`;
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        seller: [sellerId],
+        limit: 10,
+      }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    return data.asinList || [];
+  } catch (err) {
+    console.error("Keepa /query failed:", err);
+    return [];
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -369,17 +390,23 @@ export async function POST(req: NextRequest) {
       products = await fetchKeepaProducts(asins);
       brandName = "ASIN Audit List";
     } else if (sellerId) {
+      // 1. Fetch real active catalog ASINs using Product Finder query
+      const sellerAsins = await fetchKeepaSellerAsins(sellerId);
+      if (sellerAsins.length > 0) {
+        products = await fetchKeepaProducts(sellerAsins);
+      }
+
+      // 2. Fetch real merchant company name from Keepa /seller endpoint
       try {
         const sellerData = await keepaFetch("seller", { seller: sellerId });
-        if (sellerData && sellerData.asinList && sellerData.asinList.length > 0) {
-          const sellerAsins = sellerData.asinList.slice(0, 10);
-          products = await fetchKeepaProducts(sellerAsins);
-          if (sellerData.sellerName) {
-            brandName = sellerData.sellerName;
+        if (sellerData && sellerData.sellers && sellerData.sellers[sellerId]) {
+          const sellerInfo = sellerData.sellers[sellerId];
+          if (sellerInfo.sellerName) {
+            brandName = sellerInfo.sellerName;
           }
         }
       } catch (err) {
-        console.error("Keepa seller endpoint failed:", err);
+        console.error("Keepa seller name fetch failed:", err);
       }
 
       if (products.length === 0) {
