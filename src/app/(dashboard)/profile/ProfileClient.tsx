@@ -18,7 +18,7 @@ const INTEGRATIONS = [
   {
     id: "amazon",
     name: "Amazon India (SP-API)",
-    logo: "/amazon-logo.svg",
+    logo: "/amazon-logo.png",
     color: "#FF9900",
     desc: "Connect via Amazon Seller Central SP-API. Requires Client ID, Client Secret, and Refresh Token from your developer app.",
     requiredPlan: "Starter",
@@ -53,7 +53,7 @@ const INTEGRATIONS = [
   {
     id: "meesho",
     name: "Meesho Supplier",
-    logo: "/meesho-logo.svg",
+    logo: "/meesho-logo.png",
     color: "#9B30FF",
     desc: "Meesho does not have a public API yet. Export your orders as CSV from Meesho Supplier Panel and upload here for analysis.",
     requiredPlan: "Growth",
@@ -67,7 +67,7 @@ const INTEGRATIONS = [
   {
     id: "shopify",
     name: "Shopify Store",
-    logo: "/shopify-logo.svg",
+    logo: "/shopify-logo.png",
     color: "#5E8E3E",
     desc: "Connect your Shopify store via Custom App credentials. Get Admin API Access Token from your Shopify Admin panel.",
     requiredPlan: "Growth",

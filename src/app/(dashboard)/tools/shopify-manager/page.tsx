@@ -193,7 +193,7 @@ export default function ShopifyManagerPage() {
       <div className="page-header">
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <div style={{ width: 48, height: 48, borderRadius: 12, background: "rgba(94,142,62,0.12)", border: "1px solid rgba(94,142,62,0.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Image src="/shopify-logo.svg" alt="Shopify" width={32} height={32} style={{ objectFit: "contain" }} unoptimized />
+            <Image src="/shopify-logo.png" alt="Shopify" width={32} height={32} style={{ objectFit: "contain" }} unoptimized />
           </div>
           <div>
             <h1 className="page-title" style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -517,7 +517,7 @@ export default function ShopifyManagerPage() {
 
           <div className="glass-card" style={{ padding: 24, marginBottom: 20 }}>
             <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 16, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 8 }}>
-              <Image src="/shopify-logo.svg" alt="Shopify" width={20} height={20} unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/shopify-logo.png" alt="Shopify" width={20} height={20} unoptimized style={{ objectFit: "contain" }} />
               Store Connection
             </div>
 

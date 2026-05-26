@@ -14,10 +14,10 @@ const NOTIFICATIONS = [
 ];
 
 const MARKETPLACES = [
-  { id: "amazon", label: "Amazon", color: "#FF9900", logo: "/amazon-logo.svg" },
+  { id: "amazon", label: "Amazon", color: "#FF9900", logo: "/amazon-logo.png" },
   { id: "flipkart", label: "Flipkart", color: "#047BD5", logo: "/flipkart-logo.svg" },
-  { id: "meesho", label: "Meesho", color: "#9B30FF", logo: "/meesho-logo.svg" },
-  { id: "shopify", label: "Shopify", color: "#5E8E3E", logo: "/shopify-logo.svg" },
+  { id: "meesho", label: "Meesho", color: "#9B30FF", logo: "/meesho-logo.png" },
+  { id: "shopify", label: "Shopify", color: "#5E8E3E", logo: "/shopify-logo.png" },
 ] as const;
 
 function NotificationPanel({ onClose }: { onClose: () => void }) {

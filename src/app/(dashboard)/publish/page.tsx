@@ -16,10 +16,10 @@ interface PublishedItem {
 }
 
 const MARKETPLACES = [
-  { id: "amazon", name: "Amazon India", icon: "🛒", color: "#FF9900", bg: "rgba(255,153,0,0.1)", border: "#FF9900", logo: "/amazon-logo.svg", categories: ["Electronics", "Clothing", "Home & Kitchen", "Sports", "Books", "Toys", "Grocery"] },
+  { id: "amazon", name: "Amazon India", icon: "🛒", color: "#FF9900", bg: "rgba(255,153,0,0.1)", border: "#FF9900", logo: "/amazon-logo.png", categories: ["Electronics", "Clothing", "Home & Kitchen", "Sports", "Books", "Toys", "Grocery"] },
   { id: "flipkart", name: "Flipkart", icon: "🛍️", color: "#047BD5", bg: "rgba(4,123,213,0.1)", border: "#047BD5", logo: "/flipkart-logo.svg", categories: ["Mobiles", "Fashion", "Electronics", "Home", "Appliances", "Books", "Sports"] },
-  { id: "meesho", name: "Meesho", icon: "🏪", color: "#9B30FF", bg: "rgba(155,48,255,0.1)", border: "#9B30FF", logo: "/meesho-logo.svg", categories: ["Women Ethnic", "Women Western", "Men", "Kids", "Home & Kitchen", "Beauty", "Bags"] },
-  { id: "shopify", name: "Shopify Store", icon: "🟢", color: "#5E8E3E", bg: "rgba(94,142,62,0.1)", border: "#5E8E3E", logo: "/shopify-logo.svg", categories: ["Apparel", "Electronics", "Home Decor", "Health & Beauty", "Sports", "Food & Drink", "Art & Crafts", "Jewelry"] },
+  { id: "meesho", name: "Meesho", icon: "🏪", color: "#9B30FF", bg: "rgba(155,48,255,0.1)", border: "#9B30FF", logo: "/meesho-logo.png", categories: ["Women Ethnic", "Women Western", "Men", "Kids", "Home & Kitchen", "Beauty", "Bags"] },
+  { id: "shopify", name: "Shopify Store", icon: "🟢", color: "#5E8E3E", bg: "rgba(94,142,62,0.1)", border: "#5E8E3E", logo: "/shopify-logo.png", categories: ["Apparel", "Electronics", "Home Decor", "Health & Beauty", "Sports", "Food & Drink", "Art & Crafts", "Jewelry"] },
 ];
 
 const DEFAULT_PUBLISHED_ITEMS: PublishedItem[] = [
