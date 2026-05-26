@@ -4,8 +4,8 @@ import Image from "next/image";
 import { Copy, Link2, Check, ExternalLink } from "lucide-react";
 
 const PLATFORMS = [
-  { id: "amazon", name: "Amazon", logo: "/amazon-logo.png", color: "#FF9900" },
-  { id: "shopify", name: "Shopify", logo: "/shopify-logo.png", color: "#5E8E3E" },
+  { id: "amazon", name: "Amazon", logo: "/amazon-logo.svg", color: "#FF9900" },
+  { id: "shopify", name: "Shopify", logo: "/shopify-logo.svg", color: "#5E8E3E" },
 ] as const;
 
 const amazonAttributionTags = [
@@ -115,7 +115,7 @@ export default function URLBuilderPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
           <div className="glass-card" style={{ padding: 24 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-              <Image src="/amazon-logo.png" alt="Amazon" width={24} height={24} unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/amazon-logo.svg" alt="Amazon" width={24} height={24} unoptimized style={{ objectFit: "contain" }} />
               <h2 style={{ fontWeight: 700, fontSize: 16, color: "var(--text-primary)" }}>Amazon URL Configuration</h2>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -174,7 +174,7 @@ export default function URLBuilderPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
           <div className="glass-card" style={{ padding: 24 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
-              <Image src="/shopify-logo.png" alt="Shopify" width={24} height={24} unoptimized style={{ objectFit: "contain" }} />
+              <Image src="/shopify-logo.svg" alt="Shopify" width={24} height={24} unoptimized style={{ objectFit: "contain" }} />
               <h2 style={{ fontWeight: 700, fontSize: 16, color: "var(--text-primary)" }}>Shopify UTM Configuration</h2>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>

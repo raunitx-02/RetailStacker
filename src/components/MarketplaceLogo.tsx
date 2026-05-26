@@ -16,7 +16,7 @@ interface MarketplaceInfo {
 export const MARKETPLACE_META: Record<MarketplaceId, MarketplaceInfo> = {
   amazon: {
     name: "Amazon India",
-    logoSrc: "/amazon-logo.png",
+    logoSrc: "/amazon-logo.svg",
     color: "#FF9900",
     bg: "rgba(255,153,0,0.12)",
   },
@@ -28,13 +28,13 @@ export const MARKETPLACE_META: Record<MarketplaceId, MarketplaceInfo> = {
   },
   meesho: {
     name: "Meesho",
-    logoSrc: "/meesho-logo.png",
+    logoSrc: "/meesho-logo.svg",
     color: "#9B30FF",
     bg: "rgba(155,48,255,0.12)",
   },
   shopify: {
     name: "Shopify",
-    logoSrc: "/shopify-logo.png",
+    logoSrc: "/shopify-logo.svg",
     color: "#5E8E3E",
     bg: "rgba(94,142,62,0.12)",
   },

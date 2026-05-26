@@ -7,10 +7,10 @@ import { Sparkles, Send, Bot, User, TrendingUp } from "lucide-react";
 type Platform = "amazon" | "flipkart" | "meesho" | "shopify";
 
 const PLATFORMS: { id: Platform; name: string; logo: string; color: string }[] = [
-  { id: "amazon", name: "Amazon", logo: "/amazon-logo.png", color: "#FF9900" },
+  { id: "amazon", name: "Amazon", logo: "/amazon-logo.svg", color: "#FF9900" },
   { id: "flipkart", name: "Flipkart", logo: "/flipkart-logo.svg", color: "#047BD5" },
-  { id: "meesho", name: "Meesho", logo: "/meesho-logo.png", color: "#9B30FF" },
-  { id: "shopify", name: "Shopify", logo: "/shopify-logo.png", color: "#5E8E3E" },
+  { id: "meesho", name: "Meesho", logo: "/meesho-logo.svg", color: "#9B30FF" },
+  { id: "shopify", name: "Shopify", logo: "/shopify-logo.svg", color: "#5E8E3E" },
 ];
 
 const QUICK_PROMPTS: Record<Platform, string[]> = {
