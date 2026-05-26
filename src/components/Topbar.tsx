@@ -215,7 +215,7 @@ export default function Topbar({ title, user = "User", plan = "Starter" }: { tit
         flexShrink: 0,
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{
+          <div className="topbar-search" style={{
             display: "flex", alignItems: "center", gap: 10,
             background: "var(--bg-secondary)", border: "1px solid var(--border)",
             borderRadius: 10, padding: "8px 14px", width: 280,
@@ -300,7 +300,7 @@ export default function Topbar({ title, user = "User", plan = "Starter" }: { tit
           </button>
 
           {/* Plan badge */}
-          <div style={{
+          <div className="topbar-plan" style={{
             background: plan === "Diamond" ? "var(--purple-muted)" : plan === "Growth" ? "var(--accent-muted)" : "var(--bg-secondary)",
             border: `1px solid ${plan === "Diamond" ? "var(--purple)" : plan === "Growth" ? "var(--accent)" : "var(--border)"}`,
             borderRadius: 10, padding: "6px 14px", fontSize: 12, fontWeight: 700,
@@ -338,7 +338,14 @@ export default function Topbar({ title, user = "User", plan = "Starter" }: { tit
       {contactOpen && <ContactModal onClose={() => setContactOpen(false)} />}
 
       <style>{`
-        @media (max-width: 900px) { .market-label { display: none !important; } }
+        @media (max-width: 900px) { 
+          .market-label { display: none !important; }
+          .topbar-plan { display: none !important; }
+        }
+        @media (max-width: 768px) {
+          header { padding: 0 16px !important; }
+          .topbar-search { display: none !important; }
+        }
       `}</style>
     </>
   );

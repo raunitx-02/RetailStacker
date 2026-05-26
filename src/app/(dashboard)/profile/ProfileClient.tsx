@@ -182,14 +182,39 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
   const proration = getProration();
   const planIdx = (id: string) => PLANS.findIndex(p => p.id === id);
 
-  const handleConnect = (intId: string, fields: Record<string, string>) => {
-    const updatedKeys = { ...apiKeys, [intId]: fields };
-    setApiKeys(updatedKeys);
-    localStorage.setItem("neon10_api_keys_v2", JSON.stringify(updatedKeys));
-    const updatedConn = { ...connections, [intId]: true, [`${intId}Connected`]: true };
-    setConnections(updatedConn);
-    localStorage.setItem("neon10_connections", JSON.stringify(updatedConn));
-    showToast(`${INTEGRATIONS.find(i => i.id === intId)?.name} connected successfully! ✓`);
+  const [verifyingInt, setVerifyingInt] = useState<string | null>(null);
+
+  const handleConnect = async (intId: string, fields: Record<string, string>) => {
+    setVerifyingInt(intId);
+    
+    // Call the respective live API proxy for validation
+    try {
+      const res = await fetch(`/api/${intId}/proxy`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify", credentials: fields })
+      });
+      
+      if (!res.ok) {
+        showToast(`Verification failed: Invalid credentials for ${INTEGRATIONS.find(i => i.id === intId)?.name}`, "error");
+        setVerifyingInt(null);
+        return;
+      }
+      
+      const updatedKeys = { ...apiKeys, [intId]: fields };
+      setApiKeys(updatedKeys);
+      localStorage.setItem("neon10_api_keys_v2", JSON.stringify(updatedKeys));
+      
+      const updatedConn = { ...connections, [intId]: true, [`${intId}Connected`]: true };
+      setConnections(updatedConn);
+      localStorage.setItem("neon10_connections", JSON.stringify(updatedConn));
+      
+      showToast(`${INTEGRATIONS.find(i => i.id === intId)?.name} connected successfully! ✓`);
+    } catch (e) {
+      showToast("Network error during verification", "error");
+    } finally {
+      setVerifyingInt(null);
+    }
   };
 
   const handleDisconnect = (intId: string) => {
@@ -385,9 +410,9 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
                       {isConnected ? (
                         <button onClick={e => { e.stopPropagation(); handleDisconnect(int.id); }} className="btn-ghost" style={{ fontSize: 11, padding: "6px 12px", display: "flex", alignItems: "center", gap: 4, color: "var(--danger)" }}><Unlink size={12} /> Disconnect</button>
                       ) : (
-                        int.oauthUrl && <button onClick={e => { e.stopPropagation(); handleConnect(int.id, { oauth: "oauth_token_placeholder" }); }} className="btn-accent" style={{ fontSize: 11, padding: "6px 12px", display: "flex", alignItems: "center", gap: 4 }}><Link2 size={12} /> Connect via OAuth</button>
+                        <button onClick={e => { e.stopPropagation(); setExpandedInt(expanded ? null : int.id); }} className="btn-accent" style={{ fontSize: 11, padding: "6px 12px", display: "flex", alignItems: "center", gap: 4 }}><Link2 size={12} /> Setup Connection</button>
                       )}
-                      <button className="btn-ghost" style={{ fontSize: 11, padding: "6px 10px" }}>{expanded ? "▲" : "▼"} Setup Guide</button>
+                      <button className="btn-ghost" style={{ fontSize: 11, padding: "6px 10px" }}>{expanded ? "▲" : "▼"} Guide</button>
                     </div>
                   )}
                 </div>
@@ -425,9 +450,11 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
                               handleConnect(int.id, fields);
                             }}
                             className="btn-accent"
+                            disabled={verifyingInt === int.id}
                             style={{ display: "flex", alignItems: "center", gap: 8 }}
                           >
-                            <Link2 size={14} /> Save & Connect {int.name.split(" ")[0]}
+                            {verifyingInt === int.id ? <RefreshCw size={14} className="spin" /> : <Link2 size={14} />} 
+                            {verifyingInt === int.id ? "Verifying Credentials..." : `Save & Connect ${int.name.split(" ")[0]}`}
                           </button>
                           {isConnected && (
                             <span style={{ fontSize: 12, color: "var(--success)", display: "flex", alignItems: "center", gap: 4 }}>
@@ -435,7 +462,7 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
                             </span>
                           )}
                         </div>
-                        <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 8 }}>🔒 Credentials are stored locally and never transmitted to third parties.</p>
+                        <p style={{ fontSize: 11, color: "var(--text-muted)", marginTop: 8 }}>🔒 Live API Verification: Your credentials will be securely tested against the platform before connection is approved.</p>
                       </div>
                     )}
 
