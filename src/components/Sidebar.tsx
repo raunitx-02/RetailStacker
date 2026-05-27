@@ -128,7 +128,7 @@ const nav = [
   },
 ];
 
-export default function Sidebar({ plan = "Starter", user = "" }: { plan?: string; user?: string }) {
+export default function Sidebar({ plan = "Starter", user = "", role = "user" }: { plan?: string; user?: string; role?: string }) {
   const pathname = usePathname();
   // Derive display name: if email, take part before @; capitalize
   const displayName = user
@@ -352,6 +352,28 @@ export default function Sidebar({ plan = "Starter", user = "" }: { plan?: string
           );
         })}
       </nav>
+
+      {/* Reseller Admin Link */}
+      {role === "reseller" && (
+        <div style={{ padding: "0 16px 16px 16px" }}>
+          <Link href="/reseller" style={{ textDecoration: "none" }}>
+            <div style={{
+              padding: "10px 12px",
+              borderRadius: "10px",
+              background: isActive("/reseller") ? "var(--accent)" : "rgba(255,107,53,0.1)",
+              color: isActive("/reseller") ? "white" : "var(--accent)",
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              transition: "all 0.15s ease",
+              border: isActive("/reseller") ? "1px solid var(--accent-glow)" : "1px solid transparent"
+            }}>
+              <ShieldCheck size={20} />
+              {!collapsed && <span style={{ fontWeight: 600, fontSize: "14px" }}>Reseller Panel</span>}
+            </div>
+          </Link>
+        </div>
+      )}
 
       {/* User profile at bottom */}
       {!collapsed && (

@@ -37,7 +37,13 @@ function AuthForm() {
       if (isLogin) {
         const res = await loginAction(email, password);
         if (res.error) setError(res.error);
-        else router.push(callbackUrl);
+        else {
+          if (res.role === "reseller") {
+            router.push("/reseller");
+          } else {
+            router.push(callbackUrl);
+          }
+        }
       } else {
         if (!otpSent) {
           if (password !== confirmPassword) {

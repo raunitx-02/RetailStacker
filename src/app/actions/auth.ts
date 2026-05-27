@@ -95,8 +95,15 @@ export async function loginAction(email: string, password: string) {
   const cookieStore = await cookies();
   cookieStore.set("neon10_user", user.email, { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
   cookieStore.set("neon10_plan", user.plan || "Free", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+  
+  if (user.role) {
+    cookieStore.set("neon10_role", user.role, { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+  } else {
+    // Clear old role if switching accounts
+    cookieStore.set("neon10_role", "user", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+  }
 
-  return { success: true };
+  return { success: true, role: user.role };
 }
 
 // ─── Send OTP for Registration ────────────────────────────────────────────────
