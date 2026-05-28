@@ -3,6 +3,8 @@ import { findUser, saveUser, setOtp, verifyOtp } from "@/lib/db";
 import { cookies } from "next/headers";
 import crypto from "crypto";
 import { Resend } from "resend";
+import fs from "fs";
+import path from "path";
 
 // Lazy getter — never crashes at module load time if key is missing
 function getResend() {
@@ -34,8 +36,8 @@ async function sendOtpEmail(email: string, otp: string, subject: string, heading
               <table width="520" cellpadding="0" cellspacing="0" style="background:#13131a;border-radius:16px;border:1px solid #2a2a3a;overflow:hidden;">
                 <!-- Header -->
                 <tr>
-                  <td style="background:linear-gradient(135deg,#ff6b35,#e85d2f);padding:28px 40px;text-align:center;">
-                    <div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-0.5px;">NEON 10</div>
+                  <td style="background:linear-gradient(135deg,#4f46e5,#7c3aed);padding:28px 40px;text-align:center;">
+                    <div style="font-size:28px;font-weight:900;color:#fff;letter-spacing:-0.5px;">RetailStacker</div>
                     <div style="font-size:12px;color:rgba(255,255,255,0.75);margin-top:4px;letter-spacing:0.1em;text-transform:uppercase;">Seller Intelligence Platform</div>
                   </td>
                 </tr>
@@ -126,8 +128,22 @@ export async function sendOtpAction(email: string) {
   return { success: true, message: `OTP sent to ${email}. Please check your inbox.` };
 }
 
+// ─── Append signup to CSV ─────────────────────────────────────────────────────
+function appendSignupCsv(data: { firstName: string; lastName: string; email: string; mobile: string; role: string; plan: string }) {
+  const CSV_PATH = path.join(process.cwd(), "signups.csv");
+  const header = "Date,First Name,Last Name,Email,Mobile,Role,Plan\n";
+  const row = `${new Date().toISOString()},${data.firstName},${data.lastName},${data.email},${data.mobile},${data.role},${data.plan}\n`;
+  try {
+    if (!fs.existsSync(CSV_PATH)) fs.writeFileSync(CSV_PATH, header, "utf8");
+    fs.appendFileSync(CSV_PATH, row, "utf8");
+  } catch (e) { console.error("Failed to write signups.csv:", e); }
+}
+
 // ─── Register ─────────────────────────────────────────────────────────────────
-export async function registerAction(email: string, password: string, otp: string) {
+export async function registerAction(
+  email: string, password: string, otp: string,
+  firstName: string = "", lastName: string = "", mobile: string = "", role: string = "user"
+) {
   if (!verifyOtp(email, otp)) {
     return { error: "Invalid or expired OTP. Please request a new one." };
   }
@@ -135,15 +151,21 @@ export async function registerAction(email: string, password: string, otp: strin
   const newUser = {
     email,
     password: hashPassword(password),
+    firstName,
+    lastName,
+    mobile,
+    role,
     plan: "Free",
     createdAt: Date.now(),
   };
 
   saveUser(newUser);
+  appendSignupCsv({ firstName, lastName, email, mobile, role, plan: "Free" });
 
   const cookieStore = await cookies();
   cookieStore.set("retailstacker_user", email, { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
   cookieStore.set("retailstacker_plan", "Free", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+  cookieStore.set("retailstacker_role", role, { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
 
   return { success: true };
 }

@@ -500,14 +500,18 @@ export default function LandingPage() {
             <h4 style={{ fontWeight: 800, fontSize: 16, marginBottom: 24 }}>Company</h4>
             <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 16, color: "var(--text-secondary)", fontSize: 15 }}>
               <Link href="/about" style={{ textDecoration: "none", color: "inherit" }}><li>About Us</li></Link>
-              <Link href="/careers" style={{ textDecoration: "none", color: "inherit" }}><li>Careers</li></Link>
               <Link href="/pricing" style={{ textDecoration: "none", color: "inherit" }}><li>Pricing</li></Link>
-              <Link href="/contact" style={{ textDecoration: "none", color: "inherit" }}><li>Contact Support</li></Link>
+              <Link href="/resources" style={{ textDecoration: "none", color: "inherit" }}><li>Resources</li></Link>
+              <Link href="/privacy" style={{ textDecoration: "none", color: "inherit" }}><li>Privacy Policy</li></Link>
             </ul>
           </div>
         </div>
-        <div style={{ borderTop: "1px solid var(--border)", paddingTop: 32, textAlign: "center", color: "var(--text-muted)", fontSize: 14 }}>
-          © 2026 RetailStacker Inc. All rights reserved. Made with ❤️ in India.
+        <div style={{ borderTop: "1px solid var(--border)", paddingTop: 32, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, color: "var(--text-muted)", fontSize: 14 }}>
+          <span>© 2026 RetailStacker. All rights reserved. Made with ❤️ in India.</span>
+          <div style={{ display: "flex", gap: 24 }}>
+            <Link href="/privacy" style={{ textDecoration: "none", color: "var(--text-muted)" }}>Privacy Policy</Link>
+            <Link href="/about" style={{ textDecoration: "none", color: "var(--text-muted)" }}>About Us</Link>
+          </div>
         </div>
       </footer>
 
