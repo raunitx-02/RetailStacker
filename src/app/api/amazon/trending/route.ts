@@ -48,12 +48,20 @@ export async function GET(request: Request) {
 
     if (bsData.error) throw new Error(`Keepa Error: ${JSON.stringify(bsData.error)}`);
 
-    const rankedAsins: string[] = bsData.bestSellersList?.asinList || [];
+    let rankedAsins: string[] = bsData.bestSellersList?.asinList || [];
+    
+    // Fallback: If Amazon India doesn't expose a root bestseller list for this node, query top products by category name
     if (rankedAsins.length === 0) {
-      return NextResponse.json({ error: "No bestseller data returned.", nodeUsed: node.nodeId, categoryName: node.name }, { status: 404 });
+      const searchUrl = `https://api.keepa.com/search?key=${apiKey}&domain=10&type=product&term=${encodeURIComponent(node.name)}`;
+      const searchRes = await fetch(searchUrl, { next: { revalidate: 1800 } });
+      const searchData = await searchRes.json();
+      if (searchData.products && searchData.products.length > 0) {
+        // search endpoint only returns basic ASINs, not full stats, so we still pass them to the detail query
+        rankedAsins = searchData.products.slice(0, 50);
+      } else {
+        return NextResponse.json({ error: "No bestseller data returned.", nodeUsed: node.nodeId, categoryName: node.name }, { status: 404 });
+      }
     }
-
-    // Step 2: Take top 12 ASINs and fetch full product details
     const top12 = rankedAsins.slice(0, 12).join(",");
     const detailUrl = `https://api.keepa.com/product?key=${apiKey}&domain=10&asin=${top12}&stats=1`;
     const detailRes = await fetch(detailUrl, { next: { revalidate: 1800 } });
