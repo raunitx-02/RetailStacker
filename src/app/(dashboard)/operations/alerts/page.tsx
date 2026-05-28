@@ -55,15 +55,15 @@ export default function AlertsPage() {
   // Load from localStorage
   useEffect(() => {
     try {
-      const savedAlerts = localStorage.getItem("neon10_operations_alerts");
+      const savedAlerts = localStorage.getItem("retailstacker_operations_alerts");
       if (savedAlerts) {
         setAlerts(JSON.parse(savedAlerts));
       } else {
         setAlerts(DEFAULT_ALERTS);
-        localStorage.setItem("neon10_operations_alerts", JSON.stringify(DEFAULT_ALERTS));
+        localStorage.setItem("retailstacker_operations_alerts", JSON.stringify(DEFAULT_ALERTS));
       }
 
-      const savedSettings = localStorage.getItem("neon10_alert_settings");
+      const savedSettings = localStorage.getItem("retailstacker_alert_settings");
       if (savedSettings) {
         setSettings(JSON.parse(savedSettings));
       }
@@ -75,7 +75,7 @@ export default function AlertsPage() {
 
   const saveAlertsToStorage = (updated: Alert[]) => {
     setAlerts(updated);
-    localStorage.setItem("neon10_operations_alerts", JSON.stringify(updated));
+    localStorage.setItem("retailstacker_operations_alerts", JSON.stringify(updated));
   };
 
   const markAllRead = () => {
@@ -90,7 +90,7 @@ export default function AlertsPage() {
 
   const handleSaveSettings = (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem("neon10_alert_settings", JSON.stringify(settings));
+    localStorage.setItem("retailstacker_alert_settings", JSON.stringify(settings));
     setIsSettingsOpen(false);
     confetti({ particleCount: 30, spread: 30 });
   };

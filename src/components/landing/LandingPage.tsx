@@ -47,7 +47,7 @@ export default function LandingPage() {
               <div style={{ width: 42, height: 42, background: "var(--accent)", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px var(--accent-glow)" }}>
                 <span style={{ color: "white", fontWeight: 900, fontSize: 20 }}>N</span>
               </div>
-              <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.03em" }}>Neon 10</div>
+              <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.03em" }}>RetailStacker</div>
             </Link>
           </div>
 
@@ -85,7 +85,7 @@ export default function LandingPage() {
           E-commerce with
           <br />
           <span style={{ color: "var(--accent)" }}>
-            Neon 10 Intelligence
+            RetailStacker Intelligence
           </span>
         </h1>
         <p style={{ fontSize: "clamp(18px, 3vw, 24px)", color: "var(--text-muted)", maxWidth: 800, margin: "0 auto 48px", lineHeight: 1.5 }}>
@@ -123,7 +123,7 @@ export default function LandingPage() {
             <div style={{ height: 60, borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", padding: "0 24px", justifyContent: "space-between", background: "var(--bg-secondary)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                 <div style={{ width: 28, height: 28, background: "var(--accent)", borderRadius: 6, display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 900, fontSize: 14 }}>N</div>
-                <div style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>Neon 10 Workspace</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)" }}>RetailStacker Workspace</div>
               </div>
               <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
                 <div style={{ padding: "6px 12px", background: "var(--bg-primary)", border: "1px solid var(--border)", borderRadius: 20, fontSize: 13, color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 6 }}><Search size={14} /> Search ASINs...</div>
@@ -220,7 +220,7 @@ export default function LandingPage() {
             Everything you need to <br/>scale your business
           </h2>
           <p style={{ fontSize: 20, color: "var(--text-muted)", maxWidth: 700, margin: "0 auto" }}>
-            Neon 10 provides industry-leading tools covering every aspect of selling online in India.
+            RetailStacker provides industry-leading tools covering every aspect of selling online in India.
           </p>
         </div>
 
@@ -435,8 +435,8 @@ export default function LandingPage() {
         <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 900, letterSpacing: "-0.02em", marginBottom: 60, textAlign: "center" }}>Trusted by India's top sellers</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 32 }}>
           {[
-            { name: "Rahul S.", revenue: "₹2Cr/month", text: "Neon 10's Black Box helped us find a niche in home decor that was completely untapped on Flipkart. The GST calculator alone saved us from pricing mistakes." },
-            { name: "Priya M.", revenue: "₹50L/month", text: "Before Neon 10, we were guessing keywords. Cerebro showed us exactly what our competitors were doing. Our organic sales doubled in 45 days." },
+            { name: "Rahul S.", revenue: "₹2Cr/month", text: "RetailStacker's Black Box helped us find a niche in home decor that was completely untapped on Flipkart. The GST calculator alone saved us from pricing mistakes." },
+            { name: "Priya M.", revenue: "₹50L/month", text: "Before RetailStacker, we were guessing keywords. Cerebro showed us exactly what our competitors were doing. Our organic sales doubled in 45 days." },
             { name: "Vikram K.", revenue: "Agency Owner", text: "The AI Storefront Scanner is a game changer for our agency audits. We plug in a prospective client's link and instantly have a 10-page optimization report." }
           ].map((t, i) => (
             <div key={i} className="glass-card" style={{ padding: 40, borderTop: "4px solid var(--accent)" }}>
@@ -459,7 +459,7 @@ export default function LandingPage() {
           <div style={{ flex: "1 1 500px", padding: "80px" }}>
             <h2 style={{ fontSize: 48, fontWeight: 900, marginBottom: 24, letterSpacing: "-0.02em", lineHeight: 1.1 }}>Ready to dominate your category?</h2>
             <p style={{ fontSize: 20, color: "var(--text-muted)", marginBottom: 40, lineHeight: 1.6 }}>
-              Join over 10,000 Indian sellers who use Neon 10 to uncover hidden opportunities, rank higher, and maximize profits.
+              Join over 10,000 Indian sellers who use RetailStacker to uncover hidden opportunities, rank higher, and maximize profits.
             </p>
             <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
               <Link href="/login?mode=signup" style={{ textDecoration: "none" }}>
@@ -483,7 +483,7 @@ export default function LandingPage() {
               <div style={{ width: 36, height: 36, background: "var(--accent)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <span style={{ color: "white", fontWeight: 900, fontSize: 18 }}>N</span>
               </div>
-              <span style={{ fontWeight: 900, fontSize: 20 }}>Neon 10</span>
+              <span style={{ fontWeight: 900, fontSize: 20 }}>RetailStacker</span>
             </div>
             <p style={{ color: "var(--text-muted)", fontSize: 15, lineHeight: 1.6 }}>
               The industry-standard software suite for Indian e-commerce entrepreneurs and enterprises.
@@ -511,7 +511,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div style={{ borderTop: "1px solid var(--border)", paddingTop: 32, textAlign: "center", color: "var(--text-muted)", fontSize: 14 }}>
-          © 2026 Neon 10 Inc. All rights reserved. Made with ❤️ in India.
+          © 2026 RetailStacker Inc. All rights reserved. Made with ❤️ in India.
         </div>
       </footer>
 

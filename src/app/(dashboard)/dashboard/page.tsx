@@ -68,7 +68,7 @@ export default function DashboardPage({ searchParams }: { searchParams: Promise<
 
   React.useEffect(() => {
     try {
-      const connections = localStorage.getItem("neon10_connections");
+      const connections = localStorage.getItem("retailstacker_connections");
       if (connections) {
         const parsed = JSON.parse(connections);
         if (parsed.amazonConnected || parsed.flipkartConnected || parsed.meeshoConnected || parsed.shopifyConnected) {

@@ -79,20 +79,20 @@ export default function InventoryPage() {
   // Load from localStorage
   useEffect(() => {
     try {
-      const savedProducts = localStorage.getItem("neon10_operations_inventory");
+      const savedProducts = localStorage.getItem("retailstacker_operations_inventory");
       if (savedProducts) {
         setProducts(JSON.parse(savedProducts));
       } else {
         setProducts(DEFAULT_PRODUCTS);
-        localStorage.setItem("neon10_operations_inventory", JSON.stringify(DEFAULT_PRODUCTS));
+        localStorage.setItem("retailstacker_operations_inventory", JSON.stringify(DEFAULT_PRODUCTS));
       }
 
-      const savedShipments = localStorage.getItem("neon10_operations_shipments");
+      const savedShipments = localStorage.getItem("retailstacker_operations_shipments");
       if (savedShipments) {
         setShipments(JSON.parse(savedShipments));
       } else {
         setShipments(DEFAULT_SHIPMENTS);
-        localStorage.setItem("neon10_operations_shipments", JSON.stringify(DEFAULT_SHIPMENTS));
+        localStorage.setItem("retailstacker_operations_shipments", JSON.stringify(DEFAULT_SHIPMENTS));
       }
     } catch (e) {
       console.error(e);
@@ -103,12 +103,12 @@ export default function InventoryPage() {
 
   const saveProductsToStorage = (updated: Product[]) => {
     setProducts(updated);
-    localStorage.setItem("neon10_operations_inventory", JSON.stringify(updated));
+    localStorage.setItem("retailstacker_operations_inventory", JSON.stringify(updated));
   };
 
   const saveShipmentsToStorage = (updated: Shipment[]) => {
     setShipments(updated);
-    localStorage.setItem("neon10_operations_shipments", JSON.stringify(updated));
+    localStorage.setItem("retailstacker_operations_shipments", JSON.stringify(updated));
   };
 
   // Open Reorder Modal

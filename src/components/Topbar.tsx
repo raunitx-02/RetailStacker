@@ -171,14 +171,14 @@ export default function Topbar({ title, user = "User", plan = "Starter" }: { tit
   // Persist selected marketplace globally
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("neon10_active_marketplace");
+      const saved = localStorage.getItem("retailstacker_active_marketplace");
       if (saved && MARKETPLACES.some(m => m.id === saved)) setMarket(saved);
     } catch (e) {}
   }, []);
 
   const handleMarketChange = (id: string) => {
     setMarket(id);
-    try { localStorage.setItem("neon10_active_marketplace", id); } catch (e) {}
+    try { localStorage.setItem("retailstacker_active_marketplace", id); } catch (e) {}
   };
 
   const displayName = user

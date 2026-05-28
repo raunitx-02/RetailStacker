@@ -30,15 +30,15 @@ export default function InventoryProtectorPage() {
   // Load from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("neon10_inventory_protector");
+      const saved = localStorage.getItem("retailstacker_inventory_protector");
       if (saved) {
         setProducts(JSON.parse(saved));
       } else {
         setProducts(DEFAULT_PROTECTED_PRODUCTS);
-        localStorage.setItem("neon10_inventory_protector", JSON.stringify(DEFAULT_PROTECTED_PRODUCTS));
+        localStorage.setItem("retailstacker_inventory_protector", JSON.stringify(DEFAULT_PROTECTED_PRODUCTS));
       }
 
-      const savedGlobal = localStorage.getItem("neon10_global_coupon_protection");
+      const savedGlobal = localStorage.getItem("retailstacker_global_coupon_protection");
       if (savedGlobal) {
         setGlobalProtection(JSON.parse(savedGlobal));
       }
@@ -69,8 +69,8 @@ export default function InventoryProtectorPage() {
   };
 
   const handleSaveAll = () => {
-    localStorage.setItem("neon10_inventory_protector", JSON.stringify(products));
-    localStorage.setItem("neon10_global_coupon_protection", JSON.stringify(globalProtection));
+    localStorage.setItem("retailstacker_inventory_protector", JSON.stringify(products));
+    localStorage.setItem("retailstacker_global_coupon_protection", JSON.stringify(globalProtection));
     
     // Show validation toast
     setShowToast(true);

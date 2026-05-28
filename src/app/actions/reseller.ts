@@ -10,7 +10,7 @@ function hashPassword(password: string) {
 
 async function verifyReseller() {
   const cookieStore = await cookies();
-  const role = cookieStore.get("neon10_role")?.value;
+  const role = cookieStore.get("retailstacker_role")?.value;
   if (role !== "reseller") {
     throw new Error("Unauthorized. Only resellers can perform this action.");
   }

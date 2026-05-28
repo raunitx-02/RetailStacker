@@ -13,7 +13,7 @@ const DEFAULT_DB = {
   users: [
     {
       id: "reseller-1",
-      email: "reseller@neon10.com",
+      email: "reseller@retailstacker.com",
       password: RESELLER_HASH,
       plan: "Diamond",
       role: "reseller",

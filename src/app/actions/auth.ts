@@ -22,7 +22,7 @@ async function sendOtpEmail(email: string, otp: string, subject: string, heading
   }
 
   const { error } = await resend.emails.send({
-    from: "Neon 10 <onboarding@resend.dev>",
+    from: "RetailStacker <onboarding@resend.dev>",
     to: email,
     subject,
     html: `
@@ -56,7 +56,7 @@ async function sendOtpEmail(email: string, otp: string, subject: string, heading
                 <!-- Footer -->
                 <tr>
                   <td style="background:#0d0d16;padding:20px 40px;text-align:center;border-top:1px solid #2a2a3a;">
-                    <div style="font-size:12px;color:#475569;">© ${new Date().getFullYear()} Neon 10 · India's Most Powerful Amazon Seller Platform</div>
+                    <div style="font-size:12px;color:#475569;">© ${new Date().getFullYear()} RetailStacker · India's Most Powerful Amazon Seller Platform</div>
                   </td>
                 </tr>
               </table>
@@ -77,8 +77,8 @@ async function sendOtpEmail(email: string, otp: string, subject: string, heading
 export async function loginAction(email: string, password: string) {
   if (email === "admin@admin.com" && password === "Admin@2345") {
     const cookieStore = await cookies();
-    cookieStore.set("neon10_user", "admin@admin.com", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
-    cookieStore.set("neon10_plan", "Diamond", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+    cookieStore.set("retailstacker_user", "admin@admin.com", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+    cookieStore.set("retailstacker_plan", "Diamond", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
     return { success: true };
   }
 
@@ -90,14 +90,14 @@ export async function loginAction(email: string, password: string) {
   }
 
   const cookieStore = await cookies();
-  cookieStore.set("neon10_user", user.email, { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
-  cookieStore.set("neon10_plan", user.plan || "Free", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+  cookieStore.set("retailstacker_user", user.email, { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+  cookieStore.set("retailstacker_plan", user.plan || "Free", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
   
   if (user.role) {
-    cookieStore.set("neon10_role", user.role, { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+    cookieStore.set("retailstacker_role", user.role, { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
   } else {
     // Clear old role if switching accounts
-    cookieStore.set("neon10_role", "user", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+    cookieStore.set("retailstacker_role", "user", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
   }
 
   return { success: true, role: user.role };
@@ -115,8 +115,8 @@ export async function sendOtpAction(email: string) {
     await sendOtpEmail(
       email,
       otp,
-      "Verify your Neon 10 account",
-      "Welcome to Neon 10! 🎉",
+      "Verify your RetailStacker account",
+      "Welcome to RetailStacker! 🎉",
       "You're one step away from accessing India's most powerful Amazon seller platform. Use the OTP below to verify your email address and complete registration."
     );
   } catch (err: any) {
@@ -142,8 +142,8 @@ export async function registerAction(email: string, password: string, otp: strin
   saveUser(newUser);
 
   const cookieStore = await cookies();
-  cookieStore.set("neon10_user", email, { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
-  cookieStore.set("neon10_plan", "Free", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+  cookieStore.set("retailstacker_user", email, { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
+  cookieStore.set("retailstacker_plan", "Free", { path: "/", httpOnly: true, secure: process.env.NODE_ENV === "production" });
 
   return { success: true };
 }
@@ -160,9 +160,9 @@ export async function sendPasswordResetOtpAction(email: string) {
     await sendOtpEmail(
       email,
       otp,
-      "Reset your Neon 10 password",
+      "Reset your RetailStacker password",
       "Password Reset Request 🔐",
-      "We received a request to reset your Neon 10 account password. Use the OTP below to proceed. If you did not request this, you can safely ignore this email."
+      "We received a request to reset your RetailStacker account password. Use the OTP below to proceed. If you did not request this, you can safely ignore this email."
     );
   } catch (err: any) {
     return { error: err.message || "Failed to send OTP. Please try again." };

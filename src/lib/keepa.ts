@@ -1,5 +1,5 @@
 /**
- * Keepa API Client — Neon 10 Production Layer
+ * Keepa API Client — RetailStacker Production Layer
  * Amazon India (domain=10) optimized
  * All price values from Keepa are integers × 100 for India
  */

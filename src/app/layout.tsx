@@ -3,7 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
-  title: "Neon 10 — Amazon Seller Intelligence Platform",
+  title: "RetailStacker — Amazon Seller Intelligence Platform",
   description: "The most powerful suite of tools for Amazon sellers. Product research, keyword research, listing optimization, and more.",
 };
 

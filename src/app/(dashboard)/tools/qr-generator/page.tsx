@@ -94,7 +94,7 @@ export default function QRGeneratorPage() {
     const canvas = qrRef.current?.querySelector("canvas");
     if (!canvas) return;
     const link = document.createElement("a");
-    link.download = "neon10-qrcode.png";
+    link.download = "retailstacker-qrcode.png";
     link.href = (canvas as HTMLCanvasElement).toDataURL("image/png");
     link.click();
   };
@@ -321,7 +321,7 @@ export default function QRGeneratorPage() {
               }}
             >
               <QRCodeCanvas
-                value={url || "https://neon10.com"}
+                value={url || "https://retailstacker.com"}
                 size={Math.min(size, 300)}
                 fgColor={fgColor}
                 bgColor={bgColor}
@@ -363,7 +363,7 @@ export default function QRGeneratorPage() {
                 flex: 1,
                 fontFamily: "monospace",
               }}>
-                {url || "https://neon10.com"}
+                {url || "https://retailstacker.com"}
               </span>
             </div>
 

@@ -130,8 +130,8 @@ export default function ShopifyManagerPage() {
 
   useEffect(() => {
     try {
-      const savedConn = localStorage.getItem("neon10_connections");
-      const savedKeys = localStorage.getItem("neon10_api_keys_v2");
+      const savedConn = localStorage.getItem("retailstacker_connections");
+      const savedKeys = localStorage.getItem("retailstacker_api_keys_v2");
       if (savedConn && savedKeys) {
         const conn = JSON.parse(savedConn);
         const keys = JSON.parse(savedKeys);
@@ -548,7 +548,7 @@ export default function ShopifyManagerPage() {
                   <div style={{ fontWeight: 700, color: "#5E8E3E", marginBottom: 8 }}>🔗 How to Connect Shopify</div>
                   <ol style={{ fontSize: 13, color: "var(--text-secondary)", lineHeight: 1.8, paddingLeft: 18 }}>
                     <li>Go to your Shopify Admin → Settings → Apps and Sales Channels</li>
-                    <li>Click "Develop apps" → "Create an app" → Name it "Neon 10"</li>
+                    <li>Click "Develop apps" → "Create an app" → Name it "RetailStacker"</li>
                     <li>Under API Credentials, configure Admin API scopes: products, orders, inventory</li>
                     <li>Click "Install App" and copy the Admin API Access Token</li>
                     <li>Go to Profile → Integrations → Shopify Store and enter your credentials</li>

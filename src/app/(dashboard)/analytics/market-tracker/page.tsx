@@ -128,12 +128,12 @@ export default function MarketTrackerPage() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("neon10_market_tracker_niches");
+      const saved = localStorage.getItem("retailstacker_market_tracker_niches");
       if (saved) {
         setNiches(JSON.parse(saved));
       } else {
         setNiches(DEFAULT_NICHES);
-        localStorage.setItem("neon10_market_tracker_niches", JSON.stringify(DEFAULT_NICHES));
+        localStorage.setItem("retailstacker_market_tracker_niches", JSON.stringify(DEFAULT_NICHES));
       }
     } catch (e) {
       console.error(e);
@@ -203,7 +203,7 @@ export default function MarketTrackerPage() {
 
     const updated = [...niches, newNiche];
     setNiches(updated);
-    localStorage.setItem("neon10_market_tracker_niches", JSON.stringify(updated));
+    localStorage.setItem("retailstacker_market_tracker_niches", JSON.stringify(updated));
     setSelectedNicheId(generatedId);
 
     // Reset

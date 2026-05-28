@@ -69,20 +69,20 @@ export default function AdsPage() {
   // Load from localStorage
   useEffect(() => {
     try {
-      const savedCampaigns = localStorage.getItem("neon10_ppc_campaigns");
+      const savedCampaigns = localStorage.getItem("retailstacker_ppc_campaigns");
       if (savedCampaigns) {
         setCampaigns(JSON.parse(savedCampaigns));
       } else {
         setCampaigns(DEFAULT_CAMPAIGNS);
-        localStorage.setItem("neon10_ppc_campaigns", JSON.stringify(DEFAULT_CAMPAIGNS));
+        localStorage.setItem("retailstacker_ppc_campaigns", JSON.stringify(DEFAULT_CAMPAIGNS));
       }
 
-      const savedSuggestions = localStorage.getItem("neon10_ppc_suggestions");
+      const savedSuggestions = localStorage.getItem("retailstacker_ppc_suggestions");
       if (savedSuggestions) {
         setSuggestions(JSON.parse(savedSuggestions));
       } else {
         setSuggestions(DEFAULT_SUGGESTIONS);
-        localStorage.setItem("neon10_ppc_suggestions", JSON.stringify(DEFAULT_SUGGESTIONS));
+        localStorage.setItem("retailstacker_ppc_suggestions", JSON.stringify(DEFAULT_SUGGESTIONS));
       }
     } catch (e) {
       console.error(e);
@@ -93,10 +93,10 @@ export default function AdsPage() {
 
   const saveToStorage = (updatedCams: Campaign[], updatedSugs?: Suggestion[]) => {
     setCampaigns(updatedCams);
-    localStorage.setItem("neon10_ppc_campaigns", JSON.stringify(updatedCams));
+    localStorage.setItem("retailstacker_ppc_campaigns", JSON.stringify(updatedCams));
     if (updatedSugs) {
       setSuggestions(updatedSugs);
-      localStorage.setItem("neon10_ppc_suggestions", JSON.stringify(updatedSugs));
+      localStorage.setItem("retailstacker_ppc_suggestions", JSON.stringify(updatedSugs));
     }
   };
 

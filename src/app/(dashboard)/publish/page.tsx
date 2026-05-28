@@ -65,7 +65,7 @@ export default function PublishPage() {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("neon10_published_listings");
+      const saved = localStorage.getItem("retailstacker_published_listings");
       if (saved) setPublishedListings(JSON.parse(saved));
     } catch (e) {}
   }, []);
@@ -107,7 +107,7 @@ export default function PublishPage() {
       title,
       price,
       sku,
-      brand: "Neon10 User",
+      brand: "RetailStacker User",
       marketplaces: [platform],
       date: new Date().toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
       status: "Pending Approval"
@@ -115,7 +115,7 @@ export default function PublishPage() {
 
     const updated = [newListing, ...publishedListings];
     setPublishedListings(updated);
-    localStorage.setItem("neon10_published_listings", JSON.stringify(updated));
+    localStorage.setItem("retailstacker_published_listings", JSON.stringify(updated));
 
     triggerToast(`Listing pushed to ${platform.toUpperCase()} API successfully!`, "success");
     confetti({ particleCount: 80, spread: 60 });
@@ -124,7 +124,7 @@ export default function PublishPage() {
   const handleDeleteListing = (id: string) => {
     const updated = publishedListings.filter(item => item.id !== id);
     setPublishedListings(updated);
-    localStorage.setItem("neon10_published_listings", JSON.stringify(updated));
+    localStorage.setItem("retailstacker_published_listings", JSON.stringify(updated));
     triggerToast("Listing archive deleted.", "success");
   };
 

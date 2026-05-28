@@ -192,7 +192,7 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
               <span style={{ color: "white", fontWeight: 900, fontSize: 16 }}>N</span>
             </div>
             <div>
-              <div style={{ fontWeight: 800, fontSize: 16, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>Neon 10</div>
+              <div style={{ fontWeight: 800, fontSize: 16, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>RetailStacker</div>
               <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 500 }}>Seller Platform</div>
             </div>
           </div>

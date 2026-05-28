@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     });
 
     const cookieStore = await cookies();
-    const user = cookieStore.get("neon10_user")?.value;
+    const user = cookieStore.get("retailstacker_user")?.value;
     if (!user) {
       return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }

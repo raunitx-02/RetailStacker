@@ -133,8 +133,8 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
   const [connections, setConnections] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    const savedKeys = localStorage.getItem("neon10_api_keys_v2");
-    const savedConn = localStorage.getItem("neon10_connections");
+    const savedKeys = localStorage.getItem("retailstacker_api_keys_v2");
+    const savedConn = localStorage.getItem("retailstacker_connections");
     if (savedKeys) { try { setApiKeys(JSON.parse(savedKeys)); } catch (e) {} }
     if (savedConn) { try { setConnections(JSON.parse(savedConn)); } catch (e) {} }
   }, []);
@@ -212,11 +212,11 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
       
       const updatedKeys = { ...apiKeys, [intId]: fields };
       setApiKeys(updatedKeys);
-      localStorage.setItem("neon10_api_keys_v2", JSON.stringify(updatedKeys));
+      localStorage.setItem("retailstacker_api_keys_v2", JSON.stringify(updatedKeys));
       
       const updatedConn = { ...connections, [intId]: true, [`${intId}Connected`]: true };
       setConnections(updatedConn);
-      localStorage.setItem("neon10_connections", JSON.stringify(updatedConn));
+      localStorage.setItem("retailstacker_connections", JSON.stringify(updatedConn));
       
       showToast(`${INTEGRATIONS.find(i => i.id === intId)?.name} connected successfully! ✓`);
     } catch (e) {
@@ -230,12 +230,12 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
     const updatedKeys = { ...apiKeys };
     delete updatedKeys[intId];
     setApiKeys(updatedKeys);
-    localStorage.setItem("neon10_api_keys_v2", JSON.stringify(updatedKeys));
+    localStorage.setItem("retailstacker_api_keys_v2", JSON.stringify(updatedKeys));
     const updatedConn = { ...connections };
     delete updatedConn[intId];
     delete updatedConn[`${intId}Connected`];
     setConnections(updatedConn);
-    localStorage.setItem("neon10_connections", JSON.stringify(updatedConn));
+    localStorage.setItem("retailstacker_connections", JSON.stringify(updatedConn));
     showToast(`${INTEGRATIONS.find(i => i.id === intId)?.name} disconnected.`);
   };
 

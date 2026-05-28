@@ -4,9 +4,9 @@ import Topbar from "@/components/Topbar";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
-  const plan = cookieStore.get("neon10_plan")?.value || "Starter";
-  const user = cookieStore.get("neon10_user")?.value || "User";
-  const role = cookieStore.get("neon10_role")?.value || "user";
+  const plan = cookieStore.get("retailstacker_plan")?.value || "Starter";
+  const user = cookieStore.get("retailstacker_user")?.value || "User";
+  const role = cookieStore.get("retailstacker_role")?.value || "user";
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", position: "relative", zIndex: 1 }}>

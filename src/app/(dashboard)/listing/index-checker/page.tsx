@@ -22,13 +22,13 @@ export default function IndexCheckerPage() {
   // Load from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("neon10_index_keywords");
+      const saved = localStorage.getItem("retailstacker_index_keywords");
       if (saved) {
         setKeywords(JSON.parse(saved));
       } else {
         const defaults = ["bamboo cutting board", "large cutting board", "cutting board set", "bamboo kitchen board"];
         setKeywords(defaults);
-        localStorage.setItem("neon10_index_keywords", JSON.stringify(defaults));
+        localStorage.setItem("retailstacker_index_keywords", JSON.stringify(defaults));
       }
     } catch (e) {
       console.error(e);
@@ -38,7 +38,7 @@ export default function IndexCheckerPage() {
 
   const saveToStorage = (updated: string[]) => {
     setKeywords(updated);
-    localStorage.setItem("neon10_index_keywords", JSON.stringify(updated));
+    localStorage.setItem("retailstacker_index_keywords", JSON.stringify(updated));
   };
 
   const addKeyword = () => {

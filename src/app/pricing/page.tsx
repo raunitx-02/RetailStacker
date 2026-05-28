@@ -98,7 +98,7 @@ export default function PricingPage() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: orderData.order.amount,
         currency: "INR",
-        name: "Neon 10",
+        name: "RetailStacker",
         description: `${planName} Plan Subscription`,
         order_id: orderData.order.id,
         handler: async function (response: any) {
@@ -127,7 +127,7 @@ export default function PricingPage() {
           contact: "9999999999",
         },
         theme: {
-          color: "#00E5FF", // Neon 10 Accent
+          color: "#00E5FF", // RetailStacker Accent
         },
         modal: {
           ondismiss: function() {
@@ -159,7 +159,7 @@ export default function PricingPage() {
           <div style={{ width: 36, height: 36, background: "var(--accent)", borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ color: "white", fontWeight: 900, fontSize: 18 }}>N</span>
           </div>
-          <span style={{ fontWeight: 900, fontSize: 20 }}>Neon 10</span>
+          <span style={{ fontWeight: 900, fontSize: 20 }}>RetailStacker</span>
         </Link>
         <Link href="/" style={{ textDecoration: "none", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: 6, fontWeight: 600 }}>
           <ArrowLeft size={16} /> Back to Home

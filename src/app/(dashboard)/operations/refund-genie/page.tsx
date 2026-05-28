@@ -40,12 +40,12 @@ export default function RefundGeniePage() {
   // Load from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("neon10_refund_cases");
+      const saved = localStorage.getItem("retailstacker_refund_cases");
       if (saved) {
         setCases(JSON.parse(saved));
       } else {
         setCases(DEFAULT_CASES);
-        localStorage.setItem("neon10_refund_cases", JSON.stringify(DEFAULT_CASES));
+        localStorage.setItem("retailstacker_refund_cases", JSON.stringify(DEFAULT_CASES));
       }
     } catch (e) {
       console.error(e);
@@ -55,7 +55,7 @@ export default function RefundGeniePage() {
 
   const saveCasesToStorage = (updated: ReimbursementCase[]) => {
     setCases(updated);
-    localStorage.setItem("neon10_refund_cases", JSON.stringify(updated));
+    localStorage.setItem("retailstacker_refund_cases", JSON.stringify(updated));
   };
 
   // Run new refund audit scan simulation

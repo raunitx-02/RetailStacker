@@ -69,7 +69,7 @@ export default function CopilotPage() {
     {
       id: "1",
       role: "ai",
-      content: "Hello! I am your Neon 10 AI Seller Copilot. I can advise you across **Amazon, Flipkart, Meesho, and Shopify**. Ask me anything like **'Meri sales kyu gir rahi hai?'**, **'How do I fix my Shopify conversion rate?'**, or **'How to win Flipkart Assured badge?'**"
+      content: "Hello! I am your RetailStacker AI Seller Copilot. I can advise you across **Amazon, Flipkart, Meesho, and Shopify**. Ask me anything like **'Meri sales kyu gir rahi hai?'**, **'How do I fix my Shopify conversion rate?'**, or **'How to win Flipkart Assured badge?'**"
     }
   ]);
   const [input, setInput] = useState("");

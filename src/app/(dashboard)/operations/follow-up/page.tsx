@@ -52,12 +52,12 @@ export default function FollowUpPage() {
   // Load state
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("neon10_followup_campaigns");
+      const saved = localStorage.getItem("retailstacker_followup_campaigns");
       if (saved) {
         setCampaigns(JSON.parse(saved));
       } else {
         setCampaigns(DEFAULT_CAMPAIGNS);
-        localStorage.setItem("neon10_followup_campaigns", JSON.stringify(DEFAULT_CAMPAIGNS));
+        localStorage.setItem("retailstacker_followup_campaigns", JSON.stringify(DEFAULT_CAMPAIGNS));
       }
     } catch (e) {
       console.error(e);
@@ -67,7 +67,7 @@ export default function FollowUpPage() {
 
   const saveToStorage = (updated: FollowUpCampaign[]) => {
     setCampaigns(updated);
-    localStorage.setItem("neon10_followup_campaigns", JSON.stringify(updated));
+    localStorage.setItem("retailstacker_followup_campaigns", JSON.stringify(updated));
   };
 
   const toggleCampaignStatus = (id: number) => {

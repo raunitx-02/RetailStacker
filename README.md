@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌟 Neon 10
+# 🌟 RetailStacker
 
 **The Next Generation Amazon Seller Intelligence Platform**
 
@@ -18,17 +18,17 @@
 
 ## 🚀 Overview
 
-**Neon 10** is a comprehensive, production-grade demo portal designed to replicate the immense power of industry-standard Amazon seller tools, but completely reimagined through a modern, high-fidelity UI/UX lens. 
+**RetailStacker** is a comprehensive, production-grade demo portal designed to replicate the immense power of industry-standard Amazon seller tools, but completely reimagined through a modern, high-fidelity UI/UX lens. 
 
-Gone are the days of clunky, utilitarian dashboards. Neon 10 brings a **"liquid glass" aesthetic**, featuring seamless Light & Dark modes, vibrant blue accents, frosted glass cards, and fluid animations.
+Gone are the days of clunky, utilitarian dashboards. RetailStacker brings a **"liquid glass" aesthetic**, featuring seamless Light & Dark modes, vibrant blue accents, frosted glass cards, and fluid animations.
 
-Whether you're an investor, an agency, or a developer looking to build the next big SaaS, Neon 10 provides the perfect frontend blueprint.
+Whether you're an investor, an agency, or a developer looking to build the next big SaaS, RetailStacker provides the perfect frontend blueprint.
 
 ---
 
 ## ✨ Key Features
 
-Neon 10 comes packed with **22 meticulously crafted tools**, categorized for ultimate seller success:
+RetailStacker comes packed with **22 meticulously crafted tools**, categorized for ultimate seller success:
 
 ### 🔍 Product Research
 - **Black Box (Amazon Product Research)**: The ultimate product discovery tool. Black Box allows users to apply advanced filters (such as monthly revenue, price, review count, and search volume) to instantly find winning product opportunities hidden in Amazon's massive catalog.
@@ -68,7 +68,7 @@ Neon 10 comes packed with **22 meticulously crafted tools**, categorized for ult
 
 ## 🎨 Design System: "Liquid Glass"
 
-Neon 10 is built on a custom design system that prioritizes aesthetics without sacrificing performance.
+RetailStacker is built on a custom design system that prioritizes aesthetics without sacrificing performance.
 
 *   🌓 **Dynamic Theming**: Powered by `next-themes`, instantly toggle between Light and Dark mode without page reloads.
 *   🧊 **Frosted Glass**: Heavy use of `backdrop-filter: blur(24px)` creates a stunning depth effect over dynamic, animated background orbs.
@@ -90,12 +90,12 @@ Neon 10 is built on a custom design system that prioritizes aesthetics without s
 
 ## 🛠️ Getting Started
 
-To run Neon 10 locally:
+To run RetailStacker locally:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/raunitx-02/Neon-10.git
-   cd Neon-10
+   git clone https://github.com/raunitx-02/RetailStacker.git
+   cd RetailStacker
    ```
 
 2. **Install dependencies:**

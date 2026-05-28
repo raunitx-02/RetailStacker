@@ -65,7 +65,7 @@ export function proxy(req: NextRequest) {
     pathname.startsWith("/operations");
 
   if (isProtectedRoute) {
-    const planCookie = req.cookies.get("neon10_plan")?.value;
+    const planCookie = req.cookies.get("retailstacker_plan")?.value;
 
     if (!planCookie) {
       // Not logged in -> redirect to login

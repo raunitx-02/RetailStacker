@@ -92,7 +92,7 @@ function AuthForm() {
           {isLogin ? "Welcome Back" : (otpSent ? "Verify Email" : "Create Account")}
         </h1>
         <p style={{ fontSize: 14, color: "var(--text-muted)", textAlign: "center", marginBottom: 32 }}>
-          {isLogin ? "Log in to your Neon 10 workspace" : (otpSent ? "Enter the OTP sent to your email" : "Sign up for the ultimate seller platform")}
+          {isLogin ? "Log in to your RetailStacker workspace" : (otpSent ? "Enter the OTP sent to your email" : "Sign up for the ultimate seller platform")}
         </p>
 
         {error && (

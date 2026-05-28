@@ -18,13 +18,13 @@ export async function POST(req: Request) {
     if (razorpay_signature === expectedSign) {
       // Payment is successful, update plan in cookies
       const cookieStore = await cookies();
-      cookieStore.set("neon10_plan", plan, {
+      cookieStore.set("retailstacker_plan", plan, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 60 * 60 * 24 * 30, // 30 days
         path: "/",
       });
-      cookieStore.set("neon10_user", "Pro Seller", {
+      cookieStore.set("retailstacker_user", "Pro Seller", {
         path: "/",
       });
 

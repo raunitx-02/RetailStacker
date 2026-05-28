@@ -63,7 +63,7 @@ export default function URLBuilderPage() {
   const [utmTerm, setUtmTerm] = useState("");
 
   // Generated URLs
-  const amazonSearchUrl = `https://www.${amazonMarketplace}/s?k=${encodeURIComponent(keyword)}&i=aps&ref=nb_sb_noss&tag=neon10-20`;
+  const amazonSearchUrl = `https://www.${amazonMarketplace}/s?k=${encodeURIComponent(keyword)}&i=aps&ref=nb_sb_noss&tag=retailstacker-20`;
   const amazonProductUrl = `https://www.${amazonMarketplace}/dp/${asin}?th=1&psc=1`;
 
   const shopifyUtmUrl = (() => {

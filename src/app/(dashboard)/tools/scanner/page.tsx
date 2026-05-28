@@ -332,7 +332,7 @@ export default function ScannerPage() {
           <div className="spinner" style={{ margin: "0 auto 20px", width: 44, height: 44 }} />
           <h3 style={{ fontWeight: 800, fontSize: 18, marginBottom: 8, color: "var(--accent)" }}>AI Seller Scanner Engaged</h3>
           <p style={{ fontSize: 13, color: "var(--text-muted)", maxWidth: 450, margin: "0 auto 24px" }}>
-            Neon 10 is pulling real-time performance indicators directly from Keepa APIs for the Amazon India market.
+            RetailStacker is pulling real-time performance indicators directly from Keepa APIs for the Amazon India market.
           </p>
           
           <div style={{ maxWidth: 480, margin: "0 auto", textAlign: "left", background: "var(--bg-primary)", borderRadius: 12, padding: "16px 24px", border: "1px solid var(--border)" }}>

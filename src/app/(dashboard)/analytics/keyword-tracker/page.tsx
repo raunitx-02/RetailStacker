@@ -69,12 +69,12 @@ export default function KeywordTrackerPage() {
   // Load state
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("neon10_keyword_tracker");
+      const saved = localStorage.getItem("retailstacker_keyword_tracker");
       if (saved) {
         setAllKeywords(JSON.parse(saved));
       } else {
         setAllKeywords(DEFAULT_KEYWORDS);
-        localStorage.setItem("neon10_keyword_tracker", JSON.stringify(DEFAULT_KEYWORDS));
+        localStorage.setItem("retailstacker_keyword_tracker", JSON.stringify(DEFAULT_KEYWORDS));
       }
     } catch (e) {
       console.error(e);
@@ -84,7 +84,7 @@ export default function KeywordTrackerPage() {
 
   const saveToStorage = (updated: TrackedKeyword[]) => {
     setAllKeywords(updated);
-    localStorage.setItem("neon10_keyword_tracker", JSON.stringify(updated));
+    localStorage.setItem("retailstacker_keyword_tracker", JSON.stringify(updated));
   };
 
   const handleDeleteKeyword = (kwStr: string) => {
