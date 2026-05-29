@@ -77,14 +77,26 @@ export function getKeepaRating(current: number[]): number | null {
 }
 
 // ─── Primary image URL ───────────────────────────────────────────────────────
-export function getProductImageUrl(imagesCSV: string, asin: string): string {
-  if (imagesCSV) {
-    const firstId = imagesCSV.split(",")[0];
+export function getProductImageUrl(imagesData: any, asin: string): string {
+  // If it's a string (legacy imagesCSV format)
+  if (typeof imagesData === "string" && imagesData.trim() !== "") {
+    const firstId = imagesData.split(",")[0];
     if (firstId && firstId.length > 5) {
       return `https://m.media-amazon.com/images/I/${firstId}.jpg`;
     }
+  } 
+  // If it's an array of objects (new Keepa format `p.images`)
+  else if (Array.isArray(imagesData) && imagesData.length > 0) {
+    const imgObj = imagesData[0];
+    const imageId = imgObj.l || imgObj.m || imgObj.s;
+    if (imageId) {
+      // Keepa image objects just contain the filename, e.g. "61aKwQGThtL.jpg"
+      return `https://m.media-amazon.com/images/I/${imageId}`;
+    }
   }
-  return `https://images.amazon.com/images/P/${asin}.01._SCLZZZZZZZ_.jpg`;
+  
+  // Robust fallback using just ASIN
+  return `https://m.media-amazon.com/images/P/${asin}.01._SL300_.jpg`;
 }
 
 // ─── BSR Velocity (estimated monthly sold based on BSR) ─────────────────────

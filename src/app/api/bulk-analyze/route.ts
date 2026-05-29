@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
     url.searchParams.set("domain", KEEPA_DOMAIN);
     url.searchParams.set("asin", asinList);
     url.searchParams.set("stats", "1");
+    url.searchParams.set("rating", "1");
     url.searchParams.set("history", "0");
 
     const res = await fetch(url.toString(), { next: { revalidate: 0 } });
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
         asin: p.asin,
         title: p.title || "Amazon Product",
         brand: p.brand || p.manufacturer || "Unknown Brand",
-        image: getProductImageUrl(p.imagesCSV, p.asin),
+        image: getProductImageUrl(p.images || p.imagesCSV, p.asin),
         price: price > 0 ? formatINR(price) : "N/A",
         priceNum: price,
         bsr: bsr,
