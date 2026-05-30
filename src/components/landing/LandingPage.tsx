@@ -45,7 +45,9 @@ export default function LandingPage() {
           <div style={{ display: "flex", alignItems: "center" }}>
             <Link href="/" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: 12 }}>
               <img src="/logo.png" alt="RetailStacker Logo" style={{ width: 42, height: 42 }} />
-              <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.03em" }}>RetailStacker</div>
+              <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.03em", color: "var(--text-primary)" }}>
+                Retail<span style={{ color: "#2563EB" }}>Stacker</span>
+              </div>
             </Link>
           </div>
 
@@ -479,7 +481,9 @@ export default function LandingPage() {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
               <img src="/logo.png" alt="RetailStacker Logo" style={{ width: 36, height: 36 }} />
-              <span style={{ fontWeight: 900, fontSize: 20 }}>RetailStacker</span>
+              <span style={{ fontWeight: 900, fontSize: 20, color: "var(--text-primary)" }}>
+                Retail<span style={{ color: "#2563EB" }}>Stacker</span>
+              </span>
             </div>
             <p style={{ color: "var(--text-muted)", fontSize: 15, lineHeight: 1.6 }}>
               The industry-standard software suite for Indian e-commerce entrepreneurs and enterprises.

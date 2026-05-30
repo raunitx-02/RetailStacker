@@ -217,7 +217,9 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <img src="/logo.png" alt="RetailStacker Logo" style={{ width: 36, height: 36, flexShrink: 0 }} />
             <div>
-              <div style={{ fontWeight: 800, fontSize: 16, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>RetailStacker</div>
+              <div style={{ fontWeight: 800, fontSize: 16, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+                Retail<span style={{ color: "#2563EB" }}>Stacker</span>
+              </div>
               <div style={{ fontSize: 11, color: "var(--text-muted)", fontWeight: 500 }}>Seller Platform</div>
             </div>
           </div>
