@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 
 const PLANS = [
+  { id: "Lite", name: "Lite", price: 500, icon: "💡", color: "var(--text-secondary)", bg: "var(--bg-secondary)", border: "var(--border)", features: ["Extension Download", "Meesho Optimizer", "GST Invoice Builder", "Frankenstein & Scribbles"] },
   { id: "Starter", name: "Starter", price: 999, icon: "🚀", color: "var(--text-secondary)", bg: "var(--bg-secondary)", border: "var(--border)", features: ["Product Research", "BSR Intelligence", "Keyword Tracker", "Listing Analyzer"] },
   { id: "Growth", name: "Growth", price: 2499, icon: "⭐", color: "var(--accent)", bg: "var(--accent-muted)", border: "var(--accent)", features: ["All Starter features", "Cerebro & Magnet", "AI Copilot", "Market Tracker", "Adtomic"] },
   { id: "Diamond", name: "Diamond", price: 4999, icon: "💎", color: "var(--purple)", bg: "var(--purple-muted)", border: "var(--purple)", features: ["All Growth features", "Inventory Protector", "Refund Genie", "Follow-Up", "Priority Support"] },

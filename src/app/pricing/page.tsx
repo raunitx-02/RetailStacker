@@ -11,10 +11,17 @@ declare global {
 
 const STATIC_PLANS = [
   {
+    name: "Lite", price: 500, priceStr: "₹500", period: "/month",
+    color: "var(--text-muted)",
+    desc: "Access to Chrome Extension and basic free seller tools.",
+    features: ["Chrome Extension Download", "Meesho Image Optimizer", "GST Invoice Builder", "Frankenstein Keywords", "Scribbles Listing Writer", "Logistics Estimator", "URL Shortener & Builder", "QR Generator", "Community Support"],
+    highlight: false,
+  },
+  {
     name: "Starter", price: 2999, priceStr: "₹2,999", period: "/month",
     color: "var(--text-muted)",
     desc: "Perfect for new sellers starting their Amazon India journey.",
-    features: ["Black Box Product Research", "Magnet Keywords", "Listing Builder", "GST Invoice Builder", "Logistics Estimator", "URL Shortener & Builder", "Community Support"],
+    features: ["Everything in Lite", "Black Box Product Research", "Magnet Keywords", "Listing Builder"],
     highlight: false,
   },
   {

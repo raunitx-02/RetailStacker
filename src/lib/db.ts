@@ -32,16 +32,22 @@ const DEFAULT_DB = {
   otps: {},
   plans: [
     {
+      name: "Lite",
+      price: 500,
+      desc: "Perfect for sellers needing Chrome Extension & basic optimize tools.",
+      features: ["Chrome Extension Download", "Meesho Image Optimizer", "GST Invoice Builder", "Frankenstein Keywords", "Scribbles Listing Writer", "Logistics Estimator", "URL Shortener & Builder", "QR Generator", "Community Support"]
+    },
+    {
       name: "Starter",
       price: 2999,
       desc: "Perfect for new sellers starting their Amazon India journey.",
-      features: ["Black Box Product Research", "Magnet Keywords", "Listing Builder", "GST Invoice Builder", "Logistics Estimator", "URL Shortener & Builder", "Community Support"]
+      features: ["Everything in Lite", "Black Box Product Research", "Magnet Keywords", "Listing Builder"]
     },
     {
       name: "Growth",
       price: 5999,
       desc: "For serious sellers scaling across Indian marketplaces.",
-      features: ["Everything in Starter", "Cerebro Reverse ASIN", "Xray Market Intelligence", "Magnet Keywords", "AI Seller Scanner", "Meesho Shipping & Image Optimizer", "Keyword Tracker (500 words)", "Priority Email Support"]
+      features: ["Everything in Starter", "Cerebro Reverse ASIN", "Xray Market Intelligence", "Meesho Shipping & Image Optimizer", "Keyword Tracker (500 words)", "Priority Email Support"]
     },
     {
       name: "Diamond",
@@ -58,7 +64,7 @@ export const getDB = () => {
       const data = fs.readFileSync(DB_PATH, "utf8");
       const parsed = JSON.parse(data);
       let updated = false;
-      if (!parsed.plans) {
+      if (!parsed.plans || !parsed.plans.some((p: any) => p.name === "Lite")) {
         parsed.plans = DEFAULT_DB.plans;
         updated = true;
       }

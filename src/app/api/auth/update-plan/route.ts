@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const { plan } = await req.json();
-  const validPlans = ["Starter", "Growth", "Diamond"];
+  const validPlans = ["Lite", "Starter", "Growth", "Diamond"];
   if (!validPlans.includes(plan)) return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
 
   const cookieStore = await cookies();

@@ -27,18 +27,32 @@ export default function PublicNavbar() {
     return () => window.removeEventListener("open-extension-modal", handleOpenModal);
   }, []);
 
-  const handleDownload = () => {
-    // Trigger download
-    const link = document.createElement("a");
-    link.href = "/retailstacker-extension.zip";
-    link.download = "retailstacker-extension.zip";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = async () => {
+    try {
+      const res = await fetch("/api/extension/auth/me");
+      const data = await res.json();
+      const allowedPlans = ["Lite", "Starter", "Growth", "Diamond"];
 
-    // Show popup
-    setInstallStepsOpen(true);
-    setMobileOpen(false);
+      if (data.loggedIn && data.user && allowedPlans.includes(data.user.plan)) {
+        // Trigger download
+        const link = document.createElement("a");
+        link.href = "/retailstacker-extension.zip";
+        link.download = "retailstacker-extension.zip";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Show popup
+        setInstallStepsOpen(true);
+        setMobileOpen(false);
+      } else {
+        alert("To download the RetailStacker Chrome Extension, please register or log in and subscribe to the Lite Plan (₹500/month) or higher!");
+        window.location.href = "/pricing";
+      }
+    } catch (err) {
+      console.error("Failed checking download permission:", err);
+      window.location.href = "/pricing";
+    }
   };
 
   return (
