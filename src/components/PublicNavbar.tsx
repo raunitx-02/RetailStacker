@@ -15,10 +15,18 @@ export default function PublicNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [installStepsOpen, setInstallStepsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [session, setSession] = useState<{ loggedIn: boolean } | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
     setMounted(true);
+
+    fetch("/api/extension/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        setSession(data);
+      })
+      .catch((e) => console.error("Error loading navbar session:", e));
 
     const handleOpenModal = () => {
       setInstallStepsOpen(true);
@@ -122,28 +130,45 @@ export default function PublicNavbar() {
           <Download size={15} />
           Download Extension
         </button>
-        <Link href="/login" style={{
-          textDecoration: "none",
-          padding: "8px 16px",
-          borderRadius: 8,
-          fontSize: 14,
-          fontWeight: 600,
-          color: "var(--text-secondary)",
-        }}>
-          Login
-        </Link>
-        <Link href="/login?mode=signup" style={{
-          textDecoration: "none",
-          padding: "9px 20px",
-          borderRadius: 10,
-          fontSize: 14,
-          fontWeight: 700,
-          color: "white",
-          background: "var(--accent)",
-          boxShadow: "0 4px 12px var(--accent-glow)",
-        }}>
-          Get Started Free
-        </Link>
+        {mounted && session?.loggedIn ? (
+          <Link href="/dashboard" style={{
+            textDecoration: "none",
+            padding: "9px 20px",
+            borderRadius: 10,
+            fontSize: 14,
+            fontWeight: 700,
+            color: "white",
+            background: "var(--accent)",
+            boxShadow: "0 4px 12px var(--accent-glow)",
+          }}>
+            Go to Dashboard
+          </Link>
+        ) : (
+          <>
+            <Link href="/login" style={{
+              textDecoration: "none",
+              padding: "8px 16px",
+              borderRadius: 8,
+              fontSize: 14,
+              fontWeight: 600,
+              color: "var(--text-secondary)",
+            }}>
+              Login
+            </Link>
+            <Link href="/login?mode=signup" style={{
+              textDecoration: "none",
+              padding: "9px 20px",
+              borderRadius: 10,
+              fontSize: 14,
+              fontWeight: 700,
+              color: "white",
+              background: "var(--accent)",
+              boxShadow: "0 4px 12px var(--accent-glow)",
+            }}>
+              Get Started Free
+            </Link>
+          </>
+        )}
       </div>
 
       {/* Mobile Hamburger */}
@@ -190,12 +215,20 @@ export default function PublicNavbar() {
               {link.label}
             </Link>
           ))}
-          <Link href="/login" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", padding: "12px 16px", borderRadius: 8, fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>
-            Login
-          </Link>
-          <Link href="/login?mode=signup" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", padding: "12px 16px", borderRadius: 10, fontSize: 15, fontWeight: 700, color: "white", background: "var(--accent)", textAlign: "center", marginTop: 8 }}>
-            Get Started Free
-          </Link>
+          {mounted && session?.loggedIn ? (
+            <Link href="/dashboard" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", padding: "12px 16px", borderRadius: 10, fontSize: 15, fontWeight: 700, color: "white", background: "var(--accent)", textAlign: "center", marginTop: 8 }}>
+              Go to Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", padding: "12px 16px", borderRadius: 8, fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>
+                Login
+              </Link>
+              <Link href="/login?mode=signup" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", padding: "12px 16px", borderRadius: 10, fontSize: 15, fontWeight: 700, color: "white", background: "var(--accent)", textAlign: "center", marginTop: 8 }}>
+                Get Started Free
+              </Link>
+            </>
+          )}
           <button
             onClick={handleDownload}
             style={{

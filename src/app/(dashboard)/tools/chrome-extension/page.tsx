@@ -231,7 +231,7 @@ export default function ChromeExtensionPage() {
       </div>
 
       {/* Feature Grid */}
-      <h2 style={{ fontSize: 24, fontWeight: 800, color: "white", marginBottom: 24 }}>Everything you get in the Extension</h2>
+      <h2 style={{ fontSize: 24, fontWeight: 800, color: "var(--text-primary)", marginBottom: 24 }}>Everything you get in the Extension</h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))", gap: 20, marginBottom: 48 }}>
         {features.map((feat, idx) => {
           const IconComponent = feat.icon;
@@ -263,8 +263,8 @@ export default function ChromeExtensionPage() {
               }}>
                 <IconComponent size={22} />
               </div>
-              <h3 style={{ fontSize: 17, fontWeight: 700, color: "white", marginBottom: 10 }}>{feat.title}</h3>
-              <p style={{ fontSize: 14, color: "var(--text-muted)", lineHeight: 1.55 }}>{feat.desc}</p>
+              <h3 style={{ fontSize: 17, fontWeight: 700, color: "var(--text-primary)", marginBottom: 10 }}>{feat.title}</h3>
+              <p style={{ fontSize: 14, color: "var(--text-secondary)", lineHeight: 1.55 }}>{feat.desc}</p>
             </div>
           );
         })}
