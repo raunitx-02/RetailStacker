@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import {
+import PublicNavbar from "@/components/PublicNavbar";
   Search, Cpu, FileText, TrendingUp, IndianRupee, Truck,
   Star, CheckCircle, ArrowRight, Menu, X, Zap, Globe,
   BarChart3, ShieldCheck, Sparkles, MessageCircle, Package, MonitorSmartphone, Target, LineChart, BrainCircuit, Box, Boxes,
-  LayoutDashboard, ShoppingCart, Users, Activity
+  LayoutDashboard, ShoppingCart, Users, Activity, Download
 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
@@ -38,48 +38,7 @@ export default function LandingPage() {
     <div style={{ minHeight: "100vh", background: "var(--bg-primary)", color: "var(--text-primary)", overflowX: "hidden" }}>
 
       {/* ── Nav ── */}
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, borderBottom: "1px solid var(--border)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", background: "rgba(var(--bg-primary-rgb), 0.85)" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", height: 80 }}>
-          
-          {/* Left: Logo */}
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <Link href="/" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: 12 }}>
-              <img src="/logo.png" alt="RetailStacker Logo" style={{ width: 42, height: 42 }} />
-              <div style={{ fontWeight: 900, fontSize: 22, letterSpacing: "-0.03em", display: "flex", alignItems: "center" }}>
-                <span style={{ 
-                  background: "linear-gradient(135deg, #0C1E36 65%, #00B4D8 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  display: "inline-block"
-                }}>R</span>
-                <span style={{ color: "#0C1E36" }}>etail</span>
-                <span style={{ color: "#1A56DB" }}>Stacker</span>
-              </div>
-            </Link>
-          </div>
-
-          {/* Center: Nav Links */}
-          <div className="desktop-nav" style={{ display: "flex", gap: 40, fontSize: 15, fontWeight: 600, color: "var(--text-secondary)", justifyContent: "center" }}>
-            <Link href="#features" style={{ textDecoration: "none", color: "inherit", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "var(--text-primary)"} onMouseLeave={e => e.currentTarget.style.color = "var(--text-secondary)"}>Tools</Link>
-            <Link href="/resources" style={{ textDecoration: "none", color: "inherit", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "var(--text-primary)"} onMouseLeave={e => e.currentTarget.style.color = "var(--text-secondary)"}>Resources</Link>
-            <Link href="/pricing" style={{ textDecoration: "none", color: "inherit", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "var(--text-primary)"} onMouseLeave={e => e.currentTarget.style.color = "var(--text-secondary)"}>Pricing</Link>
-            <Link href="/enterprise" style={{ textDecoration: "none", color: "inherit", transition: "color 0.2s" }} onMouseEnter={e => e.currentTarget.style.color = "var(--text-primary)"} onMouseLeave={e => e.currentTarget.style.color = "var(--text-secondary)"}>Enterprise</Link>
-          </div>
-
-          {/* Right: Actions */}
-          <div style={{ display: "flex", alignItems: "center", gap: 16, justifyContent: "flex-end" }}>
-            <Link href="/login" style={{ textDecoration: "none" }}>
-              <button className="btn-ghost" style={{ fontSize: 15, fontWeight: 700, padding: "10px 20px" }}>Log In</button>
-            </Link>
-            <Link href="/login?mode=signup" style={{ textDecoration: "none" }}>
-              <button className="btn-accent" style={{ fontSize: 15, padding: "12px 28px", display: "flex", alignItems: "center", gap: 8, borderRadius: 12, fontWeight: 700 }}>
-                Sign Up For Free <ArrowRight size={16} />
-              </button>
-            </Link>
-          </div>
-          
-        </div>
-      </nav>
+      <PublicNavbar />
 
       {/* ── Hero ── */}
       <section style={{ paddingTop: 160, paddingBottom: 120, textAlign: "center", maxWidth: 1000, margin: "0 auto", padding: "180px 24px 120px" }}>
@@ -417,6 +376,124 @@ export default function LandingPage() {
                  <div style={{ padding: "4px 12px", background: "var(--success-muted)", color: "var(--success)", borderRadius: 50, fontSize: 10, fontWeight: 800 }}>KEYWORD 2</div>
                </div>
              </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Chrome Extension Section ── */}
+      <section style={{ maxWidth: 1400, margin: "0 auto 120px", padding: "0 24px" }}>
+        <div style={{ 
+          padding: "60px 40px", 
+          background: "linear-gradient(135deg, rgba(26, 86, 219, 0.03) 0%, rgba(99, 102, 241, 0.05) 100%)",
+          border: "1px solid var(--accent-muted)",
+          borderRadius: 24,
+          boxShadow: "0 20px 50px rgba(26, 86, 219, 0.05)",
+        }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 60 }}>
+            <div style={{ flex: "1 1 500px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--accent-muted)", color: "var(--accent)", padding: "6px 12px", borderRadius: 50, fontSize: 13, fontWeight: 700, marginBottom: 16 }}>
+                <Sparkles size={14} /> LIVE SELLER INTELLIGENCE
+              </div>
+              <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 900, letterSpacing: "-0.02em", marginBottom: 24, lineHeight: 1.1 }}>
+                Supercharge Amazon.in with the RetailStacker Chrome Extension
+              </h2>
+              <p style={{ fontSize: 18, color: "var(--text-muted)", marginBottom: 32, lineHeight: 1.6 }}>
+                Get Helium 10-style seller intelligence injected directly into your Amazon India browser tabs. Spot profitable products, calculate fees, and extract keyword metrics on the fly.
+              </p>
+              
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 40 }}>
+                {[
+                  { icon: <Search size={20} color="var(--accent)" />, title: "Search Expander", desc: "View keyword volumes and competing products inside native suggestions." },
+                  { icon: <Activity size={20} color="var(--accent)" />, title: "Xray Market Analyzer", desc: "Extract BSR trends, ratings, and projected revenues instantly." },
+                  { icon: <IndianRupee size={20} color="var(--accent)" />, title: "Profit Calculator", desc: "Breakdown FBA fulfillment fees, storage costs, and net margins." },
+                  { icon: <Package size={20} color="var(--accent)" />, title: "Storefront Auditor", desc: "Analyze competitor storefront metrics and listing counts." }
+                ].map((f, i) => (
+                  <div key={i} style={{ display: "flex", gap: 12 }}>
+                    <div style={{ flexShrink: 0, marginTop: 2 }}>{f.icon}</div>
+                    <div>
+                      <h4 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)", margin: "0 0 4px 0" }}>{f.title}</h4>
+                      <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0, lineHeight: 1.4 }}>{f.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => {
+                  // Trigger download
+                  const link = document.createElement("a");
+                  link.href = "/retailstacker-extension.zip";
+                  link.download = "retailstacker-extension.zip";
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+
+                  // Dispatch event to open modal
+                  window.dispatchEvent(new CustomEvent("open-extension-modal"));
+                }}
+                style={{
+                  padding: "16px 36px",
+                  borderRadius: 12,
+                  fontSize: 16,
+                  fontWeight: 700,
+                  color: "white",
+                  background: "var(--accent)",
+                  boxShadow: "0 10px 24px var(--accent-glow)",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 10,
+                  transition: "all 0.2s"
+                }}
+                className="rs-landing-download-btn"
+              >
+                <Download size={18} />
+                Download RetailStacker Extension
+              </button>
+            </div>
+            
+            <div style={{ flex: "1 1 400px", display: "flex", justifyContent: "center", position: "relative" }}>
+              <div style={{ 
+                width: "100%", 
+                maxWidth: 480, 
+                background: "var(--bg-primary)", 
+                border: "1px solid var(--border)", 
+                borderRadius: 20, 
+                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                overflow: "hidden"
+              }}>
+                <div style={{ background: "var(--bg-secondary)", padding: "12px 20px", borderBottom: "1px solid var(--border)", display: "flex", gap: 6 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ef4444" }} />
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#eab308" }} />
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#22c55e" }} />
+                </div>
+                <div style={{ padding: 24 }}>
+                  {/* Mock search bar layout */}
+                  <div style={{ border: "1px solid var(--border)", borderRadius: 10, display: "flex", overflow: "hidden", background: "var(--bg-secondary)", marginBottom: 20 }}>
+                    <div style={{ padding: "10px 14px", borderRight: "1px solid var(--border)", fontSize: 13, background: "var(--bg-primary)", color: "var(--text-muted)" }}>All</div>
+                    <div style={{ padding: "10px 14px", flex: 1, fontSize: 13, color: "var(--text-primary)" }}>s25 ultra</div>
+                    <div style={{ padding: "10px 18px", background: "var(--accent)", color: "white", display: "flex", alignItems: "center" }}><Search size={16} /></div>
+                  </div>
+                  {/* Mock suggestion rows */}
+                  <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    {[
+                      { kw: "s25 ultra cases", sv: "18,450", comp: "1,240" },
+                      { kw: "s25 ultra screen protector", sv: "14,800", comp: "980" },
+                      { kw: "s25 ultra back cover", sv: "32,900", comp: "3,110" }
+                    ].map((row, i) => (
+                      <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", borderRadius: 8, background: i === 0 ? "var(--bg-secondary)" : "transparent" }}>
+                        <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text-primary)" }}>{row.kw}</span>
+                        <div style={{ display: "flex", gap: 16, fontSize: 11 }}>
+                          <span style={{ color: "var(--accent)", fontWeight: 700 }}>SV: {row.sv}</span>
+                          <span style={{ color: "#f87171", fontWeight: 700 }}>Comp: {row.comp}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

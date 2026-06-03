@@ -19,6 +19,12 @@ export default function PublicNavbar() {
 
   useEffect(() => {
     setMounted(true);
+
+    const handleOpenModal = () => {
+      setInstallStepsOpen(true);
+    };
+    window.addEventListener("open-extension-modal", handleOpenModal);
+    return () => window.removeEventListener("open-extension-modal", handleOpenModal);
   }, []);
 
   const handleDownload = () => {
@@ -324,15 +330,16 @@ export default function PublicNavbar() {
           .mobile-menu-btn { display: block !important; }
         }
         .rs-download-btn {
-          background: rgba(6, 182, 212, 0.1) !important;
-          border: 1px solid rgba(6, 182, 212, 0.3) !important;
-          color: #00B4D8 !important;
+          background: var(--accent-muted, rgba(26, 86, 219, 0.08)) !important;
+          border: 1px solid var(--accent, #1a56db) !important;
+          color: var(--accent, #1a56db) !important;
           transition: all 0.2s !important;
         }
         .rs-download-btn:hover {
-          background: rgba(6, 182, 212, 0.2) !important;
-          border-color: #00B4D8 !important;
-          box-shadow: 0 0 12px rgba(6, 182, 212, 0.2) !important;
+          background: var(--accent, #1a56db) !important;
+          border-color: var(--accent, #1a56db) !important;
+          color: white !important;
+          box-shadow: 0 4px 12px var(--accent-glow, rgba(26, 86, 219, 0.2)) !important;
         }
         .rs-modal-ok-btn:hover {
           background: #1a3a60 !important;
