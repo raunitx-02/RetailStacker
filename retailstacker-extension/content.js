@@ -528,25 +528,43 @@
     const titleArea = document.getElementById("titleSection") || document.getElementById("title");
     if (!titleArea || document.getElementById("rs-title-stats-bar-widget")) return;
 
-    const auth = await chrome.runtime.sendMessage({ action: "check-session" });
-    if (!auth || !auth.loggedIn) return;
+    // Synchronously insert placeholder to immediately lock execution and avoid race condition duplicates
+    const bar = document.createElement("div");
+    bar.id = "rs-title-stats-bar-widget";
+    bar.className = "rs-title-stats-bar rs-title-stats-bar-loading";
+    bar.innerHTML = `
+      <div style="display:flex; align-items:center; gap:8px; padding: 4px 12px; color: var(--rs-text-secondary); font-size: 12px; font-weight: 500;">
+        <span class="rs-loading-spinner" style="width:12px; height:12px; border:2px solid var(--rs-accent-color); border-top-color:transparent; border-radius:50%; animation:rs-spin 0.8s linear infinite;"></span>
+        Analyzing Product with RetailStacker...
+      </div>
+    `;
+    titleArea.parentNode.insertBefore(bar, titleArea.nextSibling);
 
-    const res = await chrome.runtime.sendMessage({ action: "fetch-xray", asins: [asin] });
-    if (res && res.listings && res.listings.length > 0) {
-      renderProductTitleStatsBar(res.listings[0], res.plan);
+    try {
+      const auth = await chrome.runtime.sendMessage({ action: "check-session" });
+      if (!auth || !auth.loggedIn) {
+        bar.remove();
+        return;
+      }
+
+      const res = await chrome.runtime.sendMessage({ action: "fetch-xray", asins: [asin] });
+      if (res && res.listings && res.listings.length > 0) {
+        renderProductTitleStatsBar(res.listings[0], res.plan, bar);
+      } else {
+        bar.remove();
+      }
+    } catch (err) {
+      console.error("RetailStacker stats bar load error:", err);
+      bar.remove();
     }
   }
 
-  function renderProductTitleStatsBar(product, plan) {
-    const titleArea = document.getElementById("titleSection") || document.getElementById("title");
-    if (!titleArea) return;
+  function renderProductTitleStatsBar(product, plan, bar) {
+    if (!bar) return;
+    bar.classList.remove("rs-title-stats-bar-loading");
+    bar.innerHTML = ""; // Clear loader contents
 
     const isFree = plan.toLowerCase() === "free";
-
-    const bar = document.createElement("div");
-    bar.id = "rs-title-stats-bar-widget";
-    bar.className = "rs-title-stats-bar";
-
     const healthScore = product.rating >= 4.3 && product.reviews >= 200 ? "9.2/10 (Excellent)" :
                         product.rating >= 3.9 && product.reviews >= 50 ? "7.8/10 (Good)" : "5.4/10 (Average)";
     
@@ -576,8 +594,6 @@
         window.open("https://retailstacker.com/pricing", "_blank");
       });
       bar.appendChild(upgradeBtn);
-      
-      titleArea.parentNode.insertBefore(bar, titleArea.nextSibling);
     } else {
       bar.innerHTML = `
         <div class="rs-ts-item">
@@ -605,8 +621,6 @@
         openKeywordsModal(product);
       });
       bar.appendChild(kwBtn);
-
-      titleArea.parentNode.insertBefore(bar, titleArea.nextSibling);
     }
   }
 
