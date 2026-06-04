@@ -163,30 +163,37 @@
 
 /* ─── 4. Product Page Header Stats Bar (Under Main Product Title) ────────────── */
 .rs-title-stats-bar {
-  background: var(--rs-bg-panel) !important;
-  border: 1px solid var(--rs-border) !important;
-  border-radius: 10px !important;
-  padding: 12px 18px !important;
-  margin: 10px 0 16px 0 !important;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.75), rgba(8, 14, 28, 0.65)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 16px !important;
+  padding: 16px 24px !important;
+  margin: 16px 0 24px 0 !important;
   font-family: 'Inter', sans-serif !important;
   color: var(--rs-text-primary) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  backdrop-filter: var(--rs-glass) !important;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.25) !important;
-  gap: 12px !important;
-  flex-wrap: wrap !important; /* Forces items to wrap gracefully rather than overflow */
+  backdrop-filter: blur(20px) saturate(200%) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255,255,255,0.08) !important;
+  gap: 16px !important;
+  flex-wrap: wrap !important;
   width: 100% !important;
   box-sizing: border-box !important;
+  transition: all 0.3s ease !important;
+}
+
+.rs-title-stats-bar:hover {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45) !important;
+  transform: translateY(-1px) !important;
 }
 
 .rs-ts-item {
-  flex: 1 1 auto !important; /* Allow item wrapping */
+  flex: 1 1 auto !important;
   text-align: center !important;
-  border-right: 1px solid rgba(255,255,255,0.06) !important;
-  padding: 2px 0 !important;
-  min-width: 90px !important; /* Prevents squishing */
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  padding: 4px 8px !important;
+  min-width: 100px !important;
 }
 
 .rs-ts-item:last-child {
@@ -194,47 +201,49 @@
 }
 
 .rs-ts-label {
-  font-size: 9px !important;
-  font-weight: 700 !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
   text-transform: uppercase !important;
   color: var(--rs-text-secondary) !important;
-  letter-spacing: 0.5px !important;
-  margin-bottom: 2px !important;
+  letter-spacing: 0.75px !important;
+  margin-bottom: 4px !important;
 }
 
 .rs-ts-val {
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  color: #fff !important;
-  white-space: nowrap !important; /* Prevents value numbers from splitting lines */
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  white-space: nowrap !important;
 }
 
 .rs-ts-val.accent {
-  color: var(--rs-accent-cyan) !important;
+  background: linear-gradient(135deg, #a78bfa, #06b6d4) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
 }
 
 .rs-ts-btn {
   background: var(--rs-accent-gradient) !important;
   border: none !important;
-  border-radius: 6px !important;
+  border-radius: 8px !important;
   color: #fff !important;
   font-size: 11px !important;
   font-weight: 700 !important;
-  padding: 6px 12px !important;
+  padding: 8px 16px !important;
   cursor: pointer !important;
-  box-shadow: 0 2px 6px rgba(6, 182, 212, 0.2) !important;
-  transition: all 0.2s ease !important;
-  white-space: nowrap !important; /* Prevents button text wrap overflow */
-  flex-shrink: 0 !important;     /* Prevents button from compressing */
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
   min-width: fit-content !important;
   display: inline-block !important;
-  height: 28px !important;
+  height: 32px !important;
   line-height: 16px !important;
 }
 
 .rs-ts-btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 10px rgba(6, 182, 212, 0.4) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(6, 182, 212, 0.5) !important;
 }
 
 /* ─── 5. Premium Glassmorphic Modal Base ───────────────────────────────────── */
@@ -500,24 +509,24 @@
 
 /* ─── 6. Profit Calculator Sidebar/Widget ───────────────────────────────── */
 .rs-calc-widget {
-  background: var(--rs-bg-panel) !important;
-  border: 1px solid var(--rs-border) !important;
-  border-radius: 16px !important;
-  padding: 20px !important;
-  margin: 16px 0 !important;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.75), rgba(8, 14, 28, 0.65)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 20px !important;
+  padding: 24px !important;
+  margin: 20px 0 !important;
   font-family: 'Inter', sans-serif !important;
   color: var(--rs-text-primary) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255,255,255,0.08) !important;
   backdrop-filter: var(--rs-glass) !important;
 }
 
 .rs-calc-title {
-  font-size: 16px !important;
-  font-weight: 700 !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
   background: var(--rs-accent-gradient) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
-  margin-bottom: 14px !important;
+  margin-bottom: 18px !important;
   display: flex !important;
   align-items: center !important;
   gap: 8px !important;
@@ -527,74 +536,80 @@
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  margin-bottom: 10px !important;
+  margin-bottom: 12px !important;
   font-size: 13px !important;
 }
 
 .rs-calc-label {
   color: var(--rs-text-secondary) !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
 }
 
 .rs-calc-value {
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   color: #fff !important;
 }
 
 .rs-calc-input {
-  width: 90px !important;
-  background-color: #0f172a !important;
+  width: 100px !important;
+  background: rgba(0, 0, 0, 0.3) !important;
   color: #ffffff !important;
-  border: 1px solid #334155 !important;
-  border-radius: 6px !important;
-  padding: 6px 10px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
   text-align: right !important;
   font-size: 13px !important;
   outline: none !important;
-  font-weight: 700 !important;
+  font-weight: 800 !important;
   display: inline-block !important;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
   height: auto !important;
+  transition: all 0.2s ease !important;
 }
 
 .rs-calc-input:focus {
   border-color: var(--rs-accent-cyan) !important;
-  box-shadow: 0 0 8px rgba(6, 182, 212, 0.4) !important;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.3) !important;
+  background: rgba(0, 0, 0, 0.4) !important;
 }
 
 .rs-calc-divider {
   height: 1px !important;
-  background: var(--rs-border) !important;
-  margin: 12px 0 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  margin: 16px 0 !important;
 }
 
 .rs-margin-box {
-  background: rgba(6, 182, 212, 0.08) !important;
-  border: 1px solid rgba(6, 182, 212, 0.2) !important;
-  border-radius: 8px !important;
-  padding: 12px !important;
+  background: rgba(99, 102, 241, 0.06) !important;
+  border: 1px solid rgba(99, 102, 241, 0.25) !important;
+  border-radius: 12px !important;
+  padding: 14px !important;
   text-align: center !important;
-  margin-top: 14px !important;
+  margin-top: 18px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
 }
 
 .rs-margin-pct {
-  font-size: 24px !important;
-  font-weight: 800 !important;
+  font-size: 26px !important;
+  font-weight: 900 !important;
   color: var(--rs-accent-cyan) !important;
-  margin-top: 2px !important;
+  margin-top: 4px !important;
+  letter-spacing: -0.5px !important;
 }
 
 .rs-margin-box.high {
-  background: rgba(34, 197, 94, 0.08) !important;
-  border-color: rgba(34, 197, 94, 0.2) !important;
+  background: rgba(34, 197, 94, 0.06) !important;
+  border-color: rgba(34, 197, 94, 0.25) !important;
   color: #4ade80 !important;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1) !important;
 }
 .rs-margin-box.high .rs-margin-pct { color: #4ade80 !important; }
 
 .rs-margin-box.low {
-  background: rgba(239, 68, 68, 0.08) !important;
-  border-color: rgba(239, 68, 68, 0.2) !important;
+  background: rgba(239, 68, 68, 0.06) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
   color: #f87171 !important;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1) !important;
 }
 .rs-margin-box.low .rs-margin-pct { color: #f87171 !important; }
 
