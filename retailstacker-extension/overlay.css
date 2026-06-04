@@ -163,18 +163,18 @@
 
 /* ─── 4. Product Page Header Stats Bar (Under Main Product Title) ────────────── */
 .rs-title-stats-bar {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.75), rgba(8, 14, 28, 0.65)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 246, 255, 0.65)) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
   border-radius: 16px !important;
   padding: 16px 24px !important;
   margin: 16px 0 24px 0 !important;
   font-family: 'Inter', sans-serif !important;
-  color: var(--rs-text-primary) !important;
+  color: #0f172a !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
   backdrop-filter: blur(20px) saturate(200%) !important;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255,255,255,0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05), inset 0 1px 2px rgba(255, 255, 255, 0.9) !important;
   gap: 16px !important;
   flex-wrap: wrap !important;
   width: 100% !important;
@@ -183,15 +183,15 @@
 }
 
 .rs-title-stats-bar:hover {
-  border-color: rgba(255, 255, 255, 0.18) !important;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45) !important;
+  border-color: rgba(203, 213, 225, 0.9) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08) !important;
   transform: translateY(-1px) !important;
 }
 
 .rs-ts-item {
   flex: 1 1 auto !important;
   text-align: center !important;
-  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-right: 1px solid rgba(226, 232, 240, 0.8) !important;
   padding: 4px 8px !important;
   min-width: 100px !important;
 }
@@ -204,7 +204,7 @@
   font-size: 10px !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
-  color: var(--rs-text-secondary) !important;
+  color: #64748b !important;
   letter-spacing: 0.75px !important;
   margin-bottom: 4px !important;
 }
@@ -212,12 +212,12 @@
 .rs-ts-val {
   font-size: 14px !important;
   font-weight: 800 !important;
-  color: #ffffff !important;
+  color: #0f172a !important;
   white-space: nowrap !important;
 }
 
 .rs-ts-val.accent {
-  background: linear-gradient(135deg, #a78bfa, #06b6d4) !important;
+  background: linear-gradient(135deg, #4f46e5, #06b6d4) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
 }
@@ -509,15 +509,15 @@
 
 /* ─── 6. Profit Calculator Sidebar/Widget ───────────────────────────────── */
 .rs-calc-widget {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.75), rgba(8, 14, 28, 0.65)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(240, 246, 255, 0.65)) !important;
+  border: 1px solid rgba(226, 232, 240, 0.8) !important;
   border-radius: 20px !important;
   padding: 24px !important;
   margin: 20px 0 !important;
   font-family: 'Inter', sans-serif !important;
-  color: var(--rs-text-primary) !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255,255,255,0.08) !important;
-  backdrop-filter: var(--rs-glass) !important;
+  color: #0f172a !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.05), inset 0 1px 2px rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(24px) saturate(220%) !important;
 }
 
 .rs-calc-title {
@@ -541,20 +541,20 @@
 }
 
 .rs-calc-label {
-  color: var(--rs-text-secondary) !important;
+  color: #64748b !important;
   font-weight: 600 !important;
 }
 
 .rs-calc-value {
   font-weight: 700 !important;
-  color: #fff !important;
+  color: #0f172a !important;
 }
 
 .rs-calc-input {
   width: 100px !important;
-  background: rgba(0, 0, 0, 0.3) !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(203, 213, 225, 0.8) !important;
   border-radius: 8px !important;
   padding: 8px 12px !important;
   text-align: right !important;
@@ -562,31 +562,31 @@
   outline: none !important;
   font-weight: 800 !important;
   display: inline-block !important;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05) !important;
   height: auto !important;
   transition: all 0.2s ease !important;
 }
 
 .rs-calc-input:focus {
   border-color: var(--rs-accent-cyan) !important;
-  box-shadow: 0 0 10px rgba(6, 182, 212, 0.3) !important;
-  background: rgba(0, 0, 0, 0.4) !important;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.15), inset 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  background: #ffffff !important;
 }
 
 .rs-calc-divider {
   height: 1px !important;
-  background: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(226, 232, 240, 0.8) !important;
   margin: 16px 0 !important;
 }
 
 .rs-margin-box {
-  background: rgba(99, 102, 241, 0.06) !important;
-  border: 1px solid rgba(99, 102, 241, 0.25) !important;
+  background: rgba(99, 102, 241, 0.05) !important;
+  border: 1px solid rgba(99, 102, 241, 0.2) !important;
   border-radius: 12px !important;
   padding: 14px !important;
   text-align: center !important;
   margin-top: 18px !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02) !important;
 }
 
 .rs-margin-pct {
@@ -598,20 +598,20 @@
 }
 
 .rs-margin-box.high {
-  background: rgba(34, 197, 94, 0.06) !important;
+  background: rgba(34, 197, 94, 0.05) !important;
   border-color: rgba(34, 197, 94, 0.25) !important;
-  color: #4ade80 !important;
-  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1) !important;
+  color: #16a34a !important;
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.05) !important;
 }
-.rs-margin-box.high .rs-margin-pct { color: #4ade80 !important; }
+.rs-margin-box.high .rs-margin-pct { color: #16a34a !important; }
 
 .rs-margin-box.low {
-  background: rgba(239, 68, 68, 0.06) !important;
+  background: rgba(239, 68, 68, 0.05) !important;
   border-color: rgba(239, 68, 68, 0.25) !important;
-  color: #f87171 !important;
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1) !important;
+  color: #dc2626 !important;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.05) !important;
 }
-.rs-margin-box.low .rs-margin-pct { color: #f87171 !important; }
+.rs-margin-box.low .rs-margin-pct { color: #dc2626 !important; }
 
 .rs-auth-overlay {
   display: flex !important;
