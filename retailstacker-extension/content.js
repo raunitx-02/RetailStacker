@@ -554,7 +554,7 @@
         bar.remove();
       }
     } catch (err) {
-      console.warn("RetailStacker stats bar load error:", err);
+      console.log("RetailStacker stats bar load error:", err);
       bar.remove();
     }
   }
@@ -1057,7 +1057,7 @@
             }
           }
         } catch (err) {
-          console.warn("Storefront audit failed:", err);
+          console.log("Storefront audit failed:", err);
           auditBtn.textContent = "⚡ Audit Storefront Catalog via Xray";
           auditBtn.disabled = false;
           alert("Server connection failed. Make sure RetailStacker server is running.");
@@ -1141,10 +1141,10 @@
           document.getElementById("rs-sf-avg-rating").textContent = "—";
         }
       }).catch(err => {
-        console.warn("Auto-fetch storefront statistics failed:", err);
+        console.log("Auto-fetch storefront statistics failed:", err);
       });
     } catch (err) {
-      console.warn("Initiate auto-fetch storefront stats fail:", err);
+      console.log("Initiate auto-fetch storefront stats fail:", err);
     }
   }
 

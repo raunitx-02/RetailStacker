@@ -96,7 +96,7 @@ async function handleCheckSession() {
     });
     return data;
   } catch (err) {
-    console.warn("Background check-session failed:", err.message || err);
+    console.log("Background check-session failed:", err.message || err);
     return { loggedIn: false, error: err.message || "Unable to connect to server" };
   }
 }
@@ -113,7 +113,7 @@ async function handleLogin(email, password) {
     });
     return data;
   } catch (err) {
-    console.warn("Background login failed:", err.message || err);
+    console.log("Background login failed:", err.message || err);
     return { success: false, error: err.message || "Network error. Please try again." };
   }
 }
@@ -130,7 +130,7 @@ async function handleRegister(payload) {
     });
     return data;
   } catch (err) {
-    console.warn("Background register failed:", err.message || err);
+    console.log("Background register failed:", err.message || err);
     return { success: false, error: err.message || "Network error. Please try again." };
   }
 }
@@ -147,7 +147,7 @@ async function handleFetchXray(asins) {
     });
     return data;
   } catch (err) {
-    console.warn("Background fetch-xray failed:", err.message || err);
+    console.log("Background fetch-xray failed:", err.message || err);
     // Return unauthorized flow gracefully if status was 401
     if (err.message && err.message.includes("401")) {
       return { listings: [], gated: true, unauthorized: true };
@@ -168,7 +168,7 @@ async function handleFetchStorefront(sellerId) {
     });
     return data;
   } catch (err) {
-    console.warn("Background fetch-storefront failed:", err.message || err);
+    console.log("Background fetch-storefront failed:", err.message || err);
     return { error: err.message || "Network error or Server Timeout" };
   }
 }
@@ -179,7 +179,7 @@ async function handleFetchSuggestions(query) {
     const data = await safeFetchJson(`https://completion.amazon.in/api/2017/suggestions?limit=8&prefix=${encodeURIComponent(query)}&alias=aps&site-variant=desktop&version=2`);
     return data;
   } catch (err) {
-    console.warn("Background direct fetch-suggestions failed, trying API proxy:", err.message || err);
+    console.log("Background direct fetch-suggestions failed, trying API proxy:", err.message || err);
     try {
       const API_BASE = await getApiUrl();
       const data = await safeFetchJson(`${API_BASE}/api/extension/suggestions?q=${encodeURIComponent(query)}`, {
@@ -187,7 +187,7 @@ async function handleFetchSuggestions(query) {
       });
       return data;
     } catch (e) {
-      console.warn("Background fetch-suggestions fallback failed:", e.message || e);
+      console.log("Background fetch-suggestions fallback failed:", e.message || e);
       return { suggestions: [] };
     }
   }
