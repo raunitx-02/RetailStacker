@@ -86,7 +86,7 @@ const nav = [
   {
     label: "UGC-Video",
     icon: Video,
-    href: "https://chitraai.retailstacker.com",
+    href: "https://ugc.retailstacker.com",
   },
   {
     label: "Product Research",
