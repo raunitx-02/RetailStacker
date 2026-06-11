@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { 
   Users, IndianRupee, ShieldCheck, Edit, Trash2, CheckCircle2, 
   Search, X, KeyRound, Mail, Lock, Sparkles, LayoutDashboard, 
-  Check, Save, LogOut
+  Check, Save, LogOut, Briefcase, UserPlus
 } from "lucide-react";
 import Link from "next/link";
 import { loginAction } from "../actions/auth";
@@ -71,6 +71,7 @@ export default function AdminPanel() {
 
   // Dashboard Data
   const [users, setUsers] = useState<UserProfile[]>([]);
+  const [resellers, setResellers] = useState<UserProfile[]>([]);
   const [plans, setPlans] = useState<PlanConfig[]>([]);
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -80,6 +81,7 @@ export default function AdminPanel() {
   });
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [resellerSearchQuery, setResellerSearchQuery] = useState("");
 
   // Edit Modals State
   const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
@@ -95,6 +97,15 @@ export default function AdminPanel() {
   const [editPlanDesc, setEditPlanDesc] = useState("");
   const [editPlanFeatures, setEditPlanFeatures] = useState<string[]>([]);
   const [planModalLoading, setPlanModalLoading] = useState(false);
+
+  // Appoint Reseller Modal State
+  const [isAppointModalOpen, setIsAppointModalOpen] = useState(false);
+  const [appointFirstName, setAppointFirstName] = useState("");
+  const [appointLastName, setAppointLastName] = useState("");
+  const [appointEmail, setAppointEmail] = useState("");
+  const [appointMobile, setAppointMobile] = useState("");
+  const [appointPassword, setAppointPassword] = useState("");
+  const [appointModalLoading, setAppointModalLoading] = useState(false);
 
   // Authenticate Admin on render
   useEffect(() => {
@@ -116,6 +127,13 @@ export default function AdminPanel() {
         const plansData = await plansRes.json();
         if (plansData.success) {
           setPlans(plansData.plans);
+        }
+
+        // Fetch resellers
+        const resellersRes = await fetch("/api/admin/resellers");
+        const resellersData = await resellersRes.json();
+        if (resellersData.success) {
+          setResellers(resellersData.resellers);
         }
       } else {
         setAuthenticated(false);
@@ -207,6 +225,63 @@ export default function AdminPanel() {
     }
   };
 
+  const handleAppointReseller = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAppointModalLoading(true);
+    try {
+      const res = await fetch("/api/admin/resellers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "create",
+          firstName: appointFirstName,
+          lastName: appointLastName,
+          email: appointEmail,
+          mobile: appointMobile,
+          password: appointPassword
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setIsAppointModalOpen(false);
+        setAppointFirstName("");
+        setAppointLastName("");
+        setAppointEmail("");
+        setAppointMobile("");
+        setAppointPassword("");
+        fetchData();
+      } else {
+        alert(data.error || "Failed to appoint reseller");
+      }
+    } catch (err) {
+      alert("Error appointing reseller");
+    } finally {
+      setAppointModalLoading(false);
+    }
+  };
+
+  const handleDeleteReseller = async (resellerEmail: string) => {
+    if (!confirm(`Are you sure you want to revoke reseller privileges for ${resellerEmail}?`)) return;
+    try {
+      const res = await fetch("/api/admin/resellers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "delete",
+          email: resellerEmail
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchData();
+      } else {
+        alert(data.error || "Failed to delete reseller");
+      }
+    } catch (err) {
+      alert("Error deleting reseller");
+    }
+  };
+
   const handleUpdatePlan = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingPlan) return;
@@ -275,6 +350,16 @@ export default function AdminPanel() {
       fullName.includes(q) ||
       (u.mobile && u.mobile.includes(q)) ||
       (u.plan && u.plan.toLowerCase().includes(q))
+    );
+  });
+
+  const filteredResellers = resellers.filter(r => {
+    const q = resellerSearchQuery.toLowerCase();
+    const fullName = `${r.firstName || ""} ${r.lastName || ""}`.toLowerCase();
+    return (
+      r.email.toLowerCase().includes(q) ||
+      fullName.includes(q) ||
+      (r.mobile && r.mobile.includes(q))
     );
   });
 
@@ -534,6 +619,86 @@ export default function AdminPanel() {
         </div>
       </div>
 
+      {/* Resellers Registry Section */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16, marginTop: 48, marginBottom: 16 }}>
+        <h2 style={{ fontSize: 20, fontWeight: 800, display: "flex", alignItems: "center", gap: 8 }}>
+          <Briefcase size={20} color="var(--purple)" /> Reseller Partners Registry
+        </h2>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, width: "100%", maxWidth: 500, justifyContent: "flex-end", flexWrap: "wrap" }}>
+          <div style={{ position: "relative", width: "100%", maxWidth: 280 }}>
+            <Search size={16} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+            <input 
+              type="text" 
+              placeholder="Search resellers..." 
+              value={resellerSearchQuery}
+              onChange={e => setResellerSearchQuery(e.target.value)}
+              style={{ width: "100%", padding: "10px 16px 10px 38px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--bg-card)", color: "var(--text-primary)", fontSize: 13, outline: "none" }}
+            />
+          </div>
+          <button onClick={() => setIsAppointModalOpen(true)} className="btn-accent" style={{ fontSize: 13, display: "flex", alignItems: "center", gap: 6, padding: "10px 16px" }}>
+            <UserPlus size={14} /> Appoint Reseller
+          </button>
+        </div>
+      </div>
+
+      <div className="glass-card" style={{ padding: 0, overflow: "hidden", marginBottom: 40 }}>
+        <div style={{ overflowX: "auto" }}>
+          <table className="data-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ background: "var(--bg-secondary)", borderBottom: "1px solid var(--border)" }}>
+                <th style={{ textAlign: "left", padding: "14px 20px", fontSize: 12, fontWeight: 700, color: "var(--text-secondary)" }}>RESELLER</th>
+                <th style={{ textAlign: "left", padding: "14px 20px", fontSize: 12, fontWeight: 700, color: "var(--text-secondary)" }}>MOBILE</th>
+                <th style={{ textAlign: "left", padding: "14px 20px", fontSize: 12, fontWeight: 700, color: "var(--text-secondary)" }}>ACCESS PLAN</th>
+                <th style={{ textAlign: "left", padding: "14px 20px", fontSize: 12, fontWeight: 700, color: "var(--text-secondary)" }}>APPOINTED ON</th>
+                <th style={{ textAlign: "right", padding: "14px 20px", fontSize: 12, fontWeight: 700, color: "var(--text-secondary)" }}>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredResellers.map(r => (
+                <tr key={r.email} style={{ borderBottom: "1px solid var(--border)" }}>
+                  <td style={{ padding: "14px 20px" }}>
+                    <div style={{ fontWeight: 600, fontSize: 14 }}>{r.firstName} {r.lastName}</div>
+                    <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>{r.email}</div>
+                  </td>
+                  <td style={{ padding: "14px 20px", fontSize: 13, color: "var(--text-secondary)" }}>
+                    {r.mobile || "N/A"}
+                  </td>
+                  <td style={{ padding: "14px 20px" }}>
+                    <span style={{ 
+                      padding: "4px 10px", borderRadius: 6, fontSize: 12, fontWeight: 700,
+                      background: "var(--purple-muted)",
+                      color: "var(--purple)",
+                      border: "1px solid var(--border)"
+                    }}>
+                      {r.plan || "Diamond"}
+                    </span>
+                  </td>
+                  <td style={{ padding: "14px 20px", fontSize: 13, color: "var(--text-muted)" }}>
+                    {new Date(r.createdAt || Date.now()).toLocaleDateString("en-IN")}
+                  </td>
+                  <td style={{ padding: "14px 20px", textAlign: "right" }}>
+                    <button 
+                      onClick={() => handleDeleteReseller(r.email)}
+                      style={{ border: "none", background: "none", cursor: "pointer", color: "var(--danger)", padding: 6, borderRadius: 6 }}
+                      title="Revoke Reseller Partner Privileges"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {filteredResellers.length === 0 && (
+                <tr>
+                  <td colSpan={5} style={{ padding: "40px", textAlign: "center", color: "var(--text-muted)" }}>
+                    No reseller partner accounts match the query or exist.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       {/* ── EDIT PLAN MODAL ── */}
       {editingPlan && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 16 }}>
@@ -649,6 +814,60 @@ export default function AdminPanel() {
                 <button type="submit" disabled={userModalLoading} className="btn-accent" style={{ flex: 1, padding: 14, borderRadius: 10, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                   {userModalLoading ? "Saving Changes..." : "Save Profile Details"}
                   {!userModalLoading && <CheckCircle2 size={16} />}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── APPOINT RESELLER MODAL ── */}
+      {isAppointModalOpen && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 16 }}>
+          <div className="glass-card" style={{ width: "100%", maxWidth: 500, padding: 32 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
+              <h3 style={{ fontSize: 20, fontWeight: 900 }}>Appoint New Reseller Partner</h3>
+              <button onClick={() => setIsAppointModalOpen(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)" }}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleAppointReseller} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 6 }}>First Name</label>
+                  <input type="text" value={appointFirstName} onChange={e => setAppointFirstName(e.target.value)} required
+                    style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 6 }}>Last Name</label>
+                  <input type="text" value={appointLastName} onChange={e => setAppointLastName(e.target.value)} required
+                    style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 6 }}>Email Address</label>
+                <input type="email" value={appointEmail} onChange={e => setAppointEmail(e.target.value)} required
+                  style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 6 }}>Mobile Number</label>
+                <input type="tel" value={appointMobile} onChange={e => setAppointMobile(e.target.value)} required
+                  style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+              </div>
+
+              <div>
+                <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", display: "block", marginBottom: 6 }}>Temporary Password</label>
+                <input type="password" value={appointPassword} onChange={e => setAppointPassword(e.target.value)} required
+                  style={{ width: "100%", padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+              </div>
+
+              <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+                <button type="submit" disabled={appointModalLoading} className="btn-accent" style={{ flex: 1, padding: 14, borderRadius: 10, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                  {appointModalLoading ? "Appointing Partner..." : "Appoint Reseller Partner"}
+                  {!appointModalLoading && <CheckCircle2 size={16} />}
                 </button>
               </div>
             </form>

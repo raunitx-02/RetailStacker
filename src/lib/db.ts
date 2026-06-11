@@ -133,6 +133,11 @@ export const getAllUsers = () => {
   return db.users.filter((u: any) => u.role !== "reseller" && u.role !== "admin");
 };
 
+export const getAllResellers = () => {
+  const db = getDB();
+  return db.users.filter((u: any) => u.role === "reseller");
+};
+
 export const setOtp = (email: string, otp: string) => {
   const db = getDB();
   db.otps[email] = { otp, expires: Date.now() + 10 * 60 * 1000 }; // 10 min
