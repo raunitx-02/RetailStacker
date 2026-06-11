@@ -105,7 +105,15 @@ export const savePlans = (plans: any[]) => {
 
 export const findUser = (email: string) => {
   const db = getDB();
-  return db.users.find((u: any) => u.email === email);
+  const user = db.users.find((u: any) => u.email === email);
+  if (user && user.plan && user.plan !== "Free" && user.planExpiresAt && Date.now() > user.planExpiresAt) {
+    user.plan = "Free";
+    user.planExpiresAt = null;
+    const idx = db.users.findIndex((u: any) => u.email === email);
+    db.users[idx] = user;
+    saveDB(db);
+  }
+  return user;
 };
 
 export const saveUser = (user: any) => {

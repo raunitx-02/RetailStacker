@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
       return corsResponse(req, NextResponse.json({ loggedIn: false }));
     }
 
-    const userPlan = cookieStore.get("retailstacker_plan")?.value || user.plan || "Free";
+    const userPlan = user.plan || "Free";
 
     return corsResponse(req, NextResponse.json({
       loggedIn: true,

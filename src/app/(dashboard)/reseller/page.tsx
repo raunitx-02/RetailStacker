@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { fetchUsersAction, activatePlanAction, deleteUserAction, createUserAction } from "../../actions/reseller";
-import { ShieldAlert, UserPlus, Search, Trash2, ShieldCheck, Mail, Calendar, KeyRound } from "lucide-react";
+import { ShieldAlert, UserPlus, Search, Trash2, Mail, Calendar, KeyRound, User, Phone } from "lucide-react";
 
 export default function ResellerPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -10,9 +10,14 @@ export default function ResellerPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   
+  // New User Fields
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [newPlan, setNewPlan] = useState("Free");
+  const [newFirstName, setNewFirstName] = useState("");
+  const [newLastName, setNewLastName] = useState("");
+  const [newMobile, setNewMobile] = useState("");
+  const [newPlan, setNewPlan] = useState("Lite");
+  const [newValidity, setNewValidity] = useState("1 Month");
 
   const loadUsers = async () => {
     try {
@@ -29,12 +34,12 @@ export default function ResellerPage() {
     loadUsers();
   }, []);
 
-  const handleActivatePlan = async (email: string, plan: string) => {
+  const handleUpdatePlanAndValidity = async (email: string, plan: string, validity: string) => {
     try {
-      await activatePlanAction(email, plan);
+      await activatePlanAction(email, plan, validity);
       await loadUsers();
     } catch (e) {
-      alert("Failed to activate plan");
+      alert("Failed to update user subscription");
     }
   };
 
@@ -51,10 +56,22 @@ export default function ResellerPage() {
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createUserAction(newEmail, newPassword, newPlan);
+      await createUserAction(
+        newEmail, 
+        newPassword, 
+        newPlan, 
+        newFirstName, 
+        newLastName, 
+        newMobile, 
+        newValidity
+      );
       setNewEmail("");
       setNewPassword("");
-      setNewPlan("Free");
+      setNewFirstName("");
+      setNewLastName("");
+      setNewMobile("");
+      setNewPlan("Lite");
+      setNewValidity("1 Month");
       setIsCreateModalOpen(false);
       await loadUsers();
     } catch (err: any) {
@@ -62,22 +79,26 @@ export default function ResellerPage() {
     }
   };
 
-  const filteredUsers = users.filter(u => u.email.toLowerCase().includes(searchTerm.toLowerCase()));
+  const filteredUsers = users.filter(u => {
+    const q = searchTerm.toLowerCase();
+    const fullName = `${u.firstName || ""} ${u.lastName || ""}`.toLowerCase();
+    return u.email.toLowerCase().includes(q) || fullName.includes(q) || (u.mobile && u.mobile.includes(q));
+  });
 
-  if (loading) return <div style={{ padding: 40 }}>Loading Reseller Panel...</div>;
+  if (loading) return <div style={{ padding: 40, background: "var(--bg-primary)", minHeight: "100vh", color: "var(--text-primary)" }}>Loading Reseller Panel...</div>;
 
   return (
     <div style={{ padding: "32px 40px", maxWidth: 1200, margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 32 }}>
         <div>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 12px", background: "var(--warning-muted)", color: "var(--warning)", borderRadius: 50, fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 12 }}>
-            <ShieldAlert size={14} /> Reseller Admin Access
+            <ShieldAlert size={14} /> Reseller Access Mode
           </div>
-          <h1 className="page-title">User Management</h1>
-          <p className="page-subtitle">Activate plans and manage registered users.</p>
+          <h1 className="page-title">User Subscription Registry</h1>
+          <p className="page-subtitle">Add users, customize plans, set mobile numbers, and define plan validity.</p>
         </div>
         <button className="btn-accent" onClick={() => setIsCreateModalOpen(true)} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <UserPlus size={18} /> Add New User
+          <UserPlus size={18} /> Add New Customer
         </button>
       </div>
 
@@ -85,7 +106,7 @@ export default function ResellerPage() {
         <Search size={20} color="var(--text-muted)" />
         <input 
           type="text" 
-          placeholder="Search users by email..." 
+          placeholder="Search customers by email, name, or phone..." 
           value={searchTerm}
           onChange={e => setSearchTerm(e.target.value)}
           style={{ flex: 1, background: "transparent", border: "none", color: "white", fontSize: 16, outline: "none" }}
@@ -96,55 +117,88 @@ export default function ResellerPage() {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "var(--bg-secondary)", borderBottom: "1px solid var(--border)", textAlign: "left" }}>
-              <th style={{ padding: "16px 24px", color: "var(--text-muted)", fontSize: 13, fontWeight: 700 }}>EMAIL ADDRESS</th>
-              <th style={{ padding: "16px 24px", color: "var(--text-muted)", fontSize: 13, fontWeight: 700 }}>JOINED</th>
-              <th style={{ padding: "16px 24px", color: "var(--text-muted)", fontSize: 13, fontWeight: 700 }}>CURRENT PLAN</th>
-              <th style={{ padding: "16px 24px", color: "var(--text-muted)", fontSize: 13, fontWeight: 700 }}>ACTIONS</th>
+              <th style={{ padding: "16px 24px", color: "var(--text-muted)", fontSize: 13, fontWeight: 700 }}>CUSTOMER DETAILS</th>
+              <th style={{ padding: "16px 24px", color: "var(--text-muted)", fontSize: 13, fontWeight: 700 }}>MOBILE</th>
+              <th style={{ padding: "16px 24px", color: "var(--text-muted)", fontSize: 13, fontWeight: 700 }}>SUBSCRIPTION TIER & VALIDITY</th>
+              <th style={{ padding: "16px 24px", color: "var(--text-muted)", fontSize: 13, fontWeight: 700 }}>EXPIRES ON</th>
+              <th style={{ padding: "16px 24px", color: "var(--text-muted)", fontSize: 13, fontWeight: 700, textAlign: "right" }}>ACTIONS</th>
             </tr>
           </thead>
           <tbody>
             {filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan={4} style={{ padding: 40, textAlign: "center", color: "var(--text-muted)" }}>No users found.</td>
+                <td colSpan={5} style={{ padding: 40, textAlign: "center", color: "var(--text-muted)" }}>No customers registered.</td>
               </tr>
             ) : filteredUsers.map(user => (
               <tr key={user.email} style={{ borderBottom: "1px solid var(--border)" }}>
                 <td style={{ padding: "16px 24px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                     <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--accent-muted)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent)", fontWeight: 700 }}>
-                      {user.email.charAt(0).toUpperCase()}
+                      {(user.firstName || user.email).charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{user.email}</div>
+                      <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{user.firstName} {user.lastName}</div>
+                      <div style={{ fontSize: 12, color: "var(--text-muted)" }}>{user.email}</div>
                     </div>
                   </div>
                 </td>
-                <td style={{ padding: "16px 24px", color: "var(--text-muted)", fontSize: 14 }}>
-                  {new Date(user.createdAt).toLocaleDateString()}
+                <td style={{ padding: "16px 24px", color: "var(--text-secondary)", fontSize: 14 }}>
+                  {user.mobile || "N/A"}
                 </td>
                 <td style={{ padding: "16px 24px" }}>
-                  <select 
-                    value={user.plan}
-                    onChange={(e) => handleActivatePlan(user.email, e.target.value)}
-                    style={{
-                      background: user.plan === "Diamond" ? "rgba(155, 48, 255, 0.15)" : user.plan === "Pro" ? "rgba(4, 123, 213, 0.15)" : "var(--bg-secondary)",
-                      color: user.plan === "Diamond" ? "var(--purple)" : user.plan === "Pro" ? "var(--accent)" : "var(--text-muted)",
-                      border: `1px solid ${user.plan === "Diamond" ? "var(--purple)" : user.plan === "Pro" ? "var(--accent)" : "var(--border)"}`,
-                      padding: "6px 12px",
-                      borderRadius: 6,
-                      fontSize: 13,
-                      fontWeight: 700,
-                      outline: "none",
-                      cursor: "pointer"
-                    }}
-                  >
-                    <option value="Free">Free Plan</option>
-                    <option value="Pro">Pro Plan</option>
-                    <option value="Diamond">Diamond Plan</option>
-                  </select>
+                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                    <select 
+                      value={user.plan}
+                      onChange={(e) => handleUpdatePlanAndValidity(user.email, e.target.value, user.planValidity)}
+                      style={{
+                        background: user.plan === "Diamond" ? "rgba(155, 48, 255, 0.15)" : user.plan === "Growth" ? "rgba(255, 107, 53, 0.15)" : "var(--bg-secondary)",
+                        color: user.plan === "Diamond" ? "var(--purple)" : user.plan === "Growth" ? "var(--accent)" : "var(--text-primary)",
+                        border: `1px solid ${user.plan === "Diamond" ? "var(--purple)" : user.plan === "Growth" ? "var(--accent)" : "var(--border)"}`,
+                        padding: "6px 12px",
+                        borderRadius: 6,
+                        fontSize: 13,
+                        fontWeight: 700,
+                        outline: "none",
+                        cursor: "pointer"
+                      }}
+                    >
+                      <option value="Free">Free Plan</option>
+                      <option value="Lite">Lite Plan</option>
+                      <option value="Starter">Starter Plan</option>
+                      <option value="Growth">Growth Plan</option>
+                      <option value="Diamond">Diamond Plan</option>
+                    </select>
+
+                    <select 
+                      value={user.planValidity}
+                      onChange={(e) => handleUpdatePlanAndValidity(user.email, user.plan, e.target.value)}
+                      style={{
+                        background: "var(--bg-secondary)",
+                        color: "var(--text-secondary)",
+                        border: "1px solid var(--border)",
+                        padding: "6px 12px",
+                        borderRadius: 6,
+                        fontSize: 13,
+                        fontWeight: 600,
+                        outline: "none",
+                        cursor: "pointer"
+                      }}
+                    >
+                      <option value="1 Month">1 Month</option>
+                      <option value="3 Months">3 Months</option>
+                      <option value="6 Months">6 Months</option>
+                      <option value="1 Year">1 Year</option>
+                      <option value="Lifetime">Lifetime</option>
+                    </select>
+                  </div>
                 </td>
-                <td style={{ padding: "16px 24px" }}>
-                  <button onClick={() => handleDeleteUser(user.email)} style={{ background: "transparent", border: "none", color: "var(--danger)", cursor: "pointer", padding: 8, borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <td style={{ padding: "16px 24px", color: "var(--text-muted)", fontSize: 13 }}>
+                  {user.planExpiresAt 
+                    ? new Date(user.planExpiresAt).toLocaleDateString("en-IN") 
+                    : "Lifetime (Never)"}
+                </td>
+                <td style={{ padding: "16px 24px", textAlign: "right" }}>
+                  <button onClick={() => handleDeleteUser(user.email)} style={{ background: "transparent", border: "none", color: "var(--danger)", cursor: "pointer", padding: 8, borderRadius: 8, marginLeft: "auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Trash2 size={18} />
                   </button>
                 </td>
@@ -156,33 +210,77 @@ export default function ResellerPage() {
 
       {isCreateModalOpen && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
-          <div className="glass-card" style={{ width: 400, padding: 32 }}>
+          <div className="glass-card" style={{ width: 440, padding: 32 }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24, display: "flex", alignItems: "center", gap: 10 }}>
-              <UserPlus size={20} color="var(--accent)" /> Create User
+              <UserPlus size={20} color="var(--accent)" /> Appoint New User
             </h2>
             <form onSubmit={handleCreateUser} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Email Address</label>
-                <div style={{ position: "relative" }}>
-                  <Mail size={16} color="var(--text-muted)" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
-                  <input type="email" required value={newEmail} onChange={e => setNewEmail(e.target.value)} style={{ width: "100%", padding: "10px 12px 10px 36px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none" }} />
+              
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>First Name</label>
+                  <div style={{ position: "relative" }}>
+                    <User size={15} color="var(--text-muted)" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
+                    <input type="text" required value={newFirstName} onChange={e => setNewFirstName(e.target.value)} style={{ width: "100%", padding: "10px 10px 10px 32px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13 }} />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Last Name</label>
+                  <div style={{ position: "relative" }}>
+                    <User size={15} color="var(--text-muted)" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
+                    <input type="text" required value={newLastName} onChange={e => setNewLastName(e.target.value)} style={{ width: "100%", padding: "10px 10px 10px 32px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13 }} />
+                  </div>
                 </div>
               </div>
+
               <div>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Temporary Password</label>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Mobile Number</label>
                 <div style={{ position: "relative" }}>
-                  <KeyRound size={16} color="var(--text-muted)" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }} />
-                  <input type="password" required value={newPassword} onChange={e => setNewPassword(e.target.value)} style={{ width: "100%", padding: "10px 12px 10px 36px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none" }} />
+                  <Phone size={15} color="var(--text-muted)" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
+                  <input type="tel" required value={newMobile} onChange={e => setNewMobile(e.target.value)} style={{ width: "100%", padding: "10px 10px 10px 32px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13 }} />
                 </div>
               </div>
+
               <div>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Initial Plan</label>
-                <select value={newPlan} onChange={e => setNewPlan(e.target.value)} style={{ width: "100%", padding: "10px 12px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none" }}>
-                  <option value="Free">Free</option>
-                  <option value="Pro">Pro</option>
-                  <option value="Diamond">Diamond</option>
-                </select>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Email Address</label>
+                <div style={{ position: "relative" }}>
+                  <Mail size={15} color="var(--text-muted)" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
+                  <input type="email" required value={newEmail} onChange={e => setNewEmail(e.target.value)} style={{ width: "100%", padding: "10px 10px 10px 32px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13 }} />
+                </div>
               </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Temporary Password</label>
+                <div style={{ position: "relative" }}>
+                  <KeyRound size={15} color="var(--text-muted)" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
+                  <input type="password" required value={newPassword} onChange={e => setNewPassword(e.target.value)} style={{ width: "100%", padding: "10px 10px 10px 32px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13 }} />
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Subscription Tier</label>
+                  <select value={newPlan} onChange={e => setNewPlan(e.target.value)} style={{ width: "100%", padding: "10px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13, cursor: "pointer" }}>
+                    <option value="Free">Free</option>
+                    <option value="Lite">Lite</option>
+                    <option value="Starter">Starter</option>
+                    <option value="Growth">Growth</option>
+                    <option value="Diamond">Diamond</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Plan Validity</label>
+                  <select value={newValidity} onChange={e => setNewValidity(e.target.value)} style={{ width: "100%", padding: "10px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13, cursor: "pointer" }}>
+                    <option value="1 Month">1 Month</option>
+                    <option value="3 Months">3 Months</option>
+                    <option value="6 Months">6 Months</option>
+                    <option value="1 Year">1 Year</option>
+                    <option value="Lifetime">Lifetime</option>
+                  </select>
+                </div>
+              </div>
+
               <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
                 <button type="button" onClick={() => setIsCreateModalOpen(false)} style={{ flex: 1, padding: 12, background: "transparent", border: "1px solid var(--border)", borderRadius: 8, color: "white", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
                 <button type="submit" className="btn-accent" style={{ flex: 1, padding: 12, borderRadius: 8, fontWeight: 600 }}>Create Account</button>
