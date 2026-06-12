@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>RetailStacker Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg-main: #060b13;
+        --bg-panel: rgba(13, 22, 38, 0.7);
+        --border-glass: rgba(255, 255, 255, 0.08);
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --accent-blue: #1a56db;
+        --accent-cyan: #06b6d4;
+        --accent-gradient: linear-gradient(135deg, #1a56db, #06b6d4);
+        --card-glow: rgba(6, 182, 212, 0.15);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        width: 340px;
+        font-family: 'Inter', sans-serif;
+        background: var(--bg-main);
+        color: var(--text-primary);
+        padding: 20px;
+        overflow-x: hidden;
+      }
+
+      /* Base Panel with glassmorphism */
+      .container {
+        width: 100%;
+        background: var(--bg-panel);
+        border: 1px solid var(--border-glass);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+      }
+
+      /* Header Logo and Styling */
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: var(--accent-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 18px;
+        color: #fff;
+        box-shadow: 0 0 12px var(--card-glow);
+      }
+
+      .logo-text {
+        font-size: 20px;
+        font-weight: 800;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+      }
+
+      /* Auth State and forms */
+      .state-section {
+        display: none;
+      }
+
+      .state-section.active {
+        display: block;
+      }
+
+      /* Tab Selector */
+      .tabs {
+        display: flex;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 4px;
+        margin-bottom: 16px;
+      }
+
+      .tab-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        padding: 8px 0;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .tab-btn.active {
+        background: var(--accent-blue);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(26, 86, 219, 0.4);
+      }
+
+      /* Input Forms */
+      .form-group {
+        margin-bottom: 12px;
+        position: relative;
+      }
+
+      .form-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        padding: 10px 12px;
+        color: #fff;
+        font-size: 13px;
+        outline: none;
+        transition: all 0.2s ease;
+      }
+
+      .form-input:focus {
+        border-color: var(--accent-cyan);
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 8px rgba(6, 182, 212, 0.2);
+      }
+
+      .submit-btn {
+        width: 100%;
+        background: var(--accent-gradient);
+        border: none;
+        border-radius: 8px;
+        padding: 11px;
+        color: #fff;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 10px;
+        box-shadow: 0 4px 12px rgba(26, 86, 219, 0.3);
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(6, 182, 212, 0.4);
+      }
+
+      /* Error text */
+      .error-msg {
+        color: #ef4444;
+        font-size: 12px;
+        margin-top: 6px;
+        display: none;
+        text-align: center;
+      }
+
+      /* Google Sign In */
+      .google-btn {
+        width: 100%;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px;
+        color: #1e293b;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 12px;
+        transition: all 0.2s ease;
+      }
+
+      .google-btn:hover {
+        background: #f8fafc;
+        transform: translateY(-1px);
+      }
+
+      .google-icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      /* Logged In Dashboard Dashboard */
+      .profile-info {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 16px;
+      }
+
+      .profile-email {
+        font-size: 13px;
+        color: var(--text-secondary);
+        word-break: break-all;
+        margin-bottom: 6px;
+      }
+
+      .plan-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 99px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(26, 86, 219, 0.15));
+        color: var(--accent-cyan);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        box-shadow: 0 0 8px rgba(6, 182, 212, 0.1);
+      }
+
+      .plan-badge.diamond {
+        background: linear-gradient(135deg, rgba(236, 72, 153, 0.15), rgba(168, 85, 247, 0.15));
+        color: #d8b4fe;
+        border-color: rgba(168, 85, 247, 0.3);
+      }
+
+      .plan-badge.growth {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(99, 102, 241, 0.15));
+        color: #93c5fd;
+        border-color: rgba(59, 130, 246, 0.3);
+      }
+
+      /* Quick Links list */
+      .links-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+        text-align: left;
+      }
+
+      .quick-links {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .link-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 8px;
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .link-item:hover {
+        background: rgba(255, 255, 255, 0.06);
+        border-color: rgba(255, 255, 255, 0.08);
+        transform: translateX(2px);
+      }
+
+      .link-item-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .link-icon {
+        font-size: 14px;
+      }
+
+      .link-arrow {
+        color: var(--text-secondary);
+        font-size: 11px;
+      }
+
+      .logout-btn {
+        width: 100%;
+        background: transparent;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: #f87171;
+        border-radius: 8px;
+        padding: 9px;
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+        margin-top: 12px;
+        transition: all 0.2s ease;
+      }
+
+      .logout-btn:hover {
+        background: rgba(239, 68, 68, 0.06);
+        border-color: rgba(239, 68, 68, 0.3);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <img src="icons/icon48.png" style="width: 24px; height: 24px; object-fit: contain;" alt="logo">
+        <div class="logo-text">RetailStacker</div>
+      </div>
+
+      <!-- STATE 1: AUTHENTICATION (LOGGED OUT) -->
+      <div id="auth-section" class="state-section active">
+        <div class="tabs">
+          <button id="tab-login" class="tab-btn active">Log In</button>
+          <button id="tab-signup" class="tab-btn">Sign Up</button>
+        </div>
+
+        <form id="auth-form">
+          <!-- First Name / Last Name fields (shown only for Signup) -->
+          <div id="signup-fields" style="display: none; gap: 8px; margin-bottom: 12px;">
+            <div style="flex: 1;">
+              <input type="text" id="reg-firstname" class="form-input" placeholder="First Name">
+            </div>
+            <div style="flex: 1;">
+              <input type="text" id="reg-lastname" class="form-input" placeholder="Last Name">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <input type="email" id="auth-email" class="form-input" placeholder="Email Address" required>
+          </div>
+          
+          <div class="form-group">
+            <input type="password" id="auth-password" class="form-input" placeholder="Password" required>
+          </div>
+
+          <div id="signup-mobile-group" class="form-group" style="display: none;">
+            <input type="text" id="reg-mobile" class="form-input" placeholder="Mobile Number (Optional)">
+          </div>
+
+          <button type="submit" id="auth-submit-btn" class="submit-btn">Log In Workspace</button>
+          <div id="auth-error" class="error-msg">Invalid login credentials.</div>
+        </form>
+
+        <button id="google-login-btn" class="google-btn">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114A5.94 5.94 0 0 1 8.04 12.57a5.94 5.94 0 0 1 5.951-5.943c1.55 0 2.973.57 4.07 1.503l3.203-3.2A10.87 10.87 0 0 0 13.99 1.143c-6.07 0-10.99 4.92-10.99 10.99s4.92 10.99 10.99 10.99c6.338 0 10.536-4.453 10.536-10.714a9.6 9.6 0 0 0-.214-2.128l-12.072-.006z"/>
+          </svg>
+          Continue with Google
+        </button>
+      </div>
+
+      <!-- STATE 2: CONSOLE DASHBOARD (LOGGED IN) -->
+      <div id="dashboard-section" class="state-section">
+        <div class="profile-info">
+          <div id="user-email" class="profile-email">seller@retailstacker.com</div>
+          <div id="user-plan" class="plan-badge">Diamond Plan</div>
+        </div>
+
+        <div class="links-title">Quick Intelligence Tools</div>
+        <div class="quick-links">
+          <a href="#" id="link-dashboard" class="link-item">
+            <div class="link-item-left">
+              <span class="link-icon">📊</span>
+              <span>Seller Dashboard</span>
+            </div>
+            <span class="link-arrow">↗</span>
+          </a>
+          <a href="#" id="link-blackbox" class="link-item">
+            <div class="link-item-left">
+              <span class="link-icon">🔍</span>
+              <span>Black Box Finder</span>
+            </div>
+            <span class="link-arrow">↗</span>
+          </a>
+          <a href="#" id="link-cerebro" class="link-item">
+            <div class="link-item-left">
+              <span class="link-icon">🧠</span>
+              <span>Cerebro Reverse ASIN</span>
+            </div>
+            <span class="link-arrow">↗</span>
+          </a>
+          <a href="#" id="link-magnet" class="link-item">
+            <div class="link-item-left">
+              <span class="link-icon">🧲</span>
+              <span>Magnet Keyword Finder</span>
+            </div>
+            <span class="link-arrow">↗</span>
+          </a>
+        </div>
+
+        <button id="logout-action-btn" class="logout-btn">Disconnect Console</button>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RetailStacker Chrome Extension – Project Proposal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0a1628;
+      --navy-mid: #0f2240;
+      --blue: #1a56db;
+      --blue-light: #3b82f6;
+      --accent: #06b6d4;
+      --gold: #f59e0b;
+      --green: #10b981;
+      --red: #ef4444;
+      --text: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --bg-light: #f8fafc;
+      --bg-card: #ffffff;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: #ffffff;
+      font-size: 10.5pt;
+      line-height: 1.65;
+    }
+
+    /* ─── PAGE ─────────────────────────────────────── */
+    .page {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 48px 56px;
+    }
+
+    /* ─── HEADER BANNER ─────────────────────────────── */
+    .header-banner {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #0d2f5c 100%);
+      border-radius: 16px;
+      padding: 36px 40px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header-banner::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(26,86,219,0.4) 0%, transparent 70%);
+    }
+    .header-banner::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: 40%;
+      width: 150px; height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(6,182,212,0.25) 0%, transparent 70%);
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--accent) 100%);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 900; color: white;
+      font-family: 'Manrope', sans-serif;
+    }
+    .logo-text {
+      font-family: 'Manrope', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: white;
+    }
+    .logo-text span { color: #60a5fa; }
+
+    .proposal-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 26pt;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+      position: relative; z-index: 1;
+    }
+    .proposal-subtitle {
+      font-size: 11pt;
+      color: #93c5fd;
+      font-weight: 500;
+      position: relative; z-index: 1;
+    }
+
+    .meta-row {
+      display: flex;
+      gap: 28px;
+      margin-top: 24px;
+      position: relative; z-index: 1;
+    }
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .meta-label {
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #60a5fa;
+    }
+    .meta-value {
+      font-size: 10pt;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    /* ─── DIVIDER ───────────────────────────────────── */
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--accent), transparent);
+      border-radius: 4px;
+      margin: 28px 0;
+    }
+    .divider-light {
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+
+    /* ─── SECTION HEADING ───────────────────────────── */
+    .section-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      margin-top: 28px;
+    }
+    .section-num {
+      width: 28px; height: 28px;
+      background: linear-gradient(135deg, var(--blue), var(--accent));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9pt;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 13.5pt;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.3px;
+    }
+
+    /* ─── PARAGRAPH ─────────────────────────────────── */
+    p {
+      color: var(--text-secondary);
+      font-size: 10.5pt;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    p:last-child { margin-bottom: 0; }
+    strong { color: var(--text); font-weight: 600; }
+
+    /* ─── CARDS ─────────────────────────────────────── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .card {
+      background: var(--bg-light);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+    .card.blue-accent {
+      border-left: 3px solid var(--blue);
+    }
+    .card.cyan-accent {
+      border-left: 3px solid var(--accent);
+    }
+    .card.gold-accent {
+      border-left: 3px solid var(--gold);
+    }
+    .card.green-accent {
+      border-left: 3px solid var(--green);
+    }
+    .card-icon {
+      font-size: 20px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .card-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 10.5pt;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .card p {
+      font-size: 9.5pt;
+      margin: 0;
+    }
+
+    /* ─── FEATURE LIST ──────────────────────────────── */
+    .feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 10pt;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .feat-dot {
+      width: 22px; height: 22px;
+      min-width: 22px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--accent) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      margin-top: 1px;
+    }
+    .feat-label {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* ─── TIMELINE ──────────────────────────────────── */
+    .timeline {
+      margin: 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .timeline-item {
+      display: flex;
+      gap: 18px;
+      align-items: stretch;
+    }
+    .timeline-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+    .tl-dot {
+      width: 34px; height: 34px;
+      min-width: 34px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10pt;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+    }
+    .tl-line {
+      width: 2px;
+      background: linear-gradient(to bottom, var(--blue-light), var(--border));
+      flex: 1;
+      margin: 4px 0;
+      min-height: 16px;
+    }
+    .timeline-item:last-child .tl-line { display: none; }
+    .timeline-content {
+      padding-bottom: 20px;
+      flex: 1;
+    }
+    .tl-phase {
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--blue-light);
+      margin-bottom: 2px;
+    }
+    .tl-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 11pt;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .tl-time {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #eff6ff;
+      color: var(--blue);
+      font-size: 8.5pt;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 6px;
+    }
+    .tl-desc {
+      font-size: 9.5pt;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ─── PRICING TABLE ─────────────────────────────── */
+    .pricing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 10pt;
+    }
+    .pricing-table thead tr {
+      background: linear-gradient(90deg, var(--navy), var(--navy-mid));
+      color: white;
+    }
+    .pricing-table th {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 9pt;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .pricing-table th:first-child { border-radius: 10px 0 0 10px; }
+    .pricing-table th:last-child { border-radius: 0 10px 10px 0; }
+    .pricing-table td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+    .pricing-table tr:last-child td { border-bottom: none; }
+    .pricing-table tr:nth-child(even) td { background: var(--bg-light); }
+    .pricing-table td:first-child { font-weight: 600; color: var(--text); }
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 8.5pt;
+      font-weight: 700;
+    }
+    .badge-blue { background: #eff6ff; color: var(--blue); }
+    .badge-green { background: #f0fdf4; color: var(--green); }
+    .badge-gold { background: #fffbeb; color: #d97706; }
+    .badge-red { background: #fef2f2; color: var(--red); }
+
+    /* ─── TECH STACK ROW ─────────────────────────────── */
+    .tech-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .tech-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-light);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 9.5pt;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .tech-pill-icon {
+      font-size: 14px;
+    }
+
+    /* ─── SUMMARY BOX ───────────────────────────────── */
+    .summary-box {
+      background: linear-gradient(135deg, var(--navy) 0%, #0d2f5c 100%);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-top: 28px;
+      color: white;
+    }
+    .summary-box h3 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 14pt;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: white;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      margin-top: 16px;
+    }
+    .summary-stat-label {
+      font-size: 8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #60a5fa;
+      margin-bottom: 4px;
+    }
+    .summary-stat-value {
+      font-family: 'Manrope', sans-serif;
+      font-size: 20pt;
+      font-weight: 800;
+      color: white;
+      line-height: 1.1;
+    }
+    .summary-stat-sub {
+      font-size: 9pt;
+      color: #93c5fd;
+      margin-top: 2px;
+    }
+
+    /* ─── SIGNATURE ─────────────────────────────────── */
+    .signature-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 32px;
+    }
+    .signature-box {
+      border-top: 2px solid var(--navy);
+      padding-top: 10px;
+      min-width: 200px;
+      text-align: center;
+    }
+    .signature-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: 11pt;
+      font-weight: 800;
+      color: var(--navy);
+    }
+    .signature-title {
+      font-size: 9pt;
+      color: var(--text-muted);
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────── */
+    .footer {
+      margin-top: 36px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-brand {
+      font-family: 'Manrope', sans-serif;
+      font-size: 10pt;
+      font-weight: 800;
+      color: var(--navy);
+    }
+    .footer-brand span { color: var(--blue); }
+    .footer-note {
+      font-size: 8.5pt;
+      color: var(--text-muted);
+    }
+
+    /* ─── PRINT ──────────────────────────────────────── */
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .page { padding: 32px 40px; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="header-banner">
+    <div class="brand-logo">
+      <div class="logo-icon">R</div>
+      <div class="logo-text">Retail<span>Stacker</span></div>
+    </div>
+    <div class="proposal-title">Chrome Extension<br>Project Proposal</div>
+    <div class="proposal-subtitle">RetailStacker Intelligence — Injected Directly Into Amazon India</div>
+    <div class="meta-row">
+      <div class="meta-item">
+        <div class="meta-label">Date</div>
+        <div class="meta-value">02 June 2026</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Prepared By</div>
+        <div class="meta-value">Raunit Raj</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Project Type</div>
+        <div class="meta-value">SaaS Feature Expansion</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Platform</div>
+        <div class="meta-value">Google Chrome (MV3)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 1. EXECUTIVE SUMMARY ═══ -->
+  <div class="section-heading">
+    <div class="section-num">1</div>
+    <div class="section-title">Executive Summary</div>
+  </div>
+  <p>
+    This proposal outlines the development of the <strong>RetailStacker Chrome Extension</strong> — a browser-native intelligence tool that injects powerful seller analytics directly into Amazon India's product pages and search results. Inspired by the functionality of Helium 10's Chrome Extension, this tool is purpose-built and specifically calibrated for the <strong>Indian e-commerce market</strong>, covering Amazon India, Flipkart, and Meesho.
+  </p>
+  <p>
+    Since the core intelligence engine, API integrations (Keepa, FBA fee calculations, revenue estimation models), and user authentication infrastructure of RetailStacker are already fully operational, the development effort required is significantly reduced, allowing a highly polished, production-ready MVP to be delivered within an estimated <strong>30 to 36 development hours</strong>.
+  </p>
+
+  <div class="divider"></div>
+
+  <!-- ═══ 2. THE PROBLEM ═══ -->
+  <div class="section-heading">
+    <div class="section-num">2</div>
+    <div class="section-title">The Problem We're Solving</div>
+  </div>
+  <p>
+    Today, Indian Amazon sellers are forced to switch between their seller dashboard, RetailStacker's web platform, and Amazon itself to gather critical market intelligence. This fragmented workflow wastes time and causes sellers to miss real-time opportunities. Global competitors like Helium 10 offer a browser extension that eliminates this friction, but it is <strong>not optimised for Indian pricing, logistics, GST, or regional marketplaces</strong>.
+  </p>
+
+  <div class="card-grid" style="grid-template-columns: 1fr 1fr 1fr; margin-top: 14px;">
+    <div class="card blue-accent">
+      <span class="card-icon">⏱️</span>
+      <div class="card-title">Time Lost</div>
+      <p>Sellers toggle between 4–6 tabs to manually compile product intelligence that should be instant.</p>
+    </div>
+    <div class="card gold-accent">
+      <span class="card-icon">🌐</span>
+      <div class="card-title">Global Tools, Indian Gap</div>
+      <p>No existing extension is built for Amazon India's fee structure, regional shipping, and GST compliance.</p>
+    </div>
+    <div class="card green-accent">
+      <span class="card-icon">📉</span>
+      <div class="card-title">Missed Opportunities</div>
+      <p>Without real-time competitor data on the page, sellers list at the wrong price and lose the Buy Box.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ 3. PROPOSED SOLUTION ═══ -->
+  <div class="section-heading">
+    <div class="section-num">3</div>
+    <div class="section-title">Proposed Solution</div>
+  </div>
+  <p>
+    The <strong>RetailStacker Chrome Extension</strong> will be a Manifest V3 (MV3) compliant browser extension that embeds a premium, dark-mode intelligence layer directly within Amazon India. The extension will communicate with the existing RetailStacker backend, ensuring all data is live, accurate, and gated behind the user's active subscription plan.
+  </p>
+
+  <ul class="feature-list" style="margin-top: 14px;">
+    <li>
+      <div class="feat-dot">🔍</div>
+      <div><span class="feat-label">Xray — Live Product Intelligence:</span> On any Amazon.in search page, a floating "Scan with RetailStacker" button overlays an interactive data table showing BSR, estimated monthly sales, revenue, active seller count, and review velocity for every product on the page.</div>
+    </li>
+    <li>
+      <div class="feat-dot">👥</div>
+      <div><span class="feat-label">Active Sellers Counter:</span> Instantly reveals whether a listing is Private Label (1 seller) or Wholesale / Arbitrage territory (multiple sellers). A critical signal for sourcing decisions that no Indian tool currently provides inline.</div>
+    </li>
+    <li>
+      <div class="feat-dot">💰</div>
+      <div><span class="feat-label">India-Specific Profit Calculator:</span> On individual product pages, a pop-up calculator uses the product's actual weight and dimensions to compute exact Amazon India referral fees, FBA/Easy Ship fulfillment costs, and net profit margin.</div>
+    </li>
+    <li>
+      <div class="feat-dot">📋</div>
+      <div><span class="feat-label">Bulk ASIN Grabber:</span> A one-click button that copies all ASINs from any search results page to the clipboard, ready to paste into RetailStacker's Cerebro or Bulk ASIN Analyzer tool.</div>
+    </li>
+    <li>
+      <div class="feat-dot">📦</div>
+      <div><span class="feat-label">Inventory Level Indicator:</span> Displays an estimated inventory depth badge on each listing card, helping sellers identify when a competitor is running low — a prime opportunity to capture the Buy Box.</div>
+    </li>
+    <li>
+      <div class="feat-dot">🔒</div>
+      <div><span class="feat-label">Subscription-Gated Access:</span> The extension is linked to the user's existing RetailStacker account. Only active Growth or Diamond plan subscribers can access full features, driving plan upgrades and reducing churn.</div>
+    </li>
+  </ul>
+
+  <div class="divider"></div>
+
+  <!-- ═══ 4. TECH STACK ═══ -->
+  <div class="section-heading">
+    <div class="section-num">4</div>
+    <div class="section-title">Technology Stack</div>
+  </div>
+  <p>
+    The extension will be built using modern, industry-standard tooling to ensure performance, maintainability, and a premium user experience that aligns with the existing RetailStacker brand identity.
+  </p>
+  <div class="tech-pills">
+    <div class="tech-pill"><span class="tech-pill-icon">⚡</span> Plasmo Framework (Extension)</div>
+    <div class="tech-pill"><span class="tech-pill-icon">⚛️</span> React 18 (UI Layer)</div>
+    <div class="tech-pill"><span class="tech-pill-icon">🎨</span> Tailwind CSS (Styling)</div>
+    <div class="tech-pill"><span class="tech-pill-icon">🗄️</span> Next.js API (Backend)</div>
+    <div class="tech-pill"><span class="tech-pill-icon">📊</span> Keepa API (Data)</div>
+    <div class="tech-pill"><span class="tech-pill-icon">🔑</span> JWT Auth (Security)</div>
+    <div class="tech-pill"><span class="tech-pill-icon">🌐</span> Chrome MV3 (Standard)</div>
+    <div class="tech-pill"><span class="tech-pill-icon">📝</span> TypeScript (Type Safety)</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ 5. DEVELOPMENT TIMELINE ═══ -->
+  <div class="section-heading">
+    <div class="section-num">5</div>
+    <div class="section-title">Development Timeline & Phases</div>
+  </div>
+  <p>
+    Because the RetailStacker backend (Keepa integration, authentication, revenue models, FBA fee calculators) is already fully built and operational, the development scope is focused on the extension's UI layer, content injection scripts, subscription gating logic, and dedicated API endpoints. The estimated total build time is <strong>30 to 36 development hours</strong>.
+  </p>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="tl-dot" style="background: linear-gradient(135deg,#1a56db,#3b82f6);">1</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="timeline-content">
+        <div class="tl-phase">Phase 1 — Week 1</div>
+        <div class="tl-title">Foundation, Auth & Project Setup</div>
+        <div class="tl-time">⏱ 6 – 8 Hours</div>
+        <div class="tl-desc">Initialize the Plasmo + React project with TypeScript. Configure Tailwind CSS with the RetailStacker dark-mode design system and brand tokens. Build the extension popup with a premium login/signup form connected to the existing RetailStacker user authentication API. Implement JWT token storage in Chrome's secure local storage. Set up the extension manifest, permissions, and icon assets for Chrome Web Store compliance.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="tl-dot" style="background: linear-gradient(135deg,#0d9488,#06b6d4);">2</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="timeline-content">
+        <div class="tl-phase">Phase 2 — Week 1–2</div>
+        <div class="tl-title">Amazon DOM Scraping & API Bridge</div>
+        <div class="tl-time">⏱ 8 – 10 Hours</div>
+        <div class="tl-desc">Write the Content Script that runs invisibly on amazon.in. It will intelligently detect search results pages vs. individual product pages, extract all ASINs from the DOM without page reloads, and pass them to a dedicated new API route (<code style="background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:9pt;">/api/extension/xray</code>) on the RetailStacker backend. Handle rate limiting, error states, and CORS. The endpoint will return enriched live product data via Keepa. Thorough cross-page testing on amazon.in across multiple search categories.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="tl-dot" style="background: linear-gradient(135deg,#7c3aed,#a78bfa);">3</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="timeline-content">
+        <div class="tl-phase">Phase 3 — Week 2–3</div>
+        <div class="tl-title">Xray Overlay UI & Data Table</div>
+        <div class="tl-time">⏱ 8 – 10 Hours</div>
+        <div class="tl-desc">Build the animated, floating Xray data table that injects seamlessly over Amazon India search results. Columns include: Product Name, Current Price, BSR, Est. Monthly Sales, Est. Monthly Revenue, Active Seller Count, Review Count, and Rating Score. Implement full column sorting, hover tooltips, subscription-tier feature gating with upgrade prompts, and one-click CSV export. Ensure the overlay is fully responsive and does not interfere with Amazon's native page layout or performance.</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-left">
+        <div class="tl-dot" style="background: linear-gradient(135deg,#d97706,#f59e0b);">4</div>
+        <div class="tl-line"></div>
+      </div>
+      <div class="timeline-content">
+        <div class="tl-phase">Phase 4 — Week 3–4</div>
+        <div class="tl-title">Profit Calculator, QA, Polish & Submission</div>
+        <div class="tl-time">⏱ 8 – 10 Hours</div>
+        <div class="tl-desc">Inject the India-specific Profit Calculator sidebar on individual product pages, using real Amazon India referral fee slabs, Easy Ship / FBA fulfillment costs, and GST. Conduct full end-to-end QA across Chrome versions and OS platforms. Final UI polish — micro-animations, loading skeletons, and error states. Package the production build. Prepare Chrome Web Store listing assets (promotional images, screenshots, store description). Submit for Google review and handle any policy compliance feedback.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ 6. PLAN ACCESS & MONETISATION ═══ -->
+  <div class="section-heading">
+    <div class="section-num">6</div>
+    <div class="section-title">Distribution & Monetisation Strategy</div>
+  </div>
+  <p>
+    The RetailStacker Chrome Extension will be <strong>completely free to download and install</strong> from the Chrome Web Store — mirroring the exact same successful model used by Helium 10. This makes the extension our most powerful growth and acquisition channel, sitting permanently inside every Indian Amazon seller's browser and driving continuous plan upgrade conversions.
+  </p>
+  <p>
+    The extension itself is free, but the <strong>intelligence data behind it is gated by subscription tier</strong>. Free users see teaser data with locked badges and upgrade prompts, turning every browse session on Amazon India into a sales opportunity for RetailStacker's paid plans.
+  </p>
+
+  <table class="pricing-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Free (No Account)</th>
+        <th>Growth (₹5,999/mo)</th>
+        <th>Diamond (₹12,999/mo)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Install & Download Extension</td>
+        <td><span class="badge badge-green">✔ Free</span></td>
+        <td><span class="badge badge-green">✔ Free</span></td>
+        <td><span class="badge badge-green">✔ Free</span></td>
+      </tr>
+      <tr>
+        <td>Bulk ASIN Grabber</td>
+        <td><span class="badge badge-green">✔ Free</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+      </tr>
+      <tr>
+        <td>Xray Overlay (Teaser — 3/day)</td>
+        <td><span class="badge badge-gold">⭐ Limited</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+      </tr>
+      <tr>
+        <td>Active Sellers Count</td>
+        <td><span class="badge badge-red">✘ Upgrade Prompt</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+      </tr>
+      <tr>
+        <td>India Profit Calculator</td>
+        <td><span class="badge badge-red">✘ Upgrade Prompt</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+      </tr>
+      <tr>
+        <td>Full Revenue & Sales Data</td>
+        <td><span class="badge badge-red">✘ Upgrade Prompt</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+      </tr>
+      <tr>
+        <td>Inventory Level Indicator</td>
+        <td><span class="badge badge-red">✘ Upgrade Prompt</span></td>
+        <td><span class="badge badge-red">✘ Locked</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+      </tr>
+      <tr>
+        <td>Unlimited Xray Scans</td>
+        <td><span class="badge badge-red">✘ Upgrade Prompt</span></td>
+        <td><span class="badge badge-red">✘ Locked</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+      </tr>
+      <tr>
+        <td>CSV Export</td>
+        <td><span class="badge badge-red">✘ Upgrade Prompt</span></td>
+        <td><span class="badge badge-gold">⭐ Growth+</span></td>
+        <td><span class="badge badge-green">✔ Included</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- ═══ 7. COMPETITIVE ADVANTAGE ═══ -->
+  <div class="section-heading">
+    <div class="section-num">7</div>
+    <div class="section-title">Competitive Advantage</div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card blue-accent">
+      <span class="card-icon">🇮🇳</span>
+      <div class="card-title">Made for India, Only</div>
+      <p>Fee calculations use Amazon India's exact referral fee slabs and Easy Ship / FBA rates. Helium 10 uses US data.</p>
+    </div>
+    <div class="card cyan-accent">
+      <span class="card-icon">🔗</span>
+      <div class="card-title">Seamlessly Integrated</div>
+      <p>Any ASIN found in the extension can be sent directly to RetailStacker's Cerebro, Bulk Analyzer, or Listing Builder with one click.</p>
+    </div>
+    <div class="card gold-accent">
+      <span class="card-icon">💸</span>
+      <div class="card-title">Fraction of the Price</div>
+      <p>Helium 10 charges $99–$279/month in USD. RetailStacker's equivalent Growth plan is just ₹5,999/month — dramatically more accessible for Indian sellers.</p>
+    </div>
+    <div class="card green-accent">
+      <span class="card-icon">🏪</span>
+      <div class="card-title">Multi-Platform Expansion</div>
+      <p>Roadmap includes injecting the same intelligence layer into Flipkart and Meesho — a capability no current tool offers.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ 8. DEVELOPMENT PRICING ═══ -->
+  <div class="section-heading">
+    <div class="section-num">8</div>
+    <div class="section-title">Development Pricing & Payment Milestones</div>
+  </div>
+  <p>
+    The total development cost for the RetailStacker Chrome Extension is <strong>₹8,000 (Eight Thousand Rupees Only)</strong>, covering all four phases of development — from project setup and DOM scraping through to Chrome Web Store submission and post-launch support.
+  </p>
+
+  <table class="pricing-table" style="margin-top: 16px;">
+    <thead>
+      <tr>
+        <th>Milestone</th>
+        <th>Deliverable</th>
+        <th>Due</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Milestone 1 — Advance</td>
+        <td>Project kickoff. Foundation setup, auth popup, and project scaffolding complete. (Phase 1 done)</td>
+        <td><span class="badge badge-blue">On Agreement</span></td>
+        <td><strong style="color: #0a1628; font-size: 11pt;">₹4,000</strong></td>
+      </tr>
+      <tr>
+        <td>Milestone 2 — Mid Delivery</td>
+        <td>Core engine delivered. DOM scraping, API bridge, and Xray data overlay fully functional and testable. (Phase 2 & 3 done)</td>
+        <td><span class="badge badge-gold">Week 2–3</span></td>
+        <td><strong style="color: #0a1628; font-size: 11pt;">₹2,000</strong></td>
+      </tr>
+      <tr>
+        <td>Milestone 3 — Final Delivery</td>
+        <td>Full product delivered. Profit Calculator, QA passed, extension packaged and submitted to Chrome Web Store. (Phase 4 done)</td>
+        <td><span class="badge badge-green">Week 4</span></td>
+        <td><strong style="color: #0a1628; font-size: 11pt;">₹2,000</strong></td>
+      </tr>
+      <tr style="background: #f0fdf4;">
+        <td colspan="3" style="font-weight: 700; color: #0a1628; text-align: right; padding-right: 24px;">Total Project Cost</td>
+        <td><strong style="color: #1a56db; font-size: 13pt; font-family: Manrope, sans-serif;">₹8,000</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px; padding: 14px 18px; margin-top: 14px; font-size: 9.5pt; color: #1e3a5f; line-height: 1.65;">
+    <strong>Payment Terms:</strong> Payments to be made via bank transfer / UPI. Each milestone payment is due upon the client's review and approval of the corresponding deliverable. Source code and all project assets are transferred to the client upon receipt of the final milestone payment.
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ 9. SUMMARY ═══ -->
+  <div class="summary-box">
+    <h3>📊 Project Snapshot</h3>
+    <p style="color: #93c5fd; font-size: 10pt; margin-bottom: 8px;">A consolidated view of the proposed development initiative.</p>
+    <div class="summary-grid" style="grid-template-columns: 1fr 1fr 1fr 1fr;">
+      <div>
+        <div class="summary-stat-label">Total Build Time</div>
+        <div class="summary-stat-value">30–36</div>
+        <div class="summary-stat-sub">Development Hours (Est.)</div>
+      </div>
+      <div>
+        <div class="summary-stat-label">Project Cost</div>
+        <div class="summary-stat-value">₹8K</div>
+        <div class="summary-stat-sub">Across 3 Milestones</div>
+      </div>
+      <div>
+        <div class="summary-stat-label">Core Features</div>
+        <div class="summary-stat-value">6</div>
+        <div class="summary-stat-sub">Intelligence Modules</div>
+      </div>
+      <div>
+        <div class="summary-stat-label">Development Phases</div>
+        <div class="summary-stat-value">4</div>
+        <div class="summary-stat-sub">Sequential Sprints</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <div class="footer">
+    <div class="footer-brand">Retail<span>Stacker</span> — Intelligence Platform</div>
+    <div class="footer-note">Confidential &nbsp;·&nbsp; For Internal Use Only &nbsp;·&nbsp; 02 June 2026</div>
+  </div>
+
+</div>
+</body>
+</html>

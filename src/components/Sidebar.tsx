@@ -9,7 +9,7 @@ import {
   Wrench, ChevronRight, ChevronLeft, Bell, Package, TrendingUp,
   ShieldCheck, RefreshCcw, Mail, Boxes, Zap, Cpu, QrCode, Link2,
   Sparkles, Target, BookOpen, FlaskConical, IndianRupee, Truck, ScanLine, Lock, UserCircle,
-  Upload, Store, Image as ImageIcon, ShoppingBag, Calculator, Download, LogOut, AlertTriangle, Video
+  Upload, Store, Image as ImageIcon, ShoppingBag, Calculator, Download, LogOut, AlertTriangle, Video, Users
 } from "lucide-react";
 import clsx from "clsx";
 
@@ -162,6 +162,24 @@ const nav = [
   },
 ];
 
+const resellerNav: { label: string; icon: any; href?: string; children?: any[] }[] = [
+  {
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    href: "/reseller",
+  },
+  {
+    label: "Manage Users",
+    icon: Users,
+    href: "/reseller/users",
+  },
+  {
+    label: "Settings",
+    icon: Settings,
+    href: "/reseller/settings",
+  },
+];
+
 export default function Sidebar({ plan = "Starter", user = "", role = "user" }: { plan?: string; user?: string; role?: string }) {
   const pathname = usePathname();
   // Derive display name: if email, take part before @; capitalize
@@ -202,6 +220,7 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
 
   const isActive = (href: string) => pathname === href;
   const hasAccess = (href: string, label: string) => {
+    if (role === "reseller") return true;
     if (href && href.startsWith("http")) return true;
     if (role === "admin") return true;
     const activePlan = plans.find(p => p.name === plan);
@@ -306,7 +325,7 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
 
       {/* Navigation */}
       <nav style={{ flex: 1, overflowY: "auto", overflowX: "hidden", padding: "12px 10px" }}>
-        {nav.map((item) => {
+        {(role === "reseller" ? resellerNav : nav).map((item) => {
           if (!item.children) {
             const access = hasAccess(item.href!, item.label);
             return (

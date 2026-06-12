@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+  "name": "RetailStacker - Amazon India Intelligence",
+  "version": "1.0.0",
+  "description": "Premium FBA intelligence, live monthly sales estimates, active seller tracking, and product fee calculator on amazon.in",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "https://retailstacker.com/*",
+    "https://www.retailstacker.com/*",
+    "https://*.amazon.in/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "RetailStacker Dashboard",
+    "default_icon": "icons/icon128.png"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.amazon.in/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "overlay.css"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/icon16.png",
+        "icons/icon48.png",
+        "icons/icon128.png"
+      ],
+      "matches": [
+        "*://*.amazon.in/*"
+      ]
+    }
+  ]
+}
