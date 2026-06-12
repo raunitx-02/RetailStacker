@@ -20,7 +20,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div style={{ display: "flex", minHeight: "100vh", position: "relative", zIndex: 1 }}>
       <Sidebar plan={plan} user={user} role={role} />
       <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflowX: "hidden" }}>
-        <Topbar user={user} plan={plan} />
+        <Topbar user={user} plan={plan} role={role} />
         <main style={{ flex: 1, padding: "28px", overflowX: "hidden" }}>
           {children}
         </main>

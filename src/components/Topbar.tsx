@@ -162,7 +162,7 @@ function ContactModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-export default function Topbar({ title, user = "User", plan = "Starter" }: { title?: string; user?: string; plan?: string }) {
+export default function Topbar({ title, user = "User", plan = "Starter", role = "user" }: { title?: string; user?: string; plan?: string; role?: string }) {
   const [notifOpen, setNotifOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const [market, setMarket] = useState("amazon");
@@ -311,7 +311,7 @@ export default function Topbar({ title, user = "User", plan = "Starter" }: { tit
           </div>
 
           {/* Profile Avatar */}
-          <Link href="/profile" style={{ textDecoration: "none" }}>
+          <Link href={role === "reseller" ? "/reseller/settings" : "/profile"} style={{ textDecoration: "none" }}>
             <div style={{
               width: 36, height: 36, borderRadius: "50%",
               background: "var(--accent)", display: "flex", alignItems: "center",
@@ -321,7 +321,7 @@ export default function Topbar({ title, user = "User", plan = "Starter" }: { tit
             }}
               onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 0 0 3px var(--accent)")}
               onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 0 0 2px var(--accent-muted)")}
-              title="My Profile"
+              title={role === "reseller" ? "Settings" : "My Profile"}
             >
               {initials}
             </div>

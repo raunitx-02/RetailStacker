@@ -502,7 +502,7 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
 
       {/* User profile at bottom */}
       {!collapsed && (
-        <Link href="/profile" style={{ textDecoration: "none" }}>
+        <Link href={role === "reseller" ? "/reseller/settings" : "/profile"} style={{ textDecoration: "none" }}>
           <div style={{
             padding: "16px",
             borderTop: "1px solid var(--border)",
@@ -524,7 +524,7 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
             }}>{initials}</div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{displayName}</div>
-              <div style={{ fontSize: 11, color: "var(--text-muted)" }}>{plan} Plan · Manage Profile</div>
+              <div style={{ fontSize: 11, color: "var(--text-muted)" }}>{role === "reseller" ? "Reseller Settings" : `${plan} Plan · Manage Profile`}</div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-end" }}>
               <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--success)" }} />
