@@ -210,8 +210,8 @@ export default function ResellerUsersPage() {
 
       {isCreateModalOpen && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.8)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
-          <div className="glass-card" style={{ width: 440, padding: 32 }}>
-            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24, display: "flex", alignItems: "center", gap: 10 }}>
+          <div className="glass-card" style={{ width: 440, padding: 32, background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+            <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 24, display: "flex", alignItems: "center", gap: 10, color: "var(--text-primary)" }}>
               <UserPlus size={20} color="var(--accent)" /> Appoint New User
             </h2>
             <form onSubmit={handleCreateUser} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -221,14 +221,14 @@ export default function ResellerUsersPage() {
                   <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>First Name</label>
                   <div style={{ position: "relative" }}>
                     <User size={15} color="var(--text-muted)" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
-                    <input type="text" required value={newFirstName} onChange={e => setNewFirstName(e.target.value)} style={{ width: "100%", padding: "10px 10px 10px 32px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13 }} />
+                    <input type="text" required value={newFirstName} onChange={e => setNewFirstName(e.target.value)} className="input-field" style={{ paddingLeft: 32 }} />
                   </div>
                 </div>
                 <div>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Last Name</label>
                   <div style={{ position: "relative" }}>
                     <User size={15} color="var(--text-muted)" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
-                    <input type="text" required value={newLastName} onChange={e => setNewLastName(e.target.value)} style={{ width: "100%", padding: "10px 10px 10px 32px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13 }} />
+                    <input type="text" required value={newLastName} onChange={e => setNewLastName(e.target.value)} className="input-field" style={{ paddingLeft: 32 }} />
                   </div>
                 </div>
               </div>
@@ -237,7 +237,7 @@ export default function ResellerUsersPage() {
                 <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Mobile Number</label>
                 <div style={{ position: "relative" }}>
                   <Phone size={15} color="var(--text-muted)" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
-                  <input type="tel" required value={newMobile} onChange={e => setNewMobile(e.target.value)} style={{ width: "100%", padding: "10px 10px 10px 32px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13 }} />
+                  <input type="tel" required value={newMobile} onChange={e => setNewMobile(e.target.value)} className="input-field" style={{ paddingLeft: 32 }} />
                 </div>
               </div>
 
@@ -245,7 +245,7 @@ export default function ResellerUsersPage() {
                 <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Email Address</label>
                 <div style={{ position: "relative" }}>
                   <Mail size={15} color="var(--text-muted)" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
-                  <input type="email" required value={newEmail} onChange={e => setNewEmail(e.target.value)} style={{ width: "100%", padding: "10px 10px 10px 32px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13 }} />
+                  <input type="email" required value={newEmail} onChange={e => setNewEmail(e.target.value)} className="input-field" style={{ paddingLeft: 32 }} />
                 </div>
               </div>
 
@@ -253,37 +253,37 @@ export default function ResellerUsersPage() {
                 <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Temporary Password</label>
                 <div style={{ position: "relative" }}>
                   <KeyRound size={15} color="var(--text-muted)" style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)" }} />
-                  <input type="password" required value={newPassword} onChange={e => setNewPassword(e.target.value)} style={{ width: "100%", padding: "10px 10px 10px 32px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13 }} />
+                  <input type="password" required value={newPassword} onChange={e => setNewPassword(e.target.value)} className="input-field" style={{ paddingLeft: 32 }} />
                 </div>
               </div>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <div>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Subscription Tier</label>
-                  <select value={newPlan} onChange={e => setNewPlan(e.target.value)} style={{ width: "100%", padding: "10px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13, cursor: "pointer" }}>
-                    <option value="Free">Free</option>
-                    <option value="Lite">Lite</option>
-                    <option value="Starter">Starter</option>
-                    <option value="Growth">Growth</option>
-                    <option value="Diamond">Diamond</option>
+                  <select value={newPlan} onChange={e => setNewPlan(e.target.value)} className="input-field" style={{ cursor: "pointer" }}>
+                    <option value="Free" style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>Free</option>
+                    <option value="Lite" style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>Lite</option>
+                    <option value="Starter" style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>Starter</option>
+                    <option value="Growth" style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>Growth</option>
+                    <option value="Diamond" style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>Diamond</option>
                   </select>
                 </div>
 
                 <div>
                   <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "var(--text-muted)", marginBottom: 6 }}>Plan Validity</label>
-                  <select value={newValidity} onChange={e => setNewValidity(e.target.value)} style={{ width: "100%", padding: "10px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 8, color: "white", outline: "none", fontSize: 13, cursor: "pointer" }}>
-                    <option value="1 Month">1 Month</option>
-                    <option value="3 Months">3 Months</option>
-                    <option value="6 Months">6 Months</option>
-                    <option value="1 Year">1 Year</option>
-                    <option value="Lifetime">Lifetime</option>
+                  <select value={newValidity} onChange={e => setNewValidity(e.target.value)} className="input-field" style={{ cursor: "pointer" }}>
+                    <option value="1 Month" style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>1 Month</option>
+                    <option value="3 Months" style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>3 Months</option>
+                    <option value="6 Months" style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>6 Months</option>
+                    <option value="1 Year" style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>1 Year</option>
+                    <option value="Lifetime" style={{ color: "var(--text-primary)", background: "var(--bg-card)" }}>Lifetime</option>
                   </select>
                 </div>
               </div>
 
               <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
-                <button type="button" onClick={() => setIsCreateModalOpen(false)} style={{ flex: 1, padding: 12, background: "transparent", border: "1px solid var(--border)", borderRadius: 8, color: "white", fontWeight: 600, cursor: "pointer" }}>Cancel</button>
-                <button type="submit" className="btn-accent" style={{ flex: 1, padding: 12, borderRadius: 8, fontWeight: 600 }}>Create Account</button>
+                <button type="button" onClick={() => setIsCreateModalOpen(false)} className="btn-ghost" style={{ flex: 1, padding: "10px 14px", height: "auto" }}>Cancel</button>
+                <button type="submit" className="btn-accent" style={{ flex: 1, padding: 12, borderRadius: 10, fontWeight: 600 }}>Create Account</button>
               </div>
             </form>
           </div>

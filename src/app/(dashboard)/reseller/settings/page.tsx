@@ -107,7 +107,8 @@ export default function ResellerSettingsPage() {
                   required 
                   value={firstName} 
                   onChange={e => setFirstName(e.target.value)} 
-                  style={{ width: "100%", padding: "12px 14px 12px 42px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 10, color: "white", outline: "none", fontSize: 14 }} 
+                  className="input-field" 
+                  style={{ paddingLeft: 42 }} 
                 />
               </div>
             </div>
@@ -120,7 +121,8 @@ export default function ResellerSettingsPage() {
                   required 
                   value={lastName} 
                   onChange={e => setLastName(e.target.value)} 
-                  style={{ width: "100%", padding: "12px 14px 12px 42px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 10, color: "white", outline: "none", fontSize: 14 }} 
+                  className="input-field" 
+                  style={{ paddingLeft: 42 }} 
                 />
               </div>
             </div>
@@ -136,7 +138,8 @@ export default function ResellerSettingsPage() {
                 required 
                 value={email} 
                 onChange={e => setEmail(e.target.value)} 
-                style={{ width: "100%", padding: "12px 14px 12px 42px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 10, color: "white", outline: "none", fontSize: 14 }} 
+                className="input-field" 
+                style={{ paddingLeft: 42 }} 
               />
             </div>
           </div>
@@ -151,7 +154,8 @@ export default function ResellerSettingsPage() {
                 required 
                 value={mobile} 
                 onChange={e => setMobile(e.target.value)} 
-                style={{ width: "100%", padding: "12px 14px 12px 42px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 10, color: "white", outline: "none", fontSize: 14 }} 
+                className="input-field" 
+                style={{ paddingLeft: 42 }} 
               />
             </div>
           </div>
@@ -169,7 +173,8 @@ export default function ResellerSettingsPage() {
                     placeholder="Leave blank to keep same"
                     value={password} 
                     onChange={e => setPassword(e.target.value)} 
-                    style={{ width: "100%", padding: "12px 14px 12px 42px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 10, color: "white", outline: "none", fontSize: 14 }} 
+                    className="input-field" 
+                    style={{ paddingLeft: 42 }} 
                   />
                 </div>
               </div>
@@ -182,7 +187,8 @@ export default function ResellerSettingsPage() {
                     placeholder="Leave blank to keep same"
                     value={confirmPassword} 
                     onChange={e => setConfirmPassword(e.target.value)} 
-                    style={{ width: "100%", padding: "12px 14px 12px 42px", background: "var(--bg-secondary)", border: "1px solid var(--border)", borderRadius: 10, color: "white", outline: "none", fontSize: 14 }} 
+                    className="input-field" 
+                    style={{ paddingLeft: 42 }} 
                   />
                 </div>
               </div>
