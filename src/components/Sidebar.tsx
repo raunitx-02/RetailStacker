@@ -341,8 +341,19 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
           if (!item.children) {
             const access = hasAccess(item.href!, item.label);
             return (
-              <div key={item.href} title={!access ? `Upgrade to unlock` : ""}>
-                <Link href={access ? item.href! : `/dashboard?error=upgrade_required`} style={{ textDecoration: "none", pointerEvents: access ? "auto" : "none", opacity: access ? 1 : 0.6 }}>
+              <div 
+                key={item.href} 
+                title={!access ? `Upgrade to unlock` : ""}
+                onClick={(e) => {
+                  if (!access) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    alert("This feature is locked under your current plan. Please upgrade to unlock.");
+                  }
+                }}
+                style={{ cursor: access ? "pointer" : "not-allowed" }}
+              >
+                <Link href={access ? item.href! : `/dashboard?error=upgrade_required`} style={{ textDecoration: "none", opacity: access ? 1 : 0.6 }}>
                   <div style={{
                     display: "flex",
                     alignItems: "center",
@@ -413,8 +424,19 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
                   {item.children.map((child) => {
                     const access = hasAccess(child.href, child.label);
                     return (
-                    <div key={child.href} title={!access ? `Upgrade to unlock` : ""}>
-                      <Link href={access ? child.href : `/dashboard?error=upgrade_required`} style={{ textDecoration: "none", pointerEvents: access ? "auto" : "none", opacity: access ? 1 : 0.6 }}>
+                    <div 
+                      key={child.href} 
+                      title={!access ? `Upgrade to unlock` : ""}
+                      onClick={(e) => {
+                        if (!access) {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          alert("This feature is locked under your current plan. Please upgrade to unlock.");
+                        }
+                      }}
+                      style={{ cursor: access ? "pointer" : "not-allowed" }}
+                    >
+                      <Link href={access ? child.href : `/dashboard?error=upgrade_required`} style={{ textDecoration: "none", opacity: access ? 1 : 0.6 }}>
                         <div style={{
                           display: "flex",
                           alignItems: "center",
