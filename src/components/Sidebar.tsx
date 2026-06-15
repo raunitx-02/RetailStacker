@@ -223,21 +223,33 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
     if (role === "reseller") return true;
     if (href && href.startsWith("http")) return true;
     if (role === "admin") return true;
+    if (plan === "Diamond") return true;
+
+    // 1. Check if the route is defined in PLAN_ACCESS fallback config
+    if (PLAN_ACCESS[plan] && PLAN_ACCESS[plan].includes(href)) return true;
+
+    // 2. Check if the feature is allowed in the database plan features
     const activePlan = plans.find(p => p.name === plan);
-    if (!activePlan) {
-      return plan === "Diamond" || (PLAN_ACCESS[plan] && PLAN_ACCESS[plan].includes(href));
+    if (activePlan) {
+      if (activePlan.features.includes(label)) return true;
+
+      // Check loose string matches (e.g. "Black Box Product Research" matches "Black Box")
+      const matchesLoose = activePlan.features.some((f: string) => 
+        f.toLowerCase().includes(label.toLowerCase()) || 
+        label.toLowerCase().includes(f.toLowerCase())
+      );
+      if (matchesLoose) return true;
+
+      // Handle specific mappings
+      if (label === "Scribbles" && activePlan.features.includes("Scribbles Listing Writer")) return true;
+      if (label === "Frankenstein" && activePlan.features.includes("Frankenstein Keywords")) return true;
+      if (label === "Magnet" && activePlan.features.includes("Magnet Keywords")) return true;
+      if (label === "Cerebro" && activePlan.features.includes("Cerebro Reverse ASIN")) return true;
+      if (label === "Xray" && activePlan.features.includes("Xray Market Intelligence")) return true;
+      if (label === "AI Seller Scanner" && activePlan.features.includes("Multi-storefront AI Scanner")) return true;
+      if (label === "AI Seller Copilot" && activePlan.features.includes("AI Auto-Fix Listings (Hindi/Eng)")) return true;
     }
-    if (activePlan.features.includes(label)) return true;
-    if (activePlan.features.includes("Everything in Starter")) {
-      const starterPlan = plans.find(p => p.name === "Starter");
-      if (starterPlan && starterPlan.features.includes(label)) return true;
-    }
-    if (activePlan.features.includes("Everything in Growth")) {
-      const growthPlan = plans.find(p => p.name === "Growth");
-      if (growthPlan && growthPlan.features.includes(label)) return true;
-      const starterPlan = plans.find(p => p.name === "Starter");
-      if (starterPlan && starterPlan.features.includes(label)) return true;
-    }
+
     if (["/dashboard", "/profile", "/tools/chrome-extension"].includes(href)) return true;
     return false;
   };
