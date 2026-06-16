@@ -134,6 +134,15 @@ export default function ProfileClient({ initialPlan, initialEmail }: { initialPl
   const [connections, setConnections] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
+    const roleCookie = typeof document !== "undefined" && document.cookie
+      .split("; ")
+      .find(row => row.startsWith("retailstacker_role="))
+      ?.split("=")[1];
+    if (roleCookie === "reseller") {
+      window.location.href = "/reseller/settings";
+      return;
+    }
+
     const savedKeys = localStorage.getItem("retailstacker_api_keys_v2");
     const savedConn = localStorage.getItem("retailstacker_connections");
     if (savedKeys) { try { setApiKeys(JSON.parse(savedKeys)); } catch (e) {} }

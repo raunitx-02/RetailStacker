@@ -67,6 +67,15 @@ export default function DashboardPage({ searchParams }: { searchParams: Promise<
   const [isConnected, setIsConnected] = React.useState(false);
 
   React.useEffect(() => {
+    const roleCookie = typeof document !== "undefined" && document.cookie
+      .split("; ")
+      .find(row => row.startsWith("retailstacker_role="))
+      ?.split("=")[1];
+    if (roleCookie === "reseller") {
+      window.location.href = "/reseller";
+      return;
+    }
+
     try {
       const connections = localStorage.getItem("retailstacker_connections");
       if (connections) {
