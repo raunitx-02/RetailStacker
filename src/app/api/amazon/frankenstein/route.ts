@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
       for (const kw of seedKeywords.slice(0, 2)) {
         const searchData = await keepaFetch("search", {
           type: "product",
-          term: encodeURIComponent(kw),
+          term: kw,
         });
         const kwAsins: string[] = searchData.result?.slice(0, 5) || [];
         if (kwAsins.length > 0) {

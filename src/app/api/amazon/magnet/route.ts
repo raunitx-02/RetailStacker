@@ -132,7 +132,7 @@ export async function GET(req: NextRequest) {
     // ─── Step 1: Search Keepa for products matching keyword ─────────────────
     const searchData = await keepaFetch("search", {
       type: "product",
-      term: encodeURIComponent(keyword),
+      term: keyword,
     });
 
     const asins: string[] = searchData.result || (searchData.products || []).map((p: any) => p.asin);

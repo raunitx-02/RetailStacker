@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
 
     // ─── Step 1: Fetch ASINs from Keepa search ─────────────────────────────
     const searchTerms = CATEGORY_SEARCH_MAP[filters.category] || CATEGORY_SEARCH_MAP["All"];
-    const term = encodeURIComponent(searchTerms[0]);
+    const term = searchTerms[0];
 
     const searchData = await keepaFetch("search", {
       type: "product",
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
 
     // If second term available and first gave few results, supplement
     if (asins.length < 10 && searchTerms[1]) {
-      const term2 = encodeURIComponent(searchTerms[1]);
+      const term2 = searchTerms[1];
       const searchData2 = await keepaFetch("search", { type: "product", term: term2 });
       const asins2: string[] = searchData2.result || [];
       const combined = [...new Set([...asins, ...asins2])];
