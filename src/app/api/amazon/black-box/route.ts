@@ -63,20 +63,6 @@ export interface BlackBoxProduct {
   monthlySales: number;
 }
 
-// ─── Amazon India category search terms map ──────────────────────────────────
-const CATEGORY_SEARCH_MAP: Record<string, string[]> = {
-  "All":                  ["bestsellers india amazon", "trending products india"],
-  "Electronics":          ["electronics gadgets india", "wireless earphones india"],
-  "Home & Kitchen":       ["home kitchen india bestseller", "kitchen organizer india"],
-  "Sports & Outdoors":    ["sports equipment india", "fitness gym india"],
-  "Beauty & Personal Care": ["beauty skincare india", "hair care india"],
-  "Clothing":             ["clothing fashion india", "t-shirts india"],
-  "Toys & Games":         ["toys kids india", "educational toys india"],
-  "Health":               ["health supplements india", "vitamins india"],
-  "Kitchen":              ["kitchen appliances india", "cookware india"],
-  "Books":                ["books bestsellers india"],
-};
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -114,8 +100,7 @@ export async function POST(req: NextRequest) {
 
     // Fallback to keyword search if bestsellers returned no results
     if (asins.length === 0) {
-      const searchTerms = CATEGORY_SEARCH_MAP[filters.category] || CATEGORY_SEARCH_MAP["All"];
-      const term = searchTerms[0];
+      const term = catMeta.term || "bestsellers india";
 
       const searchData = await keepaFetch("search", {
         type: "product",
@@ -125,15 +110,6 @@ export async function POST(req: NextRequest) {
       asins = searchData.result || [];
       if (asins.length === 0 && searchData.products) {
         asins = searchData.products.map((p: any) => p.asin);
-      }
-
-      // If second term available and first gave few results, supplement
-      if (asins.length < 10 && searchTerms[1]) {
-        const term2 = searchTerms[1];
-        const searchData2 = await keepaFetch("search", { type: "product", term: term2 });
-        const asins2: string[] = searchData2.result || [];
-        const combined = [...new Set([...asins, ...asins2])];
-        asins = combined;
       }
     }
 

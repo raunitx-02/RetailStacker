@@ -60,8 +60,34 @@ const defaultFilters: FilterState = {
 };
 
 const CATEGORIES = [
-  "All", "Electronics", "Home & Kitchen", "Sports & Outdoors",
-  "Beauty & Personal Care", "Clothing", "Toys & Games", "Health", "Kitchen",
+  "All",
+  "Baby Products",
+  "Bags, Wallets and Luggage",
+  "Beauty",
+  "Books",
+  "Car & Motorbike",
+  "Clothing & Accessories",
+  "Computers & Accessories",
+  "Electronics",
+  "Garden & Outdoors",
+  "Grocery & Gourmet Foods",
+  "Health & Personal Care",
+  "Home & Kitchen",
+  "Home Improvement",
+  "Industrial & Scientific",
+  "Jewellery",
+  "Kindle Store",
+  "Movies & TV Shows",
+  "Music",
+  "Musical Instruments",
+  "Office Products",
+  "Pet Supplies",
+  "Shoes & Handbags",
+  "Software",
+  "Sports, Fitness & Outdoors",
+  "Toys & Games",
+  "Video Games",
+  "Watches"
 ];
 
 const oppColors = {
