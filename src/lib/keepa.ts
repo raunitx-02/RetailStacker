@@ -216,6 +216,7 @@ export async function fetchKeepaProducts(asins: string[]): Promise<KeepaProduct[
     asin: asinStr,
     stats: "1",
     history: "0",
+    rating: "1",
   });
   return data.products || [];
 }

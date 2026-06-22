@@ -146,8 +146,36 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Filter ASIN list to match the user's max BSR constraint
+    const maxRankLimit = filters.maxBsr || 100000;
+    const eligibleAsins = asins.slice(0, maxRankLimit);
+
+    // Sample 100 ASINs evenly across the eligible ranks
+    const sampledAsins: string[] = [];
+    if (eligibleAsins.length > 0) {
+      const sampleTiers = [0, 50, 150, 300, 600, 1000, 2000, 4000, 7000, 10000];
+      const itemsPerTier = Math.max(5, Math.floor(100 / sampleTiers.length));
+      
+      for (const tier of sampleTiers) {
+        if (tier < eligibleAsins.length) {
+          const slice = eligibleAsins.slice(tier, tier + itemsPerTier);
+          sampledAsins.push(...slice);
+        }
+      }
+      
+      // Fallback/fill to ensure we get a full list
+      const uniqueSampled = [...new Set(sampledAsins)];
+      if (uniqueSampled.length < 100) {
+        const remaining = eligibleAsins.filter(a => !uniqueSampled.includes(a));
+        uniqueSampled.push(...remaining.slice(0, 100 - uniqueSampled.length));
+      }
+      sampledAsins.splice(0, sampledAsins.length, ...uniqueSampled);
+    }
+
+    const finalAsins = [...new Set(sampledAsins)].slice(0, 100);
+
     // ─── Step 2: Fetch full product details ────────────────────────────────
-    const products = await fetchKeepaProducts(asins.slice(0, 80));
+    const products = await fetchKeepaProducts(finalAsins);
 
     // ─── Step 3: Normalize + filter ────────────────────────────────────────
     const results: BlackBoxProduct[] = [];
