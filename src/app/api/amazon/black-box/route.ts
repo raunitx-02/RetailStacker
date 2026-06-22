@@ -96,27 +96,45 @@ export async function POST(req: NextRequest) {
       reviewVelocity: body.reviewVelocity,
     };
 
-    // ─── Step 1: Fetch ASINs from Keepa search ─────────────────────────────
-    const searchTerms = CATEGORY_SEARCH_MAP[filters.category] || CATEGORY_SEARCH_MAP["All"];
-    const term = searchTerms[0];
+    // ─── Step 1: Fetch ASINs from Keepa category bestsellers or search ───────
+    let asins: string[] = [];
 
-    const searchData = await keepaFetch("search", {
-      type: "product",
-      term,
-    });
-
-    let asins: string[] = searchData.result || [];
-    if (asins.length === 0 && searchData.products) {
-      asins = searchData.products.map((p: any) => p.asin);
+    // Try bestsellers list for highly accurate/popular products in this category
+    const catMeta = AMAZON_IN_CATEGORIES[filters.category] || AMAZON_IN_CATEGORIES["All"];
+    if (catMeta && catMeta.id) {
+      try {
+        const bsData = await keepaFetch("bestsellers", {
+          category: catMeta.id,
+        });
+        asins = bsData.bestSellersList?.asinList || [];
+      } catch (err) {
+        console.error("[Black Box Bestsellers Error] Fallback to search:", err);
+      }
     }
 
-    // If second term available and first gave few results, supplement
-    if (asins.length < 10 && searchTerms[1]) {
-      const term2 = searchTerms[1];
-      const searchData2 = await keepaFetch("search", { type: "product", term: term2 });
-      const asins2: string[] = searchData2.result || [];
-      const combined = [...new Set([...asins, ...asins2])];
-      asins = combined;
+    // Fallback to keyword search if bestsellers returned no results
+    if (asins.length === 0) {
+      const searchTerms = CATEGORY_SEARCH_MAP[filters.category] || CATEGORY_SEARCH_MAP["All"];
+      const term = searchTerms[0];
+
+      const searchData = await keepaFetch("search", {
+        type: "product",
+        term,
+      });
+
+      asins = searchData.result || [];
+      if (asins.length === 0 && searchData.products) {
+        asins = searchData.products.map((p: any) => p.asin);
+      }
+
+      // If second term available and first gave few results, supplement
+      if (asins.length < 10 && searchTerms[1]) {
+        const term2 = searchTerms[1];
+        const searchData2 = await keepaFetch("search", { type: "product", term: term2 });
+        const asins2: string[] = searchData2.result || [];
+        const combined = [...new Set([...asins, ...asins2])];
+        asins = combined;
+      }
     }
 
     if (asins.length === 0) {
@@ -129,7 +147,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ─── Step 2: Fetch full product details ────────────────────────────────
-    const products = await fetchKeepaProducts(asins.slice(0, 20));
+    const products = await fetchKeepaProducts(asins.slice(0, 80));
 
     // ─── Step 3: Normalize + filter ────────────────────────────────────────
     const results: BlackBoxProduct[] = [];

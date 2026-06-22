@@ -211,7 +211,7 @@ export async function keepaFetch(endpoint: string, params: Record<string, string
 // ─── Fetch product details by ASINs ─────────────────────────────────────────
 export async function fetchKeepaProducts(asins: string[]): Promise<KeepaProduct[]> {
   if (asins.length === 0) return [];
-  const asinStr = asins.slice(0, 20).join(","); // Max 20 per request
+  const asinStr = asins.slice(0, 100).join(","); // Max 100 per request
   const data = await keepaFetch("product", {
     asin: asinStr,
     stats: "1",
