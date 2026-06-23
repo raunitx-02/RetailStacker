@@ -28,7 +28,7 @@ const DEFAULT_INSIGHTS: Insight[] = [
 
 
 export default function TrendsterPage() {
-  const [asin, setAsin] = useState("B08XYZ1234");
+  const [asin, setAsin] = useState("B0D7HZ3KK9");
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -69,12 +69,31 @@ export default function TrendsterPage() {
       // If Keepa returned mock or actual product
       if (data.csv) {
         const bsrCsv = data.csv[KEEPA_INDICES.SALES_RANK];
-        const priceCsv = data.csv[KEEPA_INDICES.BUY_BOX] || data.csv[KEEPA_INDICES.AMAZON_PRICE] || data.csv[KEEPA_INDICES.NEW_PRICE];
+        
+        // Helper to pick the first price CSV containing positive price values
+        const getValidPriceCsv = () => {
+          const buyBox = data.csv[KEEPA_INDICES.BUY_BOX];
+          const newPrice = data.csv[KEEPA_INDICES.NEW_PRICE];
+          const amzn = data.csv[KEEPA_INDICES.AMAZON_PRICE];
+          
+          const hasValid = (arr: number[] | undefined) => {
+            if (!arr || arr.length < 2) return false;
+            for (let i = 1; i < arr.length; i += 2) {
+              if (arr[i] > 0) return true;
+            }
+            return false;
+          };
+          
+          if (hasValid(buyBox)) return buyBox;
+          if (hasValid(newPrice)) return newPrice;
+          if (hasValid(amzn)) return amzn;
+          return buyBox || newPrice || amzn;
+        };
+
+        const priceCsv = getValidPriceCsv();
         
         // Parse BSR and Price points
         const parsedBsrs = parseKeepaCsv(bsrCsv, 1);
-        // Keepa pricing format divides by 100 for USD, but for INR it might be scale 1 or 100 depending on marketplace settings.
-        // Let's divide standard values by 100 if they look extremely large (e.g. standard product costing 2499 INR being returned as 249900).
         const parsedPrices = parseKeepaCsv(priceCsv, 1);
 
         if (parsedBsrs.length > 0) {
@@ -90,9 +109,8 @@ export default function TrendsterPage() {
           });
 
           parsedPrices.forEach(pt => {
-            // Keepa prices can be represented scaled by 100.
-            const rawVal = pt.value;
-            const normalizedPrice = rawVal > 100000 ? rawVal / 100 : rawVal;
+            // Keepa prices are always multiplied by 100 for India (paise)
+            const normalizedPrice = pt.value / 100;
 
             if (merged[pt.date]) {
               merged[pt.date].price = Math.round(normalizedPrice);
@@ -151,7 +169,7 @@ export default function TrendsterPage() {
 
 
   useEffect(() => {
-    fetchTrends("B08XYZ1234");
+    fetchTrends("B0D7HZ3KK9");
   }, []);
 
   return (
