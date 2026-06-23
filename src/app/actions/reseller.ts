@@ -113,6 +113,7 @@ export async function createUserAction(
     planValidity: validity,
     planExpiresAt: calculateExpiry(validity),
     createdBy: resellerEmail,
+    role: "user",
     createdAt: Date.now(),
   };
   saveUser(newUser);

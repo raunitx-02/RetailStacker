@@ -207,6 +207,23 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
 
   const [plans, setPlans] = useState<any[]>([]);
 
+  // Sync cookie with the actual plan passed from layout (which reads DB)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const getCookie = (name: string) => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop()?.split(';').shift();
+        return null;
+      };
+
+      const cookiePlan = getCookie("retailstacker_plan");
+      if (cookiePlan !== plan) {
+        document.cookie = `retailstacker_plan=${plan}; path=/; max-age=${30 * 24 * 60 * 60}`;
+      }
+    }
+  }, [plan]);
+
   useEffect(() => {
     fetch("/api/admin/plans")
       .then(res => res.json())
@@ -231,23 +248,43 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
     // 2. Check if the feature is allowed in the database plan features
     const activePlan = plans.find(p => p.name === plan);
     if (activePlan) {
-      if (activePlan.features.includes(label)) return true;
+      // Helper function to expand features recursively
+      const getExpandedFeatures = (pName: string, visited = new Set<string>()): string[] => {
+        if (visited.has(pName)) return [];
+        visited.add(pName);
+        const pObj = plans.find(p => p.name === pName);
+        if (!pObj) return [];
+        let exp: string[] = [];
+        for (const feat of (pObj.features || [])) {
+          if (feat.startsWith("Everything in ")) {
+            const parentName = feat.replace("Everything in ", "").trim();
+            exp = [...exp, ...getExpandedFeatures(parentName, visited)];
+          } else {
+            exp.push(feat);
+          }
+        }
+        return exp;
+      };
+
+      const expandedFeatures = getExpandedFeatures(plan);
+
+      if (expandedFeatures.includes(label)) return true;
 
       // Check loose string matches (e.g. "Black Box Product Research" matches "Black Box")
-      const matchesLoose = activePlan.features.some((f: string) => 
+      const matchesLoose = expandedFeatures.some((f: string) => 
         f.toLowerCase().includes(label.toLowerCase()) || 
         label.toLowerCase().includes(f.toLowerCase())
       );
       if (matchesLoose) return true;
 
       // Handle specific mappings
-      if (label === "Scribbles" && activePlan.features.includes("Scribbles Listing Writer")) return true;
-      if (label === "Frankenstein" && activePlan.features.includes("Frankenstein Keywords")) return true;
-      if (label === "Magnet" && activePlan.features.includes("Magnet Keywords")) return true;
-      if (label === "Cerebro" && activePlan.features.includes("Cerebro Reverse ASIN")) return true;
-      if (label === "Xray" && activePlan.features.includes("Xray Market Intelligence")) return true;
-      if (label === "AI Seller Scanner" && activePlan.features.includes("Multi-storefront AI Scanner")) return true;
-      if (label === "AI Seller Copilot" && activePlan.features.includes("AI Auto-Fix Listings (Hindi/Eng)")) return true;
+      if (label === "Scribbles" && expandedFeatures.includes("Scribbles Listing Writer")) return true;
+      if (label === "Frankenstein" && expandedFeatures.includes("Frankenstein Keywords")) return true;
+      if (label === "Magnet" && expandedFeatures.includes("Magnet Keywords")) return true;
+      if (label === "Cerebro" && expandedFeatures.includes("Cerebro Reverse ASIN")) return true;
+      if (label === "Xray" && expandedFeatures.includes("Xray Market Intelligence")) return true;
+      if (label === "AI Seller Scanner" && expandedFeatures.includes("Multi-storefront AI Scanner")) return true;
+      if (label === "AI Seller Copilot" && expandedFeatures.includes("AI Auto-Fix Listings (Hindi/Eng)")) return true;
     }
 
     if (["/dashboard", "/profile", "/tools/chrome-extension"].includes(href)) return true;
