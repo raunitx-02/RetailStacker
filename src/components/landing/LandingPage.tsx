@@ -599,7 +599,7 @@ export default function LandingPage() {
                   {/* Mock Translated Content Card */}
                   <div style={{ padding: 14, background: "rgba(155, 48, 255, 0.05)", border: "1px dashed rgba(155, 48, 255, 0.3)", borderRadius: 10 }}>
                     <div style={{ fontSize: 10, fontWeight: 700, color: "var(--purple)", textTransform: "uppercase", marginBottom: 6 }}>Translated Webview (IN English)</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: "white", marginBottom: 6 }}>Men's Premium Cotton Summer Sourcing T-Shirt</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)", marginBottom: 6 }}>Men's Premium Cotton Summer Sourcing T-Shirt</div>
                     <div style={{ fontSize: 18, fontWeight: 800, color: "var(--accent)" }}>₹175.50 (INR) <span style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "line-through" }}>₹350.00 (INR)</span></div>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
