@@ -8,7 +8,7 @@ import {
   LayoutDashboard, Search, KeyRound, FileText, Settings, BarChart3,
   Wrench, ChevronRight, ChevronLeft, Bell, Package, TrendingUp,
   ShieldCheck, RefreshCcw, Mail, Boxes, Zap, Cpu, QrCode, Link2,
-  Sparkles, Target, BookOpen, FlaskConical, IndianRupee, Truck, ScanLine, Lock, UserCircle,
+  Sparkles, Target, BookOpen, FlaskConical, IndianRupee, Truck, ScanLine, Lock, UserCircle, Globe,
   Upload, Store, Image as ImageIcon, ShoppingBag, Calculator, Download, LogOut, AlertTriangle, Video, Users
 } from "lucide-react";
 import clsx from "clsx";
@@ -158,6 +158,7 @@ const nav = [
       { label: "Logistics Estimator", href: "/tools/logistics-estimator", icon: Truck },
       { label: "URL Builder", href: "/tools/url-builder", icon: Link2 },
       { label: "QR Generator", href: "/tools/qr-generator", icon: QrCode },
+      { label: "Language Converter", href: "/tools/translator", icon: Globe },
     ],
   },
 ];
@@ -287,7 +288,7 @@ export default function Sidebar({ plan = "Starter", user = "", role = "user" }: 
       if (label === "AI Seller Copilot" && expandedFeatures.includes("AI Auto-Fix Listings (Hindi/Eng)")) return true;
     }
 
-    if (["/dashboard", "/profile", "/tools/chrome-extension"].includes(href)) return true;
+    if (["/dashboard", "/profile", "/tools/chrome-extension", "/tools/translator"].includes(href)) return true;
     return false;
   };
 

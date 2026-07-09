@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
           lastName: "User",
           plan: "Diamond",
           role: "admin",
+          hasTranslatorSubscription: true,
         },
       }));
     }
@@ -51,6 +52,7 @@ export async function GET(req: NextRequest) {
         mobile: user.mobile || "",
         plan: userPlan,
         role: user.role || "user",
+        hasTranslatorSubscription: user.hasTranslatorSubscription || false,
       },
     }));
   } catch (err: any) {

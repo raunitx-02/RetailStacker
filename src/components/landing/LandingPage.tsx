@@ -513,6 +513,112 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── English Language Converter Section ── */}
+      <section style={{ maxWidth: 1400, margin: "0 auto 120px", padding: "0 24px" }}>
+        <div style={{ 
+          padding: "60px 40px", 
+          background: "linear-gradient(135deg, rgba(155, 48, 255, 0.03) 0%, rgba(99, 102, 241, 0.05) 100%)",
+          border: "1px solid rgba(155, 48, 255, 0.3)",
+          borderRadius: 24,
+          boxShadow: "0 20px 50px rgba(155, 48, 255, 0.05)",
+        }}>
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 60, flexDirection: "row-reverse" }}>
+            <div style={{ flex: "1 1 500px" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(155, 48, 255, 0.15)", color: "var(--purple)", padding: "6px 12px", borderRadius: 50, fontSize: 13, fontWeight: 700, marginBottom: 16 }}>
+                <Sparkles size={14} /> NEW SOURCING ADD-ON
+              </div>
+              <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 900, letterSpacing: "-0.02em", marginBottom: 24, lineHeight: 1.1 }}>
+                Translate 1688.com Instantly into Clean English
+              </h2>
+              <p style={{ fontSize: 18, color: "var(--text-muted)", marginBottom: 32, lineHeight: 1.6 }}>
+                Stop struggling with Chinese sourcing sites. Our standalone **English Language Converter** extension automatically translates product listings, variants, specifications, and dynamic chat feeds into US, UK, or Indian English without reloads.
+              </p>
+              
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 40 }}>
+                {[
+                  { icon: <Zap size={20} color="var(--purple)" />, title: "Auto-Translation (No Reload)", desc: "Translate complete web page texts seamlessly just like native Chrome Google Translate." },
+                  { icon: <Activity size={20} color="var(--purple)" />, title: "Mutation Observer Engine", desc: "Infinite scroll and lazy-loaded items are translated instantly as they load." },
+                  { icon: <Sparkles size={20} color="var(--purple)" />, title: "Regional English Dialects", desc: "Select between US English, UK English, or Indian English (with currency tags) with one toggle." },
+                  { icon: <Globe size={20} color="var(--purple)" />, title: "Global Web Compatibility", desc: "Works flawlessly on all international supply chain portals, catalog sites, and custom platforms." }
+                ].map((f, i) => (
+                  <div key={i} style={{ display: "flex", gap: 12 }}>
+                    <div style={{ flexShrink: 0, marginTop: 2 }}>{f.icon}</div>
+                    <div>
+                      <h4 style={{ fontSize: 15, fontWeight: 700, color: "var(--text-primary)", margin: "0 0 4px 0" }}>{f.title}</h4>
+                      <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0, lineHeight: 1.4 }}>{f.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+                <button
+                  onClick={() => {
+                    window.location.href = "/tools/translator";
+                  }}
+                  style={{
+                    padding: "16px 36px",
+                    borderRadius: 12,
+                    fontSize: 16,
+                    fontWeight: 700,
+                    color: "white",
+                    background: "var(--purple)",
+                    boxShadow: "0 10px 24px rgba(155, 48, 255, 0.3)",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 10,
+                    transition: "all 0.2s"
+                  }}
+                  className="rs-landing-download-btn"
+                >
+                  <Download size={18} />
+                  Subscribe & Download — ₹599/mo
+                </button>
+              </div>
+            </div>
+            
+            <div style={{ flex: "1 1 400px", display: "flex", justifyContent: "center", position: "relative" }}>
+              <div style={{ 
+                width: "100%", 
+                maxWidth: 480, 
+                background: "var(--bg-primary)", 
+                border: "1px solid var(--border)", 
+                borderRadius: 20, 
+                boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
+                overflow: "hidden"
+              }}>
+                <div style={{ background: "var(--bg-secondary)", padding: "12px 20px", borderBottom: "1px solid var(--border)", display: "flex", gap: 6 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ef4444" }} />
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#eab308" }} />
+                  <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#22c55e" }} />
+                  <span style={{ fontSize: 11, color: "var(--text-muted)", marginLeft: 20 }}>m.1688.com/offer/...</span>
+                </div>
+                <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
+                  {/* Mock Translated Content Card */}
+                  <div style={{ padding: 14, background: "rgba(155, 48, 255, 0.05)", border: "1px dashed rgba(155, 48, 255, 0.3)", borderRadius: 10 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "var(--purple)", textTransform: "uppercase", marginBottom: 6 }}>Translated Webview (IN English)</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: "white", marginBottom: 6 }}>Men's Premium Cotton Summer Sourcing T-Shirt</div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: "var(--accent)" }}>₹175.50 (INR) <span style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "line-through" }}>₹350.00 (INR)</span></div>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                    <div style={{ padding: 10, background: "var(--bg-secondary)", borderRadius: 8, fontSize: 12 }}>
+                      <strong style={{ display: "block", color: "var(--text-secondary)" }}>Fabric Content</strong>
+                      <span>95% Cotton, 5% Spandex</span>
+                    </div>
+                    <div style={{ padding: 10, background: "var(--bg-secondary)", borderRadius: 8, fontSize: 12 }}>
+                      <strong style={{ display: "block", color: "var(--text-secondary)" }}>Minimum Order</strong>
+                      <span>2 Pieces</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── User Personas ── */}
       <section style={{ padding: "100px 24px", background: "var(--bg-secondary)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", marginBottom: 120 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", textAlign: "center" }}>
