@@ -178,11 +178,11 @@ export default function TranslatorToolPage() {
         {/* Subscription Status Card / Pricing card */}
         <div>
           {isSubscribed ? (
-            <div className="glass-card" style={{ padding: 32, border: "1px solid rgba(16, 185, 129, 0.3)", background: "linear-gradient(135deg, rgba(16, 185, 129, 0.02) 0%, rgba(22, 28, 38, 0.7) 100%)", textAlign: "center" }}>
+            <div className="glass-card" style={{ padding: 32, border: "1px solid rgba(16, 185, 129, 0.35)", background: "linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, var(--bg-card) 100%)", textAlign: "center" }}>
               <div style={{ width: 60, height: 60, borderRadius: "50%", background: "rgba(16, 185, 129, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--success)", margin: "0 auto 20px" }}>
                 <CheckCircle size={32} />
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>Subscription Active</h3>
+              <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 8, color: "var(--text-primary)" }}>Subscription Active</h3>
               <p style={{ fontSize: 13, color: "var(--text-secondary)", marginBottom: 28, lineHeight: 1.5 }}>
                 Your Premium English Language Converter addon subscription is active. You can download the extension below and start using it instantly.
               </p>
@@ -211,13 +211,13 @@ export default function TranslatorToolPage() {
               </button>
             </div>
           ) : (
-            <div className="glass-card" style={{ padding: 32, border: "1px solid rgba(155, 48, 255, 0.3)", background: "linear-gradient(135deg, rgba(155, 48, 255, 0.02) 0%, rgba(22, 28, 38, 0.7) 100%)", textAlign: "center" }}>
+            <div className="glass-card" style={{ padding: 32, border: "1px solid rgba(155, 48, 255, 0.35)", background: "linear-gradient(135deg, rgba(155, 48, 255, 0.05) 0%, var(--bg-card) 100%)", textAlign: "center" }}>
               <div style={{ width: 60, height: 60, borderRadius: "50%", background: "rgba(155, 48, 255, 0.15)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--purple)", margin: "0 auto 20px" }}>
                 <Globe size={32} />
               </div>
-              <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 4 }}>Premium Add-on</h3>
+              <h3 style={{ fontSize: 20, fontWeight: 800, marginBottom: 4, color: "var(--text-primary)" }}>Premium Add-on</h3>
               <div style={{ display: "flex", justifyContent: "center", alignItems: "baseline", gap: 4, margin: "16px 0 24px" }}>
-                <span style={{ fontSize: 32, fontWeight: 900, color: "white" }}>₹599</span>
+                <span style={{ fontSize: 32, fontWeight: 900, color: "var(--text-primary)" }}>₹599</span>
                 <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>/ month</span>
               </div>
 
