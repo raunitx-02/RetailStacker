@@ -135,7 +135,7 @@ export default function TranslatorToolPage() {
           <Sparkles size={14} /> Sourcing Add-ons
         </div>
         <h1 className="page-title">English Language Converter</h1>
-        <p className="page-subtitle">Instantly convert foreign supply chain websites like 1688.com to clean English dialects.</p>
+        <p className="page-subtitle">Instantly convert foreign supply chain websites and supplier portals to clean English dialects.</p>
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 32 }}>

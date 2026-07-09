@@ -528,10 +528,10 @@ export default function LandingPage() {
                 <Sparkles size={14} /> NEW SOURCING ADD-ON
               </div>
               <h2 style={{ fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 900, letterSpacing: "-0.02em", marginBottom: 24, lineHeight: 1.1 }}>
-                Translate 1688.com Instantly into Clean English
+                Translate Sourcing Portals Instantly into Clean English
               </h2>
               <p style={{ fontSize: 18, color: "var(--text-muted)", marginBottom: 32, lineHeight: 1.6 }}>
-                Stop struggling with Chinese sourcing sites. Our standalone **English Language Converter** extension automatically translates product listings, variants, specifications, and dynamic chat feeds into US, UK, or Indian English without reloads.
+                Stop struggling with foreign supply chain websites. Our standalone **English Language Converter** extension automatically translates product listings, variants, specifications, and dynamic chat feeds into US, UK, or Indian English without reloads.
               </p>
               
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 40 }}>
@@ -593,7 +593,7 @@ export default function LandingPage() {
                   <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ef4444" }} />
                   <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#eab308" }} />
                   <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#22c55e" }} />
-                  <span style={{ fontSize: 11, color: "var(--text-muted)", marginLeft: 20 }}>m.1688.com/offer/...</span>
+                  <span style={{ fontSize: 11, color: "var(--text-muted)", marginLeft: 20 }}>sourcing-portal.com/offer/...</span>
                 </div>
                 <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
                   {/* Mock Translated Content Card */}
