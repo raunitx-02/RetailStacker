@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAllUsers, saveUser, deleteUser, getPlans } from "@/lib/db";
+import { getAllUsers, saveUser, deleteUser, getPlans, getTranslatorAttempts } from "@/lib/db";
 import { cookies } from "next/headers";
 
 // Verify admin helper
@@ -18,6 +18,7 @@ export async function GET() {
 
     const users = getAllUsers();
     const plans = getPlans();
+    const translatorAttempts = getTranslatorAttempts();
 
     // Calculate dynamic stats
     const planPrices: Record<string, number> = {};
@@ -51,6 +52,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       users,
+      translatorAttempts,
       stats: {
         totalUsers: users.length,
         totalEarnings: grandTotalEarnings,

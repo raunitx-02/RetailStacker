@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { cookies } from "next/headers";
-import { findUser, saveUser } from "@/lib/db";
+import { findUser, saveUser, updateTranslatorAttempt } from "@/lib/db";
 
 export async function POST(req: Request) {
   try {
@@ -17,6 +17,9 @@ export async function POST(req: Request) {
       .digest("hex");
 
     if (razorpay_signature === expectedSign) {
+      // Update translator payment attempt status
+      updateTranslatorAttempt(razorpay_order_id, "succeeded");
+
       // Payment is successful, update user DB profile
       const cookieStore = await cookies();
       const userEmail = cookieStore.get("retailstacker_user")?.value;

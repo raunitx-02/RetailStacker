@@ -72,6 +72,7 @@ export default function AdminPanel() {
   // Dashboard Data
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [resellers, setResellers] = useState<UserProfile[]>([]);
+  const [translatorAttempts, setTranslatorAttempts] = useState<any[]>([]);
   const [plans, setPlans] = useState<PlanConfig[]>([]);
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -121,6 +122,9 @@ export default function AdminPanel() {
         setAuthenticated(true);
         setUsers(data.users);
         setStats(data.stats);
+        if (data.translatorAttempts) {
+          setTranslatorAttempts(data.translatorAttempts);
+        }
         
         // Fetch plans
         const plansRes = await fetch("/api/admin/plans");
@@ -696,6 +700,85 @@ export default function AdminPanel() {
               )}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* ── Extension Translator Subscriptions Section ── */}
+      <div style={{ marginTop: 40, marginBottom: 40 }}>
+        <h2 style={{ fontSize: 24, fontWeight: 900, marginBottom: 20, display: "flex", alignItems: "center", gap: 10, color: "var(--text-primary)" }}>
+          <Sparkles size={24} color="var(--purple)" /> Language Converter Extension Tracking
+        </h2>
+        
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(450px, 1fr))", gap: 32 }}>
+          
+          {/* Active Succeeded Payments */}
+          <div className="glass-card" style={{ padding: 24 }}>
+            <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: "var(--success)", display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--success)" }} /> Succeeded Payments (Active Add-on)
+            </h3>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid var(--border)", textAlign: "left", fontSize: 11, color: "var(--text-secondary)" }}>
+                    <th style={{ padding: 10 }}>USER EMAIL</th>
+                    <th style={{ padding: 10 }}>ORDER ID</th>
+                    <th style={{ padding: 10 }}>AMOUNT</th>
+                    <th style={{ padding: 10 }}>DATE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {translatorAttempts.filter(a => a.status === "succeeded").map((a, idx) => (
+                    <tr key={idx} style={{ borderBottom: "1px solid var(--border)", fontSize: 13 }}>
+                      <td style={{ padding: 10, fontWeight: 600 }}>{a.email}</td>
+                      <td style={{ padding: 10, fontFamily: "monospace", color: "var(--text-muted)", fontSize: 12 }}>{a.id}</td>
+                      <td style={{ padding: 10, color: "var(--success)" }}>₹{a.amount}</td>
+                      <td style={{ padding: 10, color: "var(--text-muted)" }}>{new Date(a.createdAt).toLocaleDateString("en-IN")}</td>
+                    </tr>
+                  ))}
+                  {translatorAttempts.filter(a => a.status === "succeeded").length === 0 && (
+                    <tr>
+                      <td colSpan={4} style={{ padding: 20, textAlign: "center", color: "var(--text-muted)" }}>No successful extension payments found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Failed / Incomplete Checkout Attempts */}
+          <div className="glass-card" style={{ padding: 24 }}>
+            <h3 style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, color: "var(--danger)", display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--danger)" }} /> Failed / Incomplete Checkout Attempts
+            </h3>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid var(--border)", textAlign: "left", fontSize: 11, color: "var(--text-secondary)" }}>
+                    <th style={{ padding: 10 }}>USER EMAIL</th>
+                    <th style={{ padding: 10 }}>ORDER ID</th>
+                    <th style={{ padding: 10 }}>AMOUNT</th>
+                    <th style={{ padding: 10 }}>DATE</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {translatorAttempts.filter(a => a.status !== "succeeded").map((a, idx) => (
+                    <tr key={idx} style={{ borderBottom: "1px solid var(--border)", fontSize: 13 }}>
+                      <td style={{ padding: 10, fontWeight: 600 }}>{a.email}</td>
+                      <td style={{ padding: 10, fontFamily: "monospace", color: "var(--text-muted)", fontSize: 12 }}>{a.id}</td>
+                      <td style={{ padding: 10, color: "var(--text-muted)" }}>₹{a.amount}</td>
+                      <td style={{ padding: 10, color: "var(--text-muted)" }}>{new Date(a.createdAt).toLocaleDateString("en-IN")}</td>
+                    </tr>
+                  ))}
+                  {translatorAttempts.filter(a => a.status !== "succeeded").length === 0 && (
+                    <tr>
+                      <td colSpan={4} style={{ padding: 20, textAlign: "center", color: "var(--text-muted)" }}>No failed/incomplete attempts found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
       </div>
 

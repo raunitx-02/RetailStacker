@@ -163,3 +163,32 @@ export const verifyOtp = (email: string, otp: string) => {
   }
   return false;
 };
+
+export const logTranslatorAttempt = (attempt: { id: string; email: string; amount: number; status: string }) => {
+  const db = getDB();
+  if (!db.translatorAttempts) {
+    db.translatorAttempts = [];
+  }
+  db.translatorAttempts.push({
+    ...attempt,
+    createdAt: Date.now()
+  });
+  saveDB(db);
+};
+
+export const updateTranslatorAttempt = (id: string, status: "succeeded" | "failed") => {
+  const db = getDB();
+  if (db.translatorAttempts) {
+    const idx = db.translatorAttempts.findIndex((a: any) => a.id === id);
+    if (idx >= 0) {
+      db.translatorAttempts[idx].status = status;
+      saveDB(db);
+    }
+  }
+};
+
+export const getTranslatorAttempts = () => {
+  const db = getDB();
+  return db.translatorAttempts || [];
+};
+

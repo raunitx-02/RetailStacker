@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import Razorpay from "razorpay";
 import { cookies } from "next/headers";
+import { logTranslatorAttempt } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,6 +31,15 @@ export async function POST(req: NextRequest) {
       receipt: `receipt_${plan}_${Date.now()}`,
       notes: { plan },
     });
+
+    if (plan === "Translator Addon") {
+      logTranslatorAttempt({
+        id: order.id,
+        email: user,
+        amount: amount,
+        status: "pending"
+      });
+    }
 
     return NextResponse.json({ order });
   } catch (error: any) {
