@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Download } from "lucide-react";
+import { Menu, X, Download, Globe } from "lucide-react";
 
 const NAV_LINKS = [
   { label: "UGC-Video", href: "https://ugc.retailstacker.com" },
@@ -15,8 +15,9 @@ const NAV_LINKS = [
 export default function PublicNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [installStepsOpen, setInstallStepsOpen] = useState(false);
+  const [translatorStepsOpen, setTranslatorStepsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [session, setSession] = useState<{ loggedIn: boolean } | null>(null);
+  const [session, setSession] = useState<{ loggedIn: boolean; user?: any } | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -61,6 +62,33 @@ export default function PublicNavbar() {
     } catch (err) {
       console.error("Failed checking download permission:", err);
       window.location.href = "/pricing";
+    }
+  };
+
+  const handleDownloadTranslator = async () => {
+    try {
+      const res = await fetch("/api/extension/auth/me");
+      const data = await res.json();
+
+      if (data.loggedIn && data.user && data.user.hasTranslatorSubscription) {
+        // Trigger download
+        const link = document.createElement("a");
+        link.href = "/english-language-converter.zip";
+        link.download = "english-language-converter.zip";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Show popup
+        setTranslatorStepsOpen(true);
+        setMobileOpen(false);
+      } else {
+        alert("To download the Language Converter extension, please log in and purchase the Translator subscription (₹599/month)!");
+        window.location.href = "/tools/translator";
+      }
+    } catch (err) {
+      console.error("Failed checking download permission:", err);
+      window.location.href = "/tools/translator";
     }
   };
 
@@ -134,6 +162,24 @@ export default function PublicNavbar() {
           >
             <Download size={15} />
             Download Extension
+          </button>
+          <button
+            onClick={handleDownloadTranslator}
+            style={{
+              textDecoration: "none",
+              padding: "8px 16px",
+              borderRadius: 8,
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: "pointer",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+            className="rs-download-translator-btn"
+          >
+            <Download size={15} />
+            Download Translator
           </button>
           {mounted && session?.loggedIn ? (
             <Link href="/dashboard" style={{
@@ -256,6 +302,27 @@ export default function PublicNavbar() {
             <Download size={16} />
             Download Extension
           </button>
+          <button
+            onClick={handleDownloadTranslator}
+            style={{
+              padding: "12px 16px",
+              borderRadius: 10,
+              fontSize: 15,
+              fontWeight: 700,
+              textAlign: "center",
+              marginTop: 4,
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+            }}
+            className="rs-download-translator-btn"
+          >
+            <Download size={16} />
+            Download Translator
+          </button>
         </div>
       )}
 
@@ -377,6 +444,125 @@ export default function PublicNavbar() {
         document.body
       )}
 
+      {/* Translator Installation Steps Dialog */}
+      {mounted && translatorStepsOpen && createPortal(
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(22, 10, 40, 0.8)",
+          backdropFilter: "blur(8px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 99999,
+          padding: 20
+        }}>
+          <div style={{
+            background: "#ffffff",
+            borderRadius: 16,
+            width: "100%",
+            maxWidth: 550,
+            padding: 32,
+            boxShadow: "0 20px 40px rgba(155, 48, 255, 0.25)",
+            position: "relative",
+            border: "1px solid rgba(155, 48, 255, 0.2)",
+            display: "flex",
+            flexDirection: "column",
+            animation: "scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards"
+          }}>
+            <button
+              onClick={() => setTranslatorStepsOpen(false)}
+              style={{
+                position: "absolute",
+                top: 20,
+                right: 20,
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "#64748b",
+                padding: 4
+              }}
+            >
+              <X size={20} />
+            </button>
+
+            <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+              <div style={{
+                background: "rgba(155, 48, 255, 0.1)",
+                padding: 10,
+                borderRadius: 12,
+                color: "var(--purple)"
+              }}>
+                <Globe size={24} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: 20, fontWeight: 800, color: "#0F172A", margin: 0 }}>Converter Downloaded!</h3>
+                <p style={{ fontSize: 13, color: "#64748b", margin: "2px 0 0 0" }}>Follow these simple steps to activate the translator:</p>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 24 }}>
+              {[
+                { step: "1", title: "Extract the Zip file", desc: "Extract the downloaded 'english-language-converter.zip' file into a dedicated folder on your computer." },
+                { step: "2", title: "Open Chrome Extensions", desc: "Open Google Chrome and navigate to chrome://extensions/ in the URL bar." },
+                { step: "3", title: "Enable Developer Mode", desc: "Toggle the Developer mode switch in the top-right corner to ON." },
+                { step: "4", title: "Load Unpacked Folder", desc: "Click the Load unpacked button in the top-left corner of the page." },
+                { step: "5", title: "Select Extracted Folder", desc: "Browse and select the folder you extracted in Step 1 to install the extension." },
+                { step: "6", title: "Log In & Activate", desc: "Click the extension icon in your browser toolbar, log in with your account, select US/UK/India, and toggle it on!" }
+              ].map((item) => (
+                <div key={item.step} style={{ display: "flex", gap: 14 }}>
+                  <div style={{
+                    width: 26,
+                    height: 26,
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, #7c3aed 0%, #9b30ff 100%)",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 12,
+                    fontWeight: 800,
+                    flexShrink: 0,
+                    boxShadow: "0 2px 6px rgba(155, 48, 255, 0.3)"
+                  }}>
+                    {item.step}
+                  </div>
+                  <div>
+                    <h4 style={{ fontSize: 14, fontWeight: 700, color: "#1E293B", margin: "0 0 2px 0" }}>{item.title}</h4>
+                    <p style={{ fontSize: 12, color: "#64748b", margin: 0, lineHeight: 1.4 }}>{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setTranslatorStepsOpen(false)}
+              style={{
+                width: "100%",
+                padding: "12px",
+                borderRadius: 10,
+                background: "var(--purple)",
+                color: "white",
+                fontSize: 14,
+                fontWeight: 700,
+                border: "none",
+                cursor: "pointer",
+                textAlign: "center",
+                transition: "all 0.2s",
+                boxShadow: "0 4px 12px rgba(155, 48, 255, 0.2)"
+              }}
+              className="rs-modal-ok-btn"
+            >
+              Got it, let's translate!
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
+
       <style>{`
         @media (max-width: 768px) {
           .public-nav-links { display: none !important; }
@@ -394,8 +580,20 @@ export default function PublicNavbar() {
           color: white !important;
           box-shadow: 0 4px 12px var(--accent-glow, rgba(26, 86, 219, 0.2)) !important;
         }
+        .rs-download-translator-btn {
+          background: rgba(155, 48, 255, 0.08) !important;
+          border: 1px solid var(--purple, #9b30ff) !important;
+          color: var(--purple, #9b30ff) !important;
+          transition: all 0.2s !important;
+        }
+        .rs-download-translator-btn:hover {
+          background: var(--purple, #9b30ff) !important;
+          border-color: var(--purple, #9b30ff) !important;
+          color: white !important;
+          box-shadow: 0 4px 12px rgba(155, 48, 255, 0.2) !important;
+        }
         .rs-modal-ok-btn:hover {
-          background: #1a3a60 !important;
+          opacity: 0.9 !important;
           box-shadow: 0 4px 16px rgba(12, 30, 54, 0.3) !important;
         }
         @keyframes scaleIn {
