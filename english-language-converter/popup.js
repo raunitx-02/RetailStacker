@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Translator Switchers
   const translationToggle = document.getElementById("translation-toggle");
   const localeButtons = document.querySelectorAll(".locale-btn");
+  const expiryBanner = document.getElementById("expiry-banner");
 
   let isSignupMode = false;
 
@@ -199,14 +200,29 @@ document.addEventListener("DOMContentLoaded", async () => {
           btn.classList.remove("active");
         }
       });
+
+      // Show expiry warning starting 7 days prior
+      if (user.translatorExpiresAt) {
+        const msLeft = user.translatorExpiresAt - Date.now();
+        const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
+        if (daysLeft > 0 && daysLeft <= 7) {
+          expiryBanner.textContent = `⚠️ Your Translator subscription expires in ${daysLeft} day${daysLeft > 1 ? 's' : ''}. Please renew to prevent interruption.`;
+          expiryBanner.style.display = "block";
+        } else {
+          expiryBanner.style.display = "none";
+        }
+      } else {
+        expiryBanner.style.display = "none";
+      }
     } else {
-      // User is not subscribed to the translator
+      // User is not subscribed to the translator or subscription expired
       translatorControls.style.display = "none";
       upgradeSection.classList.add("active");
+      expiryBanner.style.display = "none";
     }
 
     const webBase = await getWebUrl();
-    document.getElementById("upgrade-link").href = `${webBase}/pricing`;
+    document.getElementById("upgrade-link").href = `${webBase}/tools/translator`;
   }
 
   function showAuth() {

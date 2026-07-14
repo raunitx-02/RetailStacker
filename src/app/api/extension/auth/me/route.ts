@@ -32,6 +32,7 @@ export async function GET(req: NextRequest) {
           plan: "Diamond",
           role: "admin",
           hasTranslatorSubscription: true,
+          translatorExpiresAt: Date.now() + 30 * 24 * 60 * 60 * 1000,
         },
       }));
     }
@@ -42,6 +43,7 @@ export async function GET(req: NextRequest) {
     }
 
     const userPlan = user.plan || "Free";
+    const hasTranslator = user.hasTranslatorSubscription === true && (!user.translatorExpiresAt || Date.now() < user.translatorExpiresAt);
 
     return corsResponse(req, NextResponse.json({
       loggedIn: true,
@@ -52,7 +54,8 @@ export async function GET(req: NextRequest) {
         mobile: user.mobile || "",
         plan: userPlan,
         role: user.role || "user",
-        hasTranslatorSubscription: user.hasTranslatorSubscription || false,
+        hasTranslatorSubscription: hasTranslator,
+        translatorExpiresAt: user.translatorExpiresAt || null,
       },
     }));
   } catch (err: any) {

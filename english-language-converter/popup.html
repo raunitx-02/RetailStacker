@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>English Language Converter</title>
+  <style>
+    :root {
+      --bg-primary: #0d0f14;
+      --bg-card: rgba(22, 28, 38, 0.7);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.15);
+      --accent: #ff6b35;
+      --accent-muted: rgba(255, 107, 53, 0.15);
+      --accent-hover: #ff8552;
+      --text-primary: #ffffff;
+      --text-secondary: #a0aec0;
+      --text-muted: #718096;
+      --success: #10b981;
+      --danger: #ef4444;
+      --purple: #9b30ff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      width: 360px;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      font-size: 14px;
+      padding: 16px;
+    }
+
+    /* Glassmorphic Container */
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 20px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      transition: all 0.3s ease;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+
+    .logo-container {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: white;
+      font-size: 18px;
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff, var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Auth Section styles */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 3px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--border-hover);
+      color: var(--text-primary);
+    }
+
+    .input-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .input-field {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: white;
+      outline: none;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .input-field:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-muted);
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(255, 107, 53, 0.2);
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .auth-error {
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      margin-top: 12px;
+      display: none;
+      line-height: 1.4;
+    }
+
+    /* Dashboard & Toggle styles */
+    .user-profile {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      background: rgba(255,255,255,0.02);
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .plan-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 50px;
+      background: var(--accent-muted);
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .plan-badge.diamond {
+      background: rgba(155, 48, 255, 0.15);
+      color: var(--purple);
+    }
+
+    /* Custom Switch Container */
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .control-label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .control-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* Switch Switcher */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      transition: .3s;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--success);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    /* Selector Groups for Locales */
+    .locale-group {
+      margin-top: 16px;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 10px;
+      padding: 6px;
+      border: 1px solid var(--border);
+      display: flex;
+      gap: 4px;
+    }
+
+    .locale-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+
+    .locale-btn.active {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+    }
+
+    /* Upgrade Required Overlay styling */
+    .upgrade-screen {
+      display: none;
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .upgrade-screen.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .upgrade-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .upgrade-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+
+    .upgrade-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .btn-upgrade {
+      background: var(--accent);
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 8px;
+      display: inline-block;
+      font-size: 12px;
+      box-shadow: 0 4px 14px rgba(255, 107, 53, 0.3);
+    }
+
+    .btn-logout {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 16px;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      border-color: rgba(239, 68, 68, 0.2);
+    }
+    .expiry-banner {
+      display: none;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #ffa4a4;
+      font-size: 11px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      text-align: center;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="glass-card">
+    <header>
+      <div class="logo-container">E</div>
+      <div>
+        <h1 class="brand-title">English Converter</h1>
+        <p class="brand-subtitle">RetailStacker Premium Tool</p>
+      </div>
+    </header>
+
+    <!-- 1. Authentication Form Section -->
+    <div id="auth-section" class="section active">
+      <div class="tabs">
+        <button id="tab-login" class="tab-btn active">Log In</button>
+        <button id="tab-signup" class="tab-btn">Sign Up</button>
+      </div>
+      
+      <form id="auth-form">
+        <div id="signup-fields" style="display: none; flex-direction: column; gap: 10px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div>
+              <label>First Name</label>
+              <input type="text" id="reg-firstname" class="input-field" placeholder="John">
+            </div>
+            <div>
+              <label>Last Name</label>
+              <input type="text" id="reg-lastname" class="input-field" placeholder="Doe">
+            </div>
+          </div>
+          <div>
+            <label>Mobile Number</label>
+            <input type="tel" id="reg-mobile" class="input-field" placeholder="Phone with country code">
+          </div>
+        </div>
+
+        <div class="input-group" style="margin-top: 10px;">
+          <label>Email Address</label>
+          <input type="email" id="auth-email" class="input-field" required placeholder="name@retailstacker.com">
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="auth-password" class="input-field" required placeholder="••••••••">
+        </div>
+
+        <button type="submit" id="auth-submit-btn" class="btn-submit">Log In Workspace</button>
+      </form>
+      <div id="auth-error" class="auth-error"></div>
+    </div>
+
+    <!-- 2. Dashboard - Controller Switch Section -->
+    <div id="dashboard-section" class="section">
+      <div class="user-profile">
+        <div class="user-info">
+          <span id="user-email" class="user-name">user@retailstacker.com</span>
+          <span class="brand-subtitle">Subscription Status</span>
+        </div>
+        <span id="user-plan" class="plan-badge">Lite Plan</span>
+      </div>
+
+      <!-- Expiry Warning Banner -->
+      <div id="expiry-banner" class="expiry-banner"></div>
+
+      <!-- Controls -->
+      <div id="translator-controls">
+        <div class="control-row">
+          <div>
+            <div class="control-label">Convert Page to English</div>
+            <div class="control-sub">Auto-translate without reload</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="translation-toggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="locale-group">
+          <button id="btn-us" class="locale-btn active" data-locale="us">US English</button>
+          <button id="btn-uk" class="locale-btn" data-locale="uk">UK English</button>
+          <button id="btn-in" class="locale-btn" data-locale="in">IN English</button>
+        </div>
+      </div>
+
+      <!-- Upgrade Screen Overlay -->
+      <div id="upgrade-section" class="upgrade-screen">
+        <div class="upgrade-icon">🔒</div>
+        <h2 class="upgrade-title">Subscription Required</h2>
+        <p class="upgrade-desc">
+          The English Language Converter is a premium feature. Please upgrade to a paid RetailStacker plan (Lite, Starter, Growth, or Diamond) for ₹599/month to translate any website.
+        </p>
+        <a id="upgrade-link" href="https://retailstacker.com/pricing" target="_blank" class="btn-upgrade">Upgrade Now</a>
+      </div>
+
+      <button id="logout-action-btn" class="btn-logout">Logout Account</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

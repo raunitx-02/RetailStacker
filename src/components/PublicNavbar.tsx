@@ -179,7 +179,7 @@ export default function PublicNavbar() {
             className="rs-download-translator-btn"
           >
             <Download size={15} />
-            Download Translator
+            Language Translator
           </button>
           {mounted && session?.loggedIn ? (
             <Link href="/dashboard" style={{
@@ -321,7 +321,7 @@ export default function PublicNavbar() {
             className="rs-download-translator-btn"
           >
             <Download size={16} />
-            Download Translator
+            Language Translator
           </button>
         </div>
       )}
