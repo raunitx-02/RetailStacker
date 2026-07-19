@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const PLAN_ACCESS: Record<string, string[]> = {
+  Free: [
+    "/dashboard",
+    "/profile",
+  ],
   Lite: [
     "/dashboard",
     "/profile",
