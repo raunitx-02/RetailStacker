@@ -93,161 +93,186 @@ export default function PublicNavbar() {
   };
 
   return (
-    <nav style={{
-      padding: "0 40px",
-      height: 72,
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      borderBottom: "1px solid var(--border)",
-      background: "var(--bg-primary)",
-      position: "sticky",
-      top: 0,
-      zIndex: 1000,
-      backdropFilter: "blur(12px)",
-    }}>
-      {/* Logo */}
-      <Link href="/" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: 10 }}>
-        <img src="/logo.png" alt="RetailStacker" style={{ width: 36, height: 36 }} />
-        <span style={{ fontWeight: 900, fontSize: 20, letterSpacing: "-0.02em", display: "flex", alignItems: "center" }}>
-          <span style={{ 
-            background: "linear-gradient(135deg, #0C1E36 65%, #00B4D8 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            display: "inline-block"
-          }}>R</span>
-          <span style={{ color: "#0C1E36" }}>etail</span>
-          <span style={{ color: "#1A56DB" }}>Stacker</span>
-        </span>
-      </Link>
+    <>
+      {/* Floating pill navbar wrapper */}
+      <div style={{
+        position: "sticky",
+        top: 16,
+        zIndex: 1000,
+        display: "flex",
+        justifyContent: "center",
+        padding: "0 24px",
+        pointerEvents: "none",
+      }}>
+        <nav style={{
+          pointerEvents: "all",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          maxWidth: 1200,
+          height: 60,
+          padding: "0 8px 0 16px",
+          borderRadius: 999,
+          background: "rgba(255,255,255,0.07)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.18), 0 1px 0 rgba(255,255,255,0.08) inset",
+        }}>
+          {/* Logo */}
+          <Link href="/" style={{ textDecoration: "none", color: "inherit", display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+            <img src="/logo.png" alt="RetailStacker" style={{ width: 32, height: 32 }} />
+            <span style={{ fontWeight: 900, fontSize: 18, letterSpacing: "-0.02em", display: "flex", alignItems: "center" }}>
+              <span style={{
+                background: "linear-gradient(135deg, #0C1E36 65%, #00B4D8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                display: "inline-block"
+              }}>R</span>
+              <span style={{ color: "#0C1E36" }}>etail</span>
+              <span style={{ color: "#1A56DB" }}>Stacker</span>
+            </span>
+          </Link>
 
-      {/* Desktop Nav */}
-      <div className="public-nav-links" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flex: 1, marginLeft: 48 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          {NAV_LINKS.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
+          {/* Desktop Nav Links — centered */}
+          <div className="public-nav-links" style={{ display: "flex", alignItems: "center", gap: 2, position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
+            {NAV_LINKS.map(link => (
+              <Link
+                key={link.href}
+                href={link.href}
+                style={{
+                  textDecoration: "none",
+                  padding: "7px 14px",
+                  borderRadius: 999,
+                  fontSize: 13.5,
+                  fontWeight: 600,
+                  color: pathname === link.href ? "var(--accent)" : "var(--text-secondary)",
+                  background: pathname === link.href ? "var(--accent-muted)" : "transparent",
+                  transition: "all 0.2s",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          {/* Right side actions */}
+          <div className="public-nav-links" style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+            <button
+              onClick={handleDownload}
+              className="rs-download-btn"
               style={{
-                textDecoration: "none",
-                padding: "8px 16px",
-                borderRadius: 8,
-                fontSize: 14,
+                padding: "7px 13px",
+                borderRadius: 999,
+                fontSize: 13,
                 fontWeight: 600,
-                color: pathname === link.href ? "var(--accent)" : "var(--text-secondary)",
-                background: pathname === link.href ? "var(--accent-muted)" : "transparent",
-                transition: "all 0.2s",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                whiteSpace: "nowrap",
               }}
             >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <button
-            onClick={handleDownload}
-            style={{
-              textDecoration: "none",
-              padding: "8px 16px",
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-            }}
-            className="rs-download-btn"
-          >
-            <Download size={15} />
-            Download Extension
-          </button>
-          <button
-            onClick={handleDownloadTranslator}
-            style={{
-              textDecoration: "none",
-              padding: "8px 16px",
-              borderRadius: 8,
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: "pointer",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 6,
-            }}
-            className="rs-download-translator-btn"
-          >
-            <Download size={15} />
-            Language Translator
-          </button>
-          {mounted && session?.loggedIn ? (
-            <Link href="/dashboard" style={{
-              textDecoration: "none",
-              padding: "9px 20px",
-              borderRadius: 10,
-              fontSize: 14,
-              fontWeight: 700,
-              color: "white",
-              background: "var(--accent)",
-              boxShadow: "0 4px 12px var(--accent-glow)",
-            }}>
-              Go to Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link href="/login" style={{
-                textDecoration: "none",
-                padding: "8px 16px",
-                borderRadius: 8,
-                fontSize: 14,
+              <Download size={13} />
+              Download Extension
+            </button>
+            <button
+              onClick={handleDownloadTranslator}
+              className="rs-download-translator-btn"
+              style={{
+                padding: "7px 13px",
+                borderRadius: 999,
+                fontSize: 13,
                 fontWeight: 600,
-                color: "var(--text-secondary)",
-              }}>
-                Login
-              </Link>
-              <Link href="/login?mode=signup" style={{
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                whiteSpace: "nowrap",
+              }}
+            >
+              <Globe size={13} />
+              Language Translator
+            </button>
+
+            {/* Divider */}
+            <div style={{ width: 1, height: 24, background: "rgba(255,255,255,0.15)", margin: "0 2px" }} />
+
+            {mounted && session?.loggedIn ? (
+              <Link href="/dashboard" style={{
                 textDecoration: "none",
-                padding: "9px 20px",
-                borderRadius: 10,
-                fontSize: 14,
+                padding: "8px 18px",
+                borderRadius: 999,
+                fontSize: 13.5,
                 fontWeight: 700,
                 color: "white",
                 background: "var(--accent)",
                 boxShadow: "0 4px 12px var(--accent-glow)",
+                whiteSpace: "nowrap",
               }}>
-                Get Started Free
+                Dashboard →
               </Link>
-            </>
-          )}
-        </div>
+            ) : (
+              <>
+                <Link href="/login" style={{
+                  textDecoration: "none",
+                  padding: "7px 14px",
+                  borderRadius: 999,
+                  fontSize: 13.5,
+                  fontWeight: 600,
+                  color: "var(--text-secondary)",
+                  whiteSpace: "nowrap",
+                }}>
+                  Login
+                </Link>
+                <Link href="/login?mode=signup" style={{
+                  textDecoration: "none",
+                  padding: "8px 18px",
+                  borderRadius: 999,
+                  fontSize: 13.5,
+                  fontWeight: 700,
+                  color: "white",
+                  background: "linear-gradient(135deg, #1A56DB 0%, #0C1E36 100%)",
+                  boxShadow: "0 4px 14px rgba(26,86,219,0.35)",
+                  whiteSpace: "nowrap",
+                }}>
+                  Get Started Free
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Hamburger */}
+          <button
+            className="mobile-menu-btn"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            style={{ display: "none", background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", padding: 8 }}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </nav>
       </div>
 
-      {/* Mobile Hamburger */}
-      <button
-        className="mobile-menu-btn"
-        onClick={() => setMobileOpen(!mobileOpen)}
-        style={{ display: "none", background: "none", border: "none", cursor: "pointer", color: "var(--text-primary)", padding: 8 }}
-        aria-label="Toggle menu"
-      >
-        {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
-
-      {/* Mobile Dropdown */}
+      {/* Mobile Dropdown — rendered outside pill */}
       {mobileOpen && (
         <div style={{
-          position: "absolute",
-          top: 72,
-          left: 0,
-          right: 0,
-          background: "var(--bg-secondary)",
-          borderBottom: "1px solid var(--border)",
-          padding: "16px 24px",
+          position: "fixed",
+          top: 88,
+          left: 16,
+          right: 16,
+          background: "rgba(12,18,30,0.97)",
+          border: "1px solid rgba(255,255,255,0.1)",
+          borderRadius: 20,
+          padding: "16px 20px",
           display: "flex",
           flexDirection: "column",
           gap: 4,
           zIndex: 999,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+          backdropFilter: "blur(24px)",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
         }}>
           {NAV_LINKS.map(link => (
             <Link
@@ -257,7 +282,7 @@ export default function PublicNavbar() {
               style={{
                 textDecoration: "none",
                 padding: "12px 16px",
-                borderRadius: 8,
+                borderRadius: 12,
                 fontSize: 15,
                 fontWeight: 600,
                 color: pathname === link.href ? "var(--accent)" : "var(--text-primary)",
@@ -267,62 +292,28 @@ export default function PublicNavbar() {
               {link.label}
             </Link>
           ))}
+          <div style={{ height: 1, background: "rgba(255,255,255,0.08)", margin: "8px 0" }} />
+          <button onClick={handleDownload} className="rs-download-btn" style={{ padding: "12px 16px", borderRadius: 12, fontSize: 14, fontWeight: 700, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 2 }}>
+            <Download size={15} /> Download Extension
+          </button>
+          <button onClick={handleDownloadTranslator} className="rs-download-translator-btn" style={{ padding: "12px 16px", borderRadius: 12, fontSize: 14, fontWeight: 700, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 4 }}>
+            <Globe size={15} /> Language Translator
+          </button>
+          <div style={{ height: 1, background: "rgba(255,255,255,0.08)", margin: "8px 0" }} />
           {mounted && session?.loggedIn ? (
-            <Link href="/dashboard" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", padding: "12px 16px", borderRadius: 10, fontSize: 15, fontWeight: 700, color: "white", background: "var(--accent)", textAlign: "center", marginTop: 8 }}>
+            <Link href="/dashboard" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", padding: "12px 16px", borderRadius: 12, fontSize: 15, fontWeight: 700, color: "white", background: "var(--accent)", textAlign: "center" }}>
               Go to Dashboard
             </Link>
           ) : (
             <>
-              <Link href="/login" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", padding: "12px 16px", borderRadius: 8, fontSize: 15, fontWeight: 600, color: "var(--text-primary)" }}>
+              <Link href="/login" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", padding: "12px 16px", borderRadius: 12, fontSize: 15, fontWeight: 600, color: "var(--text-primary)", textAlign: "center" }}>
                 Login
               </Link>
-              <Link href="/login?mode=signup" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", padding: "12px 16px", borderRadius: 10, fontSize: 15, fontWeight: 700, color: "white", background: "var(--accent)", textAlign: "center", marginTop: 8 }}>
+              <Link href="/login?mode=signup" onClick={() => setMobileOpen(false)} style={{ textDecoration: "none", padding: "12px 16px", borderRadius: 12, fontSize: 15, fontWeight: 700, color: "white", background: "linear-gradient(135deg, #1A56DB 0%, #0C1E36 100%)", textAlign: "center", marginTop: 4 }}>
                 Get Started Free
               </Link>
             </>
           )}
-          <button
-            onClick={handleDownload}
-            style={{
-              padding: "12px 16px",
-              borderRadius: 10,
-              fontSize: 15,
-              fontWeight: 700,
-              textAlign: "center",
-              marginTop: 4,
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-            }}
-            className="rs-download-btn"
-          >
-            <Download size={16} />
-            Download Extension
-          </button>
-          <button
-            onClick={handleDownloadTranslator}
-            style={{
-              padding: "12px 16px",
-              borderRadius: 10,
-              fontSize: 15,
-              fontWeight: 700,
-              textAlign: "center",
-              marginTop: 4,
-              border: "none",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-            }}
-            className="rs-download-translator-btn"
-          >
-            <Download size={16} />
-            Language Translator
-          </button>
         </div>
       )}
 
@@ -330,54 +321,24 @@ export default function PublicNavbar() {
       {mounted && installStepsOpen && createPortal(
         <div style={{
           position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          top: 0, left: 0, right: 0, bottom: 0,
           background: "rgba(10, 22, 40, 0.8)",
           backdropFilter: "blur(8px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 99999,
-          padding: 20
+          display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 99999, padding: 20
         }}>
           <div style={{
-            background: "#ffffff",
-            borderRadius: 16,
-            width: "100%",
-            maxWidth: 550,
-            padding: 32,
-            boxShadow: "0 20px 40px rgba(0, 0, 0, 0.25)",
-            position: "relative",
-            border: "1px solid var(--border)",
-            display: "flex",
-            flexDirection: "column",
+            background: "#ffffff", borderRadius: 16, width: "100%", maxWidth: 550,
+            padding: 32, boxShadow: "0 20px 40px rgba(0, 0, 0, 0.25)",
+            position: "relative", border: "1px solid var(--border)",
+            display: "flex", flexDirection: "column",
             animation: "scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards"
           }}>
-            <button
-              onClick={() => setInstallStepsOpen(false)}
-              style={{
-                position: "absolute",
-                top: 20,
-                right: 20,
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "#64748b",
-                padding: 4
-              }}
-            >
+            <button onClick={() => setInstallStepsOpen(false)} style={{ position: "absolute", top: 20, right: 20, background: "none", border: "none", cursor: "pointer", color: "#64748b", padding: 4 }}>
               <X size={20} />
             </button>
-
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
-              <div style={{
-                background: "rgba(6, 182, 212, 0.1)",
-                padding: 10,
-                borderRadius: 12,
-                color: "#00B4D8"
-              }}>
+              <div style={{ background: "rgba(6, 182, 212, 0.1)", padding: 10, borderRadius: 12, color: "#00B4D8" }}>
                 <Download size={24} />
               </div>
               <div>
@@ -385,7 +346,6 @@ export default function PublicNavbar() {
                 <p style={{ fontSize: 13, color: "#64748b", margin: "2px 0 0 0" }}>Follow these 5 simple steps to install in Chrome:</p>
               </div>
             </div>
-
             <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 24 }}>
               {[
                 { step: "1", title: "Extract the Zip file", desc: "Locate the downloaded 'retailstacker-extension.zip' file on your computer and extract/unzip it into a folder." },
@@ -395,20 +355,7 @@ export default function PublicNavbar() {
                 { step: "5", title: "Select Extracted Folder", desc: "Browse to the folder you extracted in Step 1 and select it to install. You're ready to stack!" }
               ].map((item) => (
                 <div key={item.step} style={{ display: "flex", gap: 14 }}>
-                  <div style={{
-                    width: 26,
-                    height: 26,
-                    borderRadius: "50%",
-                    background: "linear-gradient(135deg, #0C1E36 0%, #00B4D8 100%)",
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 12,
-                    fontWeight: 800,
-                    flexShrink: 0,
-                    boxShadow: "0 2px 6px rgba(0, 180, 216, 0.3)"
-                  }}>
+                  <div style={{ width: 26, height: 26, borderRadius: "50%", background: "linear-gradient(135deg, #0C1E36 0%, #00B4D8 100%)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, flexShrink: 0, boxShadow: "0 2px 6px rgba(0, 180, 216, 0.3)" }}>
                     {item.step}
                   </div>
                   <div>
@@ -418,25 +365,7 @@ export default function PublicNavbar() {
                 </div>
               ))}
             </div>
-
-            <button
-              onClick={() => setInstallStepsOpen(false)}
-              style={{
-                width: "100%",
-                padding: "12px",
-                borderRadius: 10,
-                background: "#0C1E36",
-                color: "white",
-                fontSize: 14,
-                fontWeight: 700,
-                border: "none",
-                cursor: "pointer",
-                textAlign: "center",
-                transition: "all 0.2s",
-                boxShadow: "0 4px 12px rgba(12, 30, 54, 0.2)"
-              }}
-              className="rs-modal-ok-btn"
-            >
+            <button onClick={() => setInstallStepsOpen(false)} className="rs-modal-ok-btn" style={{ width: "100%", padding: "12px", borderRadius: 10, background: "#0C1E36", color: "white", fontSize: 14, fontWeight: 700, border: "none", cursor: "pointer", textAlign: "center", transition: "all 0.2s", boxShadow: "0 4px 12px rgba(12, 30, 54, 0.2)" }}>
               Got it, let's start!
             </button>
           </div>
@@ -448,54 +377,24 @@ export default function PublicNavbar() {
       {mounted && translatorStepsOpen && createPortal(
         <div style={{
           position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          top: 0, left: 0, right: 0, bottom: 0,
           background: "rgba(22, 10, 40, 0.8)",
           backdropFilter: "blur(8px)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 99999,
-          padding: 20
+          display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 99999, padding: 20
         }}>
           <div style={{
-            background: "#ffffff",
-            borderRadius: 16,
-            width: "100%",
-            maxWidth: 550,
-            padding: 32,
-            boxShadow: "0 20px 40px rgba(155, 48, 255, 0.25)",
-            position: "relative",
-            border: "1px solid rgba(155, 48, 255, 0.2)",
-            display: "flex",
-            flexDirection: "column",
+            background: "#ffffff", borderRadius: 16, width: "100%", maxWidth: 550,
+            padding: 32, boxShadow: "0 20px 40px rgba(155, 48, 255, 0.25)",
+            position: "relative", border: "1px solid rgba(155, 48, 255, 0.2)",
+            display: "flex", flexDirection: "column",
             animation: "scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards"
           }}>
-            <button
-              onClick={() => setTranslatorStepsOpen(false)}
-              style={{
-                position: "absolute",
-                top: 20,
-                right: 20,
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "#64748b",
-                padding: 4
-              }}
-            >
+            <button onClick={() => setTranslatorStepsOpen(false)} style={{ position: "absolute", top: 20, right: 20, background: "none", border: "none", cursor: "pointer", color: "#64748b", padding: 4 }}>
               <X size={20} />
             </button>
-
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
-              <div style={{
-                background: "rgba(155, 48, 255, 0.1)",
-                padding: 10,
-                borderRadius: 12,
-                color: "var(--purple)"
-              }}>
+              <div style={{ background: "rgba(155, 48, 255, 0.1)", padding: 10, borderRadius: 12, color: "var(--purple)" }}>
                 <Globe size={24} />
               </div>
               <div>
@@ -503,7 +402,6 @@ export default function PublicNavbar() {
                 <p style={{ fontSize: 13, color: "#64748b", margin: "2px 0 0 0" }}>Follow these simple steps to activate the translator:</p>
               </div>
             </div>
-
             <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 24 }}>
               {[
                 { step: "1", title: "Extract the Zip file", desc: "Extract the downloaded 'english-language-converter.zip' file into a dedicated folder on your computer." },
@@ -514,20 +412,7 @@ export default function PublicNavbar() {
                 { step: "6", title: "Log In & Activate", desc: "Click the extension icon in your browser toolbar, log in with your account, select US/UK/India, and toggle it on!" }
               ].map((item) => (
                 <div key={item.step} style={{ display: "flex", gap: 14 }}>
-                  <div style={{
-                    width: 26,
-                    height: 26,
-                    borderRadius: "50%",
-                    background: "linear-gradient(135deg, #7c3aed 0%, #9b30ff 100%)",
-                    color: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 12,
-                    fontWeight: 800,
-                    flexShrink: 0,
-                    boxShadow: "0 2px 6px rgba(155, 48, 255, 0.3)"
-                  }}>
+                  <div style={{ width: 26, height: 26, borderRadius: "50%", background: "linear-gradient(135deg, #7c3aed 0%, #9b30ff 100%)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, flexShrink: 0, boxShadow: "0 2px 6px rgba(155, 48, 255, 0.3)" }}>
                     {item.step}
                   </div>
                   <div>
@@ -537,25 +422,7 @@ export default function PublicNavbar() {
                 </div>
               ))}
             </div>
-
-            <button
-              onClick={() => setTranslatorStepsOpen(false)}
-              style={{
-                width: "100%",
-                padding: "12px",
-                borderRadius: 10,
-                background: "var(--purple)",
-                color: "white",
-                fontSize: 14,
-                fontWeight: 700,
-                border: "none",
-                cursor: "pointer",
-                textAlign: "center",
-                transition: "all 0.2s",
-                boxShadow: "0 4px 12px rgba(155, 48, 255, 0.2)"
-              }}
-              className="rs-modal-ok-btn"
-            >
+            <button onClick={() => setTranslatorStepsOpen(false)} className="rs-modal-ok-btn" style={{ width: "100%", padding: "12px", borderRadius: 10, background: "var(--purple)", color: "white", fontSize: 14, fontWeight: 700, border: "none", cursor: "pointer", textAlign: "center", transition: "all 0.2s", boxShadow: "0 4px 12px rgba(155, 48, 255, 0.2)" }}>
               Got it, let's translate!
             </button>
           </div>
@@ -564,9 +431,9 @@ export default function PublicNavbar() {
       )}
 
       <style>{`
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .public-nav-links { display: none !important; }
-          .mobile-menu-btn { display: block !important; }
+          .mobile-menu-btn { display: flex !important; }
         }
         .rs-download-btn {
           background: var(--accent-muted, rgba(26, 86, 219, 0.08)) !important;
@@ -597,16 +464,14 @@ export default function PublicNavbar() {
           box-shadow: 0 4px 16px rgba(12, 30, 54, 0.3) !important;
         }
         @keyframes scaleIn {
-          from {
-            transform: scale(0.85);
-            opacity: 0;
-          }
-          to {
-            transform: scale(1);
-            opacity: 1;
-          }
+          from { transform: scale(0.85); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        nav a:hover {
+          color: var(--text-primary) !important;
+          background: rgba(255,255,255,0.06) !important;
         }
       `}</style>
-    </nav>
+    </>
   );
 }
