@@ -2,8 +2,8 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
-import { sendLoginOtpAction, verifyLoginOtpAction, registerWithOtpAction } from "../../actions/auth";
-import { ArrowRight, Mail, KeyRound, User, Briefcase } from "lucide-react";
+import { loginAction, sendMobileOtpAction, verifyMobileOtpAction, registerWithMobileOtpAction } from "../../actions/auth";
+import { ArrowRight, Mail, KeyRound, User, Briefcase, Lock, Phone } from "lucide-react";
 import Link from "next/link";
 import PublicNavbar from "@/components/PublicNavbar";
 
@@ -57,39 +57,35 @@ function AuthForm() {
   const [countryCode, setCountryCode] = useState("+91");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loginInput, setLoginInput] = useState(""); // Email or Mobile number
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
-  const [userExists, setUserExists] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const isLogin = mode === "login-user" || mode === "login-reseller";
   const isReseller = mode === "login-reseller" || mode === "signup-reseller";
   const role = isReseller ? "reseller" : "user";
+  const isEmailLogin = loginInput.includes("@");
 
-  const switchTo = (m: AuthMode) => { setMode(m); setError(""); setOtpSent(false); };
+  const switchTo = (m: AuthMode) => { 
+    setMode(m); 
+    setError(""); 
+    setOtpSent(false); 
+    setOtp("");
+  };
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      if (!otpSent) {
-        if (!isLogin && (!firstName || !lastName || !mobile)) {
-          setError("Please fill all required fields");
-          setLoading(false);
-          return;
-        }
-        const res = await sendLoginOtpAction(email);
-        if (res.error) {
-          setError(res.error);
-        } else {
-          setOtpSent(true);
-          setUserExists(!!res.userExists);
-        }
-      } else {
-        if (userExists) {
-          const res = await verifyLoginOtpAction(email, otp);
+      if (isLogin) {
+        if (isEmailLogin) {
+          // Email + Password login
+          const res = await loginAction(loginInput, password);
           if (res.error) {
             setError(res.error);
           } else {
@@ -97,17 +93,53 @@ function AuthForm() {
             else router.push(callbackUrl);
           }
         } else {
-          if (!firstName || !lastName || !mobile) {
-            setError("Please fill all required fields");
-            setLoading(false);
-            return;
+          // Mobile OTP login
+          const formattedMobile = loginInput.replace(/[^\d+]/g, "");
+          if (!otpSent) {
+            const res = await sendMobileOtpAction(formattedMobile, false);
+            if (res.error) {
+              setError(res.error);
+            } else {
+              setOtpSent(true);
+            }
+          } else {
+            const res = await verifyMobileOtpAction(formattedMobile, otp);
+            if (res.error) {
+              setError(res.error);
+            } else {
+              if (res.role === "reseller") router.push("/reseller");
+              else router.push(callbackUrl);
+            }
           }
-          const res = await registerWithOtpAction(
-            email,
+        }
+      } else {
+        // Signup Mode
+        if (password !== confirmPassword) {
+          setError("Passwords do not match");
+          setLoading(false);
+          return;
+        }
+        if (!firstName || !lastName || !mobile || !email || !password) {
+          setError("Please fill all required fields");
+          setLoading(false);
+          return;
+        }
+        const formattedMobile = mobile.replace(/[^\d+]/g, "");
+        if (!otpSent) {
+          const res = await sendMobileOtpAction(formattedMobile, true, email);
+          if (res.error) {
+            setError(res.error);
+          } else {
+            setOtpSent(true);
+          }
+        } else {
+          const res = await registerWithMobileOtpAction(
+            formattedMobile,
             otp,
             firstName,
             lastName,
-            `${countryCode}${mobile}`,
+            email,
+            password,
             role
           );
           if (res.error) {
@@ -170,10 +202,10 @@ function AuthForm() {
 
         {/* Title */}
         <h1 style={{ fontSize: "clamp(20px, 3vw, 26px)", fontWeight: 900, marginBottom: 6, textAlign: "center" }}>
-          {isLogin ? (isReseller ? "Reseller Login" : "Welcome Back") : otpSent ? "Verify Your Email" : (isReseller ? "Become a Reseller" : "Create Account")}
+          {isLogin ? (isReseller ? "Reseller Login" : "Welcome Back") : otpSent ? "Verify Your Phone" : (isReseller ? "Become a Reseller" : "Create Account")}
         </h1>
         <p style={{ fontSize: 13, color: "var(--text-muted)", textAlign: "center", marginBottom: 24 }}>
-          {isLogin ? `Log in to your ${isReseller ? "reseller" : "RetailStacker"} workspace` : otpSent ? "Enter the 6-digit OTP sent to your email" : `Sign up as a ${isReseller ? "reseller partner" : "seller"}`}
+          {isLogin ? `Log in to your ${isReseller ? "reseller" : "RetailStacker"} workspace` : otpSent ? `Enter the 6-digit OTP sent to ${isLogin ? loginInput : mobile}` : `Sign up as a ${isReseller ? "reseller partner" : "seller"}`}
         </p>
 
         {/* Error */}
@@ -189,77 +221,96 @@ function AuthForm() {
 
         {/* Form */}
         <form onSubmit={handleAuth} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {otpSent ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.02)", padding: "10px 14px", borderRadius: 10, border: "1px solid var(--border)", fontSize: 13, color: "var(--text-secondary)" }}>
-                <Mail size={14} />
-                <span>OTP sent to: <strong>{email}</strong></span>
+          {isLogin ? (
+            /* LOGIN FLOW */
+            otpSent ? (
+              /* OTP verification for phone login */
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.02)", padding: "10px 14px", borderRadius: 10, border: "1px solid var(--border)", fontSize: 13, color: "var(--text-secondary)" }}>
+                  <Phone size={14} />
+                  <span>OTP sent to mobile: <strong>{loginInput}</strong></span>
+                </div>
+                <div style={{ position: "relative" }}>
+                  <KeyRound size={18} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+                  <input type="text" placeholder="Enter 6-digit OTP" value={otp} onChange={e => setOtp(e.target.value)} required
+                    style={{ width: "100%", padding: "13px 16px 13px 42px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 15, outline: "none", letterSpacing: 4 }} />
+                </div>
               </div>
-
-              {!userExists && (
-                <>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    <input type="text" placeholder="First Name *" value={firstName} onChange={e => setFirstName(e.target.value)} required
-                      style={{ width: "100%", padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
-                    <input type="text" placeholder="Last Name *" value={lastName} onChange={e => setLastName(e.target.value)} required
-                      style={{ width: "100%", padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+            ) : (
+              /* Initial login step */
+              <>
+                <div style={{ position: "relative" }}>
+                  <Mail size={16} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+                  <input type="text" placeholder="Email or Mobile Number" value={loginInput} onChange={e => setLoginInput(e.target.value)} required
+                    style={{ width: "100%", padding: "13px 16px 13px 40px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                </div>
+                {isEmailLogin && (
+                  <div style={{ position: "relative" }}>
+                    <Lock size={16} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+                    <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required
+                      style={{ width: "100%", padding: "13px 16px 13px 40px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
                   </div>
-                  <div style={{ display: "flex", gap: 10 }}>
-                    <select value={countryCode} onChange={e => setCountryCode(e.target.value)}
-                      style={{ padding: "13px 10px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, cursor: "pointer", outline: "none" }}>
-                      <option value="+91">🇮🇳 +91</option>
-                      <option value="+1">🇺🇸 +1</option>
-                      <option value="+44">🇬🇧 +44</option>
-                      <option value="+971">🇦🇪 +971</option>
-                      <option value="+65">🇸🇬 +65</option>
-                    </select>
-                    <input type="tel" placeholder="Mobile Number *" value={mobile} onChange={e => setMobile(e.target.value)} required
-                      style={{ flex: 1, padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
-                  </div>
-                </>
-              )}
-
-              <div style={{ position: "relative" }}>
-                <KeyRound size={18} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
-                <input type="text" placeholder="Enter 6-digit OTP" value={otp} onChange={e => setOtp(e.target.value)} required
-                  style={{ width: "100%", padding: "13px 16px 13px 42px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 15, outline: "none", letterSpacing: 4 }} />
-              </div>
-            </div>
+                )}
+              </>
+            )
           ) : (
-            <>
-              {!isLogin && (
-                <>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    <input type="text" placeholder="First Name *" value={firstName} onChange={e => setFirstName(e.target.value)} required
-                      style={{ width: "100%", padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
-                    <input type="text" placeholder="Last Name *" value={lastName} onChange={e => setLastName(e.target.value)} required
-                      style={{ width: "100%", padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
-                  </div>
-                  <div style={{ display: "flex", gap: 10 }}>
-                    <select value={countryCode} onChange={e => setCountryCode(e.target.value)}
-                      style={{ padding: "13px 10px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, cursor: "pointer", outline: "none" }}>
-                      <option value="+91">🇮🇳 +91</option>
-                      <option value="+1">🇺🇸 +1</option>
-                      <option value="+44">🇬🇧 +44</option>
-                      <option value="+971">🇦🇪 +971</option>
-                      <option value="+65">🇸🇬 +65</option>
-                    </select>
-                    <input type="tel" placeholder="Mobile Number *" value={mobile} onChange={e => setMobile(e.target.value)} required
-                      style={{ flex: 1, padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
-                  </div>
-                </>
-              )}
-              <div style={{ position: "relative" }}>
-                <Mail size={16} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
-                <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required
-                  style={{ width: "100%", padding: "13px 16px 13px 40px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+            /* SIGNUP FLOW */
+            otpSent ? (
+              /* OTP verification for signup */
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.02)", padding: "10px 14px", borderRadius: 10, border: "1px solid var(--border)", fontSize: 13, color: "var(--text-secondary)" }}>
+                  <Phone size={14} />
+                  <span>OTP sent to mobile: <strong>{mobile}</strong></span>
+                </div>
+                <div style={{ position: "relative" }}>
+                  <KeyRound size={18} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+                  <input type="text" placeholder="Enter 6-digit OTP" value={otp} onChange={e => setOtp(e.target.value)} required
+                    style={{ width: "100%", padding: "13px 16px 13px 42px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 15, outline: "none", letterSpacing: 4 }} />
+                </div>
               </div>
-            </>
+            ) : (
+              /* Signup fields */
+              <>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                  <input type="text" placeholder="First Name *" value={firstName} onChange={e => setFirstName(e.target.value)} required
+                    style={{ width: "100%", padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                  <input type="text" placeholder="Last Name *" value={lastName} onChange={e => setLastName(e.target.value)} required
+                    style={{ width: "100%", padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                </div>
+                <div style={{ display: "flex", gap: 10 }}>
+                  <select value={countryCode} onChange={e => setCountryCode(e.target.value)}
+                    style={{ padding: "13px 10px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, cursor: "pointer", outline: "none" }}>
+                    <option value="+91">🇮🇳 +91</option>
+                    <option value="+1">🇺🇸 +1</option>
+                    <option value="+44">🇬🇧 +44</option>
+                    <option value="+971">🇦🇪 +971</option>
+                    <option value="+65">🇸🇬 +65</option>
+                  </select>
+                  <input type="tel" placeholder="Mobile Number *" value={mobile} onChange={e => setMobile(e.target.value)} required
+                    style={{ flex: 1, padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                </div>
+                <div style={{ position: "relative" }}>
+                  <Mail size={16} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+                  <input type="email" placeholder="Email Address *" value={email} onChange={e => setEmail(e.target.value)} required
+                    style={{ width: "100%", padding: "13px 16px 13px 40px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                </div>
+                <div style={{ position: "relative" }}>
+                  <Lock size={16} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+                  <input type="password" placeholder="Password *" value={password} onChange={e => setPassword(e.target.value)} required
+                    style={{ width: "100%", padding: "13px 16px 13px 40px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                </div>
+                <div style={{ position: "relative" }}>
+                  <Lock size={16} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+                  <input type="password" placeholder="Confirm Password *" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required
+                    style={{ width: "100%", padding: "13px 16px 13px 40px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                </div>
+              </>
+            )
           )}
 
           <button type="submit" disabled={loading} className="btn-accent"
             style={{ width: "100%", padding: 15, borderRadius: 12, fontSize: 15, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 4 }}>
-            {loading ? "Processing..." : !otpSent ? "Send OTP to Email" : userExists ? "Verify & Log In" : "Verify & Create Account"}
+            {loading ? "Processing..." : isLogin ? (isEmailLogin ? "Log In" : !otpSent ? "Send OTP to Mobile" : "Verify & Log In") : (!otpSent ? "Send OTP to Mobile" : "Verify & Create Account")}
             {!loading && <ArrowRight size={17} />}
           </button>
         </form>
@@ -268,7 +319,7 @@ function AuthForm() {
         {otpSent && (
           <div style={{ marginTop: 16, textAlign: "center", fontSize: 13, color: "var(--text-muted)" }}>
             Didn't receive the OTP?{" "}
-            <span onClick={async () => { const r = await sendLoginOtpAction(email); if (r.error) setError(r.error); }} style={{ color: "var(--accent)", fontWeight: 700, cursor: "pointer" }}>
+            <span onClick={async () => { const targetNum = isLogin ? loginInput.replace(/[^\d+]/g, "") : mobile.replace(/[^\d+]/g, ""); const r = await sendMobileOtpAction(targetNum, !isLogin, email); if (r.error) setError(r.error); }} style={{ color: "var(--accent)", fontWeight: 700, cursor: "pointer" }}>
               Resend OTP
             </span>
           </div>

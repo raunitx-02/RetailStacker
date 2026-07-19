@@ -116,6 +116,28 @@ export const findUser = (email: string) => {
   return user;
 };
 
+export const findUserByMobile = (mobile: string) => {
+  const db = getDB();
+  const cleanSearch = mobile.replace(/[^\d]/g, "");
+  const standardSearch = cleanSearch.length === 10 ? "91" + cleanSearch : cleanSearch;
+
+  const user = db.users.find((u: any) => {
+    if (!u.mobile) return false;
+    const cleanUser = u.mobile.replace(/[^\d]/g, "");
+    const standardUser = cleanUser.length === 10 ? "91" + cleanUser : cleanUser;
+    return standardUser === standardSearch;
+  });
+
+  if (user && user.plan && user.plan !== "Free" && user.planExpiresAt && Date.now() > user.planExpiresAt) {
+    user.plan = "Free";
+    user.planExpiresAt = null;
+    const idx = db.users.findIndex((u: any) => u.email === user.email);
+    db.users[idx] = user;
+    saveDB(db);
+  }
+  return user;
+};
+
 export const saveUser = (user: any) => {
   const db = getDB();
   const idx = db.users.findIndex((u: any) => u.email === user.email);
