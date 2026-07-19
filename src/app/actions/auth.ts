@@ -219,7 +219,7 @@ export async function resetPasswordAction(email: string, otp: string, newPasswor
 
 // ─── 2factor SMS OTP Login/Signup Actions ────────────────────────────────────
 const TWOFACTOR_API_KEY = process.env.TWOFACTOR_API_KEY || "f32709e2-8023-11f1-803e-0200cd936042";
-const TWOFACTOR_TEMPLATE_NAME = process.env.TWOFACTOR_TEMPLATE_NAME || "";
+const TWOFACTOR_TEMPLATE_NAME = process.env.TWOFACTOR_TEMPLATE_NAME || "RetailStacker AI";
 
 async function sendSmsOtp(phoneNumber: string, otp: string) {
   let cleanNumber = phoneNumber.replace(/[^\d]/g, "");
@@ -229,7 +229,7 @@ async function sendSmsOtp(phoneNumber: string, otp: string) {
   
   let url = `https://2factor.in/API/V1/${TWOFACTOR_API_KEY}/SMS/${cleanNumber}/${otp}`;
   if (TWOFACTOR_TEMPLATE_NAME) {
-    url += `/${TWOFACTOR_TEMPLATE_NAME}`;
+    url += `/${encodeURIComponent(TWOFACTOR_TEMPLATE_NAME)}`;
   }
 
   try {
