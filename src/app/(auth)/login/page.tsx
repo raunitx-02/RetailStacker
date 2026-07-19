@@ -240,8 +240,8 @@ function AuthForm() {
               /* Initial login step */
               <>
                 <div style={{ position: "relative" }}>
-                  <Mail size={16} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
-                  <input type="text" placeholder="Email or Mobile Number" value={loginInput} onChange={e => setLoginInput(e.target.value)} required
+                  <Phone size={16} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+                  <input type="text" placeholder="Mobile Number" value={loginInput} onChange={e => setLoginInput(e.target.value)} required
                     style={{ width: "100%", padding: "13px 16px 13px 40px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
                 </div>
                 {isEmailLogin && (
