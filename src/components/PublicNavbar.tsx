@@ -106,11 +106,11 @@ export default function PublicNavbar() {
       }}>
         <nav style={{
           pointerEvents: "all",
-          display: "flex",
+          display: "grid",
+          gridTemplateColumns: "auto 1fr auto",
           alignItems: "center",
-          justifyContent: "space-between",
           width: "100%",
-          maxWidth: 1200,
+          maxWidth: 1400,
           height: 60,
           padding: "0 8px 0 16px",
           borderRadius: 999,
@@ -135,17 +135,17 @@ export default function PublicNavbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav Links — centered */}
-          <div className="public-nav-links" style={{ display: "flex", alignItems: "center", gap: 2, position: "absolute", left: "50%", transform: "translateX(-50%)" }}>
+          {/* Desktop Nav Links — centered via grid */}
+          <div className="public-nav-links" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 2 }}>
             {NAV_LINKS.map(link => (
               <Link
                 key={link.href}
                 href={link.href}
                 style={{
                   textDecoration: "none",
-                  padding: "7px 14px",
+                  padding: "7px 13px",
                   borderRadius: 999,
-                  fontSize: 13.5,
+                  fontSize: 13,
                   fontWeight: 600,
                   color: pathname === link.href ? "var(--accent)" : "var(--text-secondary)",
                   background: pathname === link.href ? "var(--accent-muted)" : "transparent",
@@ -159,14 +159,14 @@ export default function PublicNavbar() {
           </div>
 
           {/* Right side actions */}
-          <div className="public-nav-links" style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          <div className="public-nav-links" style={{ display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end" }}>
             <button
               onClick={handleDownload}
               className="rs-download-btn"
               style={{
-                padding: "7px 13px",
+                padding: "7px 12px",
                 borderRadius: 999,
-                fontSize: 13,
+                fontSize: 12.5,
                 fontWeight: 600,
                 cursor: "pointer",
                 display: "inline-flex",
@@ -175,16 +175,16 @@ export default function PublicNavbar() {
                 whiteSpace: "nowrap",
               }}
             >
-              <Download size={13} />
-              Download Extension
+              <Download size={12} />
+              Extension
             </button>
             <button
               onClick={handleDownloadTranslator}
               className="rs-download-translator-btn"
               style={{
-                padding: "7px 13px",
+                padding: "7px 12px",
                 borderRadius: 999,
-                fontSize: 13,
+                fontSize: 12.5,
                 fontWeight: 600,
                 cursor: "pointer",
                 display: "inline-flex",
@@ -193,8 +193,8 @@ export default function PublicNavbar() {
                 whiteSpace: "nowrap",
               }}
             >
-              <Globe size={13} />
-              Language Translator
+              <Globe size={12} />
+              Translator
             </button>
 
             {/* Divider */}
