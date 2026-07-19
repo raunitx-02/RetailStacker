@@ -186,6 +186,17 @@ export const verifyOtp = (email: string, otp: string) => {
   return false;
 };
 
+export const getOtpRecord = (email: string) => {
+  const db = getDB();
+  return db.otps[email];
+};
+
+export const deleteOtpRecord = (email: string) => {
+  const db = getDB();
+  delete db.otps[email];
+  saveDB(db);
+};
+
 export const logTranslatorAttempt = (attempt: { id: string; email: string; amount: number; status: string }) => {
   const db = getDB();
   if (!db.translatorAttempts) {
