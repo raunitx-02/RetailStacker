@@ -219,63 +219,27 @@ export async function resetPasswordAction(email: string, otp: string, newPasswor
 
 // ─── 2factor SMS OTP Login/Signup Actions ────────────────────────────────────
 const TWOFACTOR_API_KEY = process.env.TWOFACTOR_API_KEY || "f32709e2-8023-11f1-803e-0200cd936042";
+const TWOFACTOR_TEMPLATE_NAME = process.env.TWOFACTOR_TEMPLATE_NAME || "";
 
-async function sendSmsOtpAuto(phoneNumber: string) {
+async function sendSmsOtp(phoneNumber: string, otp: string) {
   let cleanNumber = phoneNumber.replace(/[^\d]/g, "");
   if (cleanNumber.length === 10) {
     cleanNumber = "91" + cleanNumber;
   }
   
-  const url = `https://2factor.in/API/V1/${TWOFACTOR_API_KEY}/SMS/${cleanNumber}/AUTOGEN`;
+  let url = `https://2factor.in/API/V1/${TWOFACTOR_API_KEY}/SMS/${cleanNumber}/${otp}`;
+  if (TWOFACTOR_TEMPLATE_NAME) {
+    url += `/${TWOFACTOR_TEMPLATE_NAME}`;
+  }
+
   try {
     const res = await fetch(url);
     const data = await res.json();
-    console.log("2factor send autogen SMS response:", data);
-    if (data.Status === "Success") {
-      return data.Details; // This is the SessionID
-    }
-    return null;
+    console.log("2factor SMS response Status:", data.Status, "Details:", data.Details);
+    return data.Status === "Success";
   } catch (err) {
     console.error("Failed to send 2factor SMS:", err);
-    return null;
-  }
-}
-
-async function verifySmsOtpCode(mobileNumber: string, otpInput: string) {
-  // Test backdoor bypass
-  if ((mobileNumber === "9999999999" || mobileNumber === "919999999999") && otpInput === "123456") {
-    return { success: true };
-  }
-
-  const record = getOtpRecord(mobileNumber);
-  if (!record || Date.now() > record.expires) {
-    return { error: "OTP expired. Please request a new one." };
-  }
-
-  // If the record in our DB is a dev fallback (like a 6 digit code) instead of a 2factor SessionID (typically UUID), we check it directly:
-  const isDevOtp = record.otp.length === 6 && /^\d+$/.test(record.otp);
-  if (isDevOtp) {
-    if (record.otp === otpInput) {
-      deleteOtpRecord(mobileNumber);
-      return { success: true };
-    }
-    return { error: "Invalid OTP. Please try again." };
-  }
-
-  // Otherwise, verify via 2factor:
-  const url = `https://2factor.in/API/V1/${TWOFACTOR_API_KEY}/SMS/VERIFY/${record.otp}/${otpInput}`;
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    console.log("2factor verify response:", data);
-    if (data.Status === "Success" || data.Details === "OTP Matched") {
-      deleteOtpRecord(mobileNumber);
-      return { success: true };
-    }
-    return { error: data.Details || "Invalid OTP. Please try again." };
-  } catch (err) {
-    console.error("Failed to verify 2factor OTP:", err);
-    return { error: "Failed to connect to verification server. Please try again." };
+    return false;
   }
 }
 
@@ -300,14 +264,12 @@ export async function sendMobileOtpAction(mobileNumber: string, isSignUp: boolea
     }
   }
 
-  const sessionId = await sendSmsOtpAuto(mobileNumber);
-  if (sessionId) {
-    // Save 2factor SessionID to our database
-    setOtp(mobileNumber, sessionId);
-  } else {
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  setOtp(mobileNumber, otp);
+
+  const smsSent = await sendSmsOtp(mobileNumber, otp);
+  if (!smsSent) {
     // Local fallback/sandbox print if API fails or in dev
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    setOtp(mobileNumber, otp);
     console.log(`\n==============================================\n[SMS DEV OTP FALLBACK] Verification Code for ${mobileNumber}: ${otp}\n==============================================\n`);
   }
 
@@ -325,9 +287,8 @@ export async function verifyMobileOtpAction(mobileNumber: string, otp: string) {
     return { success: true, newUser: false, role: "admin" };
   }
 
-  const verifyRes = await verifySmsOtpCode(mobileNumber, otp);
-  if (verifyRes.error) {
-    return { error: verifyRes.error };
+  if (!verifyOtp(mobileNumber, otp)) {
+    return { error: "Invalid or expired OTP. Please request a new one." };
   }
 
   const user = findUserByMobile(mobileNumber);
@@ -352,9 +313,8 @@ export async function registerWithMobileOtpAction(
   password: string,
   role: string = "user"
 ) {
-  const verifyRes = await verifySmsOtpCode(mobileNumber, otp);
-  if (verifyRes.error) {
-    return { error: verifyRes.error };
+  if (!verifyOtp(mobileNumber, otp)) {
+    return { error: "Invalid or expired OTP. Please request a new one." };
   }
 
   const existingMobile = findUserByMobile(mobileNumber);
