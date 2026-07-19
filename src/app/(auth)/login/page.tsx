@@ -2,8 +2,8 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
-import { loginAction, sendOtpAction, registerAction } from "../../actions/auth";
-import { ArrowRight, Mail, Lock, KeyRound, User, Briefcase } from "lucide-react";
+import { sendLoginOtpAction, verifyLoginOtpAction, registerWithOtpAction } from "../../actions/auth";
+import { ArrowRight, Mail, KeyRound, User, Briefcase } from "lucide-react";
 import Link from "next/link";
 import PublicNavbar from "@/components/PublicNavbar";
 
@@ -28,7 +28,7 @@ function GoogleButton({ role, label }: { role: string; label: string }) {
         <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
         <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/>
         <path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
-        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58(9 3.58z" fill="#EA4335"/>
       </svg>
       {label}
     </a>
@@ -57,10 +57,9 @@ function AuthForm() {
   const [countryCode, setCountryCode] = useState("+91");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
+  const [userExists, setUserExists] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -75,24 +74,47 @@ function AuthForm() {
     setLoading(true);
     setError("");
     try {
-      if (isLogin) {
-        const res = await loginAction(email, password);
-        if (res.error) setError(res.error);
-        else {
-          if (res.role === "reseller") router.push("/reseller");
-          else router.push(callbackUrl);
+      if (!otpSent) {
+        if (!isLogin && (!firstName || !lastName || !mobile)) {
+          setError("Please fill all required fields");
+          setLoading(false);
+          return;
+        }
+        const res = await sendLoginOtpAction(email);
+        if (res.error) {
+          setError(res.error);
+        } else {
+          setOtpSent(true);
+          setUserExists(!!res.userExists);
         }
       } else {
-        if (!otpSent) {
-          if (password !== confirmPassword) { setError("Passwords do not match"); setLoading(false); return; }
-          if (!firstName || !lastName || !mobile) { setError("Please fill all required fields"); setLoading(false); return; }
-          const res = await sendOtpAction(email);
-          if (res.error) setError(res.error);
-          else setOtpSent(true);
+        if (userExists) {
+          const res = await verifyLoginOtpAction(email, otp);
+          if (res.error) {
+            setError(res.error);
+          } else {
+            if (res.role === "reseller") router.push("/reseller");
+            else router.push(callbackUrl);
+          }
         } else {
-          const res = await registerAction(email, password, otp, firstName, lastName, `${countryCode}${mobile}`, role);
-          if (res.error) setError(res.error);
-          else router.push(isReseller ? "/reseller" : "/pricing");
+          if (!firstName || !lastName || !mobile) {
+            setError("Please fill all required fields");
+            setLoading(false);
+            return;
+          }
+          const res = await registerWithOtpAction(
+            email,
+            otp,
+            firstName,
+            lastName,
+            `${countryCode}${mobile}`,
+            role
+          );
+          if (res.error) {
+            setError(res.error);
+          } else {
+            router.push(isReseller ? "/reseller" : "/pricing");
+          }
         }
       }
     } catch (err: any) {
@@ -168,10 +190,40 @@ function AuthForm() {
         {/* Form */}
         <form onSubmit={handleAuth} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {otpSent ? (
-            <div style={{ position: "relative" }}>
-              <KeyRound size={18} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
-              <input type="text" placeholder="Enter 6-digit OTP" value={otp} onChange={e => setOtp(e.target.value)} required
-                style={{ width: "100%", padding: "13px 16px 13px 42px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 15, outline: "none", letterSpacing: 4 }} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.02)", padding: "10px 14px", borderRadius: 10, border: "1px solid var(--border)", fontSize: 13, color: "var(--text-secondary)" }}>
+                <Mail size={14} />
+                <span>OTP sent to: <strong>{email}</strong></span>
+              </div>
+
+              {!userExists && (
+                <>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                    <input type="text" placeholder="First Name *" value={firstName} onChange={e => setFirstName(e.target.value)} required
+                      style={{ width: "100%", padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                    <input type="text" placeholder="Last Name *" value={lastName} onChange={e => setLastName(e.target.value)} required
+                      style={{ width: "100%", padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                  </div>
+                  <div style={{ display: "flex", gap: 10 }}>
+                    <select value={countryCode} onChange={e => setCountryCode(e.target.value)}
+                      style={{ padding: "13px 10px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, cursor: "pointer", outline: "none" }}>
+                      <option value="+91">🇮🇳 +91</option>
+                      <option value="+1">🇺🇸 +1</option>
+                      <option value="+44">🇬🇧 +44</option>
+                      <option value="+971">🇦🇪 +971</option>
+                      <option value="+65">🇸🇬 +65</option>
+                    </select>
+                    <input type="tel" placeholder="Mobile Number *" value={mobile} onChange={e => setMobile(e.target.value)} required
+                      style={{ flex: 1, padding: "13px 14px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
+                  </div>
+                </>
+              )}
+
+              <div style={{ position: "relative" }}>
+                <KeyRound size={18} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
+                <input type="text" placeholder="Enter 6-digit OTP" value={otp} onChange={e => setOtp(e.target.value)} required
+                  style={{ width: "100%", padding: "13px 16px 13px 42px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 15, outline: "none", letterSpacing: 4 }} />
+              </div>
             </div>
           ) : (
             <>
@@ -202,24 +254,12 @@ function AuthForm() {
                 <input type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} required
                   style={{ width: "100%", padding: "13px 16px 13px 40px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
               </div>
-              <div style={{ position: "relative" }}>
-                <Lock size={16} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
-                <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required
-                  style={{ width: "100%", padding: "13px 16px 13px 40px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
-              </div>
-              {!isLogin && (
-                <div style={{ position: "relative" }}>
-                  <Lock size={16} color="var(--text-muted)" style={{ position: "absolute", left: 14, top: "50%", transform: "translateY(-50%)" }} />
-                  <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required
-                    style={{ width: "100%", padding: "13px 16px 13px 40px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-secondary)", color: "var(--text-primary)", fontSize: 14, outline: "none" }} />
-                </div>
-              )}
             </>
           )}
 
           <button type="submit" disabled={loading} className="btn-accent"
             style={{ width: "100%", padding: 15, borderRadius: 12, fontSize: 15, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 4 }}>
-            {loading ? "Processing..." : isLogin ? "Log In" : otpSent ? "Verify & Create Account" : "Send OTP to Email"}
+            {loading ? "Processing..." : !otpSent ? "Send OTP to Email" : userExists ? "Verify & Log In" : "Verify & Create Account"}
             {!loading && <ArrowRight size={17} />}
           </button>
         </form>
@@ -228,7 +268,7 @@ function AuthForm() {
         {otpSent && (
           <div style={{ marginTop: 16, textAlign: "center", fontSize: 13, color: "var(--text-muted)" }}>
             Didn't receive the OTP?{" "}
-            <span onClick={async () => { const r = await sendOtpAction(email); if (r.error) setError(r.error); }} style={{ color: "var(--accent)", fontWeight: 700, cursor: "pointer" }}>
+            <span onClick={async () => { const r = await sendLoginOtpAction(email); if (r.error) setError(r.error); }} style={{ color: "var(--accent)", fontWeight: 700, cursor: "pointer" }}>
               Resend OTP
             </span>
           </div>
