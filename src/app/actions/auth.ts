@@ -218,7 +218,7 @@ export async function resetPasswordAction(email: string, otp: string, newPasswor
 }
 
 // ─── 2factor SMS OTP Login/Signup Actions ────────────────────────────────────
-const TWOFACTOR_API_KEY = process.env.TWOFACTOR_API_KEY || "e1b9b6db-5497-11ef-8b1a-0200cd936042";
+const TWOFACTOR_API_KEY = process.env.TWOFACTOR_API_KEY || "f32709e2-8023-11f1-803e-0200cd936042";
 
 async function sendSmsOtp(phoneNumber: string, otp: string) {
   let cleanNumber = phoneNumber.replace(/[^\d]/g, "");
