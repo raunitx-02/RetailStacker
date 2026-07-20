@@ -223,7 +223,7 @@ const TWOFACTOR_TEMPLATE_NAME = process.env.TWOFACTOR_TEMPLATE_NAME || "RetailSt
 
 async function sendSmsOtp(phoneNumber: string, otp: string, templateName?: string) {
   let cleanNumber = phoneNumber.replace(/[^\d]/g, "");
-  // 2factor OTP API requires international number format: 91 + 10-digit mobile number
+  // 2factor API requires international number format: 91 + 10-digit mobile number
   if (cleanNumber.length === 10) {
     cleanNumber = "91" + cleanNumber;
   }
@@ -232,21 +232,39 @@ async function sendSmsOtp(phoneNumber: string, otp: string, templateName?: strin
     return false;
   }
 
-  // Approved DLT Templates under 2factor OTP Templates (Sender ID: TPSYIN):
-  //   Signup: "RetailStacker AI"
-  //   Login:  "RetailStacker AI login"
   const template = templateName || TWOFACTOR_TEMPLATE_NAME;
-  const url = `https://2factor.in/API/V1/${TWOFACTOR_API_KEY}/SMS/${cleanNumber}/${otp}/${encodeURIComponent(template)}`;
+  
+  // Construct the exact DLT Approved Template Content
+  let msg = "";
+  if (template === "RetailStacker AI login") {
+    msg = `Welcome back to RetailStacker AI! Your login verification code is ${otp}. Valid for 10 minutes - please keep it confidential. Powered by Tapasya International`;
+  } else {
+    msg = `Welcome to RetailStacker AI! Your signup verification code is ${otp}. Valid for 10 minutes - please keep it confidential. Powered by Tapasya International`;
+  }
 
-  console.log("Sending OTP via 2factor URL:", url);
+  // Use the Open SMS API (R1) which directly forwards to telecom operators
+  const url = `https://2factor.in/API/R1/`;
+  const body = new URLSearchParams({
+    module: "TRANS_SMS",
+    apikey: TWOFACTOR_API_KEY,
+    to: cleanNumber,
+    from: "TPSYIN",
+    msg: msg
+  });
+
+  console.log("Sending OTP via 2factor Open SMS API to:", cleanNumber);
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    });
     const data = await res.json();
-    console.log("2factor OTP SMS Status:", data.Status, "Details:", data.Details, "Number:", cleanNumber);
+    console.log("2factor SMS Status:", data.Status, "Details:", data.Details, "Number:", cleanNumber);
     return data.Status === "Success";
   } catch (err) {
-    console.error("Failed to send 2factor OTP SMS:", err);
+    console.error("Failed to send 2factor SMS:", err);
     return false;
   }
 }
