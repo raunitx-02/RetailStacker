@@ -59,6 +59,25 @@ const PLAN_ACCESS: Record<string, string[]> = {
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const host = req.headers.get("host") || "";
+  const isAdminSubdomain = host.startsWith("admin.retailstacker.com") || host.startsWith("admin.localhost");
+
+  if (isAdminSubdomain) {
+    if (pathname === "/") {
+      const url = req.nextUrl.clone();
+      url.pathname = "/admin";
+      return NextResponse.rewrite(url);
+    }
+  } else {
+    // If accessing main domain /admin path, redirect to subdomain
+    if (pathname.startsWith("/admin")) {
+      const isProd = process.env.NODE_ENV === "production";
+      const redirectUrl = isProd 
+        ? "https://admin.retailstacker.com" 
+        : `http://admin.localhost:${req.nextUrl.port || "3000"}`;
+      return NextResponse.redirect(new URL(redirectUrl));
+    }
+  }
 
   // Protect all dashboard, product-research, keywords, listing, tools, analytics, operations routes
   const isProtectedRoute = 
@@ -101,6 +120,8 @@ export function proxy(req: NextRequest) {
 
 export const config = {
   matcher: [
+    "/",
+    "/admin/:path*",
     "/dashboard/:path*",
     "/product-research/:path*",
     "/keywords/:path*",
