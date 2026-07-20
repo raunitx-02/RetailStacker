@@ -33,6 +33,8 @@ export default function ChromeExtensionPage() {
   const [loadingSession, setLoadingSession] = useState(true);
   const [installStepsOpen, setInstallStepsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
+  const [purchaseModalConfig, setPurchaseModalConfig] = useState<{ title: string; desc: string; link: string } | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -54,14 +56,22 @@ export default function ChromeExtensionPage() {
 
   const handleDownload = () => {
     if (!session?.loggedIn) {
-      alert("Please log in first!");
-      window.location.href = "/login";
+      setPurchaseModalConfig({
+        title: "Login Required",
+        desc: "Please log in first to verify your subscription access and download the Chrome Extension.",
+        link: "/login"
+      });
+      setPurchaseModalOpen(true);
       return;
     }
 
     if (!hasAccess) {
-      alert(`To download the RetailStacker Chrome Extension, please subscribe to the Lite Plan (₹500/month) or higher! Current plan: ${userPlan}`);
-      window.location.href = "/profile";
+      setPurchaseModalConfig({
+        title: "Plan Subscription Required",
+        desc: `To download the RetailStacker Chrome Extension, please subscribe to the Lite Plan (₹500/month) or higher! Your current plan is: ${userPlan}`,
+        link: "/pricing"
+      });
+      setPurchaseModalOpen(true);
       return;
     }
 
@@ -388,15 +398,143 @@ export default function ChromeExtensionPage() {
         document.body
       )}
 
+      {/* Premium iOS 27 style Bouncy Glassmorphic Purchase Modal */}
+      {mounted && purchaseModalOpen && purchaseModalConfig && createPortal(
+        <div style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(10, 15, 30, 0.45)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 999999, padding: 24,
+          transition: "opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
+        }}>
+          <div style={{
+            background: "rgba(255, 255, 255, 0.15)",
+            backdropFilter: "blur(40px)",
+            WebkitBackdropFilter: "blur(40px)",
+            borderRadius: 24,
+            width: "100%",
+            maxWidth: 420,
+            padding: "32px 24px",
+            boxShadow: "0 30px 70px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255,255,255,0.2) inset",
+            position: "relative",
+            border: "1px solid rgba(255, 255, 255, 0.22)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+            animation: "iosSpringOpen 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards"
+          }}>
+            <button 
+              onClick={() => setPurchaseModalOpen(false)} 
+              style={{ 
+                position: "absolute", top: 16, right: 16, 
+                background: "rgba(255,255,255,0.1)", border: "none", 
+                cursor: "pointer", color: "white", padding: 6, borderRadius: "50%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                transition: "background 0.2s"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.2)"}
+              onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
+            >
+              <X size={16} />
+            </button>
+
+            <div style={{
+              background: "linear-gradient(135deg, #FF5E62 0%, #FF9966 100%)",
+              padding: 16,
+              borderRadius: "50%",
+              color: "white",
+              marginBottom: 20,
+              boxShadow: "0 12px 30px rgba(255, 94, 98, 0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}>
+              <AlertCircle size={32} />
+            </div>
+
+            <h3 style={{ fontSize: 22, fontWeight: 800, color: "white", margin: "0 0 12px 0", letterSpacing: "-0.01em" }}>
+              {purchaseModalConfig.title}
+            </h3>
+            
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.75)", margin: "0 0 28px 0", lineHeight: 1.5 }}>
+              {purchaseModalConfig.desc}
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%" }}>
+              <Link href={purchaseModalConfig.link} style={{ textDecoration: "none", width: "100%" }} onClick={() => setPurchaseModalOpen(false)}>
+                <button style={{
+                  width: "100%",
+                  padding: "14px 20px",
+                  borderRadius: 16,
+                  background: "linear-gradient(135deg, #1A56DB 0%, #00B4D8 100%)",
+                  color: "white",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  border: "none",
+                  cursor: "pointer",
+                  textAlign: "center",
+                  transition: "all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1)",
+                  boxShadow: "0 8px 24px rgba(26, 86, 219, 0.3)"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.025)";
+                  e.currentTarget.style.boxShadow = "0 12px 28px rgba(26, 86, 219, 0.45)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(26, 86, 219, 0.3)";
+                }}
+                >
+                  {purchaseModalConfig.link === "/login" ? "Go to Login" : "View Plans & Subscribe"}
+                </button>
+              </Link>
+
+              <button 
+                onClick={() => setPurchaseModalOpen(false)} 
+                style={{
+                  width: "100%",
+                  padding: "14px 20px",
+                  borderRadius: 16,
+                  background: "rgba(255,255,255,0.08)",
+                  color: "rgba(255,255,255,0.85)",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  cursor: "pointer",
+                  textAlign: "center",
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.15)";
+                  e.currentTarget.style.color = "white";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                  e.currentTarget.style.color = "rgba(255,255,255,0.85)";
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
       <style>{`
         .rs-accent-btn {
           background: var(--accent, #1a56db);
           color: white;
           box-shadow: 0 4px 14px var(--accent-glow);
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         .rs-accent-btn:hover {
           background: #1e4bb2;
-          transform: translateY(-2px);
+          transform: translateY(-2px) scale(1.03);
           box-shadow: 0 6px 20px var(--accent-glow);
         }
         .flex-feature-card:hover {
@@ -413,6 +551,24 @@ export default function ChromeExtensionPage() {
         .rs-modal-ok-btn:hover {
           background: #1a3a60 !important;
           box-shadow: 0 4px 16px rgba(12, 30, 54, 0.3) !important;
+        }
+        @keyframes iosSpringOpen {
+          0% {
+            transform: scale(0.6) translateY(40px);
+            opacity: 0;
+          }
+          60% {
+            transform: scale(1.06) translateY(-4px);
+            opacity: 0.9;
+          }
+          85% {
+            transform: scale(0.98) translateY(1px);
+            opacity: 0.95;
+          }
+          100% {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+          }
         }
         @keyframes scaleIn {
           from {

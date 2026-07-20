@@ -18,6 +18,8 @@ export default function PublicNavbar() {
   const [translatorStepsOpen, setTranslatorStepsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [session, setSession] = useState<{ loggedIn: boolean; user?: any } | null>(null);
+  const [purchaseToastOpen, setPurchaseToastOpen] = useState(false);
+  const [purchaseToastConfig, setPurchaseToastConfig] = useState<{ title: string; desc: string; link: string } | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -56,12 +58,21 @@ export default function PublicNavbar() {
         setInstallStepsOpen(true);
         setMobileOpen(false);
       } else {
-        alert("To download the RetailStacker Chrome Extension, please register or log in and subscribe to the Lite Plan (₹500/month) or higher!");
-        window.location.href = "/pricing";
+        setPurchaseToastConfig({
+          title: "Access Plan Required",
+          desc: "To download the RetailStacker Chrome Extension, please subscribe to the Lite Plan (₹500/month) or higher to unlock real-time intelligence.",
+          link: "/pricing"
+        });
+        setPurchaseToastOpen(true);
       }
     } catch (err) {
       console.error("Failed checking download permission:", err);
-      window.location.href = "/pricing";
+      setPurchaseToastConfig({
+        title: "Access Required",
+        desc: "Please log in and subscribe to the Lite Plan (₹500/month) or higher to download the extension.",
+        link: "/pricing"
+      });
+      setPurchaseToastOpen(true);
     }
   };
 
@@ -83,12 +94,21 @@ export default function PublicNavbar() {
         setTranslatorStepsOpen(true);
         setMobileOpen(false);
       } else {
-        alert("To download the Language Converter extension, please log in and purchase the Translator subscription (₹599/month)!");
-        window.location.href = "/tools/translator";
+        setPurchaseToastConfig({
+          title: "Translator Plan Required",
+          desc: "To download the Language Converter extension, please purchase the Translator subscription (₹599/month).",
+          link: "/tools/translator"
+        });
+        setPurchaseToastOpen(true);
       }
     } catch (err) {
       console.error("Failed checking download permission:", err);
-      window.location.href = "/tools/translator";
+      setPurchaseToastConfig({
+        title: "Subscription Required",
+        desc: "Please log in and purchase the Translator subscription (₹599/month) to download the converter.",
+        link: "/tools/translator"
+      });
+      setPurchaseToastOpen(true);
     }
   };
 
@@ -430,6 +450,133 @@ export default function PublicNavbar() {
         document.body
       )}
 
+      {/* Premium iOS 27 style Bouncy Glassmorphic Purchase Modal */}
+      {mounted && purchaseToastOpen && purchaseToastConfig && createPortal(
+        <div style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(10, 15, 30, 0.45)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 999999, padding: 24,
+          transition: "opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1)"
+        }}>
+          <div style={{
+            background: "rgba(255, 255, 255, 0.15)",
+            backdropFilter: "blur(40px)",
+            WebkitBackdropFilter: "blur(40px)",
+            borderRadius: 24,
+            width: "100%",
+            maxWidth: 420,
+            padding: "32px 24px",
+            boxShadow: "0 30px 70px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255,255,255,0.2) inset",
+            position: "relative",
+            border: "1px solid rgba(255, 255, 255, 0.22)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+            animation: "iosSpringOpen 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards"
+          }}>
+            <button 
+              onClick={() => setPurchaseToastOpen(false)} 
+              style={{ 
+                position: "absolute", top: 16, right: 16, 
+                background: "rgba(255,255,255,0.1)", border: "none", 
+                cursor: "pointer", color: "white", padding: 6, borderRadius: "50%",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                transition: "background 0.2s"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.2)"}
+              onMouseLeave={(e) => e.currentTarget.style.background = "rgba(255,255,255,0.1)"}
+            >
+              <X size={16} />
+            </button>
+
+            <div style={{
+              background: "linear-gradient(135deg, #FF5E62 0%, #FF9966 100%)",
+              padding: 16,
+              borderRadius: "50%",
+              color: "white",
+              marginBottom: 20,
+              boxShadow: "0 12px 30px rgba(255, 94, 98, 0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}>
+              <Globe size={32} />
+            </div>
+
+            <h3 style={{ fontSize: 22, fontWeight: 800, color: "white", margin: "0 0 12px 0", letterSpacing: "-0.01em" }}>
+              {purchaseToastConfig.title}
+            </h3>
+            
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,0.75)", margin: "0 0 28px 0", lineHeight: 1.5 }}>
+              {purchaseToastConfig.desc}
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%" }}>
+              <Link href={purchaseToastConfig.link} style={{ textDecoration: "none", width: "100%" }} onClick={() => setPurchaseToastOpen(false)}>
+                <button style={{
+                  width: "100%",
+                  padding: "14px 20px",
+                  borderRadius: 16,
+                  background: "linear-gradient(135deg, #1A56DB 0%, #00B4D8 100%)",
+                  color: "white",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  border: "none",
+                  cursor: "pointer",
+                  textAlign: "center",
+                  transition: "all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1)",
+                  boxShadow: "0 8px 24px rgba(26, 86, 219, 0.3)"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.025)";
+                  e.currentTarget.style.boxShadow = "0 12px 28px rgba(26, 86, 219, 0.45)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(26, 86, 219, 0.3)";
+                }}
+                >
+                  View Plans & Subscribe
+                </button>
+              </Link>
+
+              <button 
+                onClick={() => setPurchaseToastOpen(false)} 
+                style={{
+                  width: "100%",
+                  padding: "14px 20px",
+                  borderRadius: 16,
+                  background: "rgba(255,255,255,0.08)",
+                  color: "rgba(255,255,255,0.85)",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  cursor: "pointer",
+                  textAlign: "center",
+                  transition: "all 0.2s"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.15)";
+                  e.currentTarget.style.color = "white";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+                  e.currentTarget.style.color = "rgba(255,255,255,0.85)";
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
       <style>{`
         @media (max-width: 900px) {
           .public-nav-links { display: none !important; }
@@ -439,29 +586,60 @@ export default function PublicNavbar() {
           background: var(--accent-muted, rgba(26, 86, 219, 0.08)) !important;
           border: 1px solid var(--accent, #1a56db) !important;
           color: var(--accent, #1a56db) !important;
-          transition: all 0.2s !important;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
         }
         .rs-download-btn:hover {
           background: var(--accent, #1a56db) !important;
           border-color: var(--accent, #1a56db) !important;
           color: white !important;
+          transform: scale(1.05);
           box-shadow: 0 4px 12px var(--accent-glow, rgba(26, 86, 219, 0.2)) !important;
         }
         .rs-download-translator-btn {
           background: rgba(155, 48, 255, 0.08) !important;
           border: 1px solid var(--purple, #9b30ff) !important;
           color: var(--purple, #9b30ff) !important;
-          transition: all 0.2s !important;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
         }
         .rs-download-translator-btn:hover {
           background: var(--purple, #9b30ff) !important;
           border-color: var(--purple, #9b30ff) !important;
           color: white !important;
+          transform: scale(1.05);
           box-shadow: 0 4px 12px rgba(155, 48, 255, 0.2) !important;
         }
         .rs-modal-ok-btn:hover {
           opacity: 0.9 !important;
           box-shadow: 0 4px 16px rgba(12, 30, 54, 0.3) !important;
+        }
+        .ios-nav-link {
+          position: relative;
+        }
+        .ios-nav-link:hover {
+          color: var(--text-primary) !important;
+          transform: scale(1.08);
+          background: rgba(255,255,255,0.09) !important;
+        }
+        .ios-nav-link:active {
+          transform: scale(0.95);
+        }
+        @keyframes iosSpringOpen {
+          0% {
+            transform: scale(0.6) translateY(40px);
+            opacity: 0;
+          }
+          60% {
+            transform: scale(1.06) translateY(-4px);
+            opacity: 0.9;
+          }
+          85% {
+            transform: scale(0.98) translateY(1px);
+            opacity: 0.95;
+          }
+          100% {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+          }
         }
         @keyframes scaleIn {
           from { transform: scale(0.85); opacity: 0; }
