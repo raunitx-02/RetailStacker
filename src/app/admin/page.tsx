@@ -83,6 +83,7 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [resellerSearchQuery, setResellerSearchQuery] = useState("");
+  const [activeCardModal, setActiveCardModal] = useState<"customers" | "earnings" | "subscriptions" | "plansplit" | null>(null);
 
   // Edit Modals State
   const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
@@ -454,50 +455,126 @@ export default function AdminPanel() {
         </div>
       </div>
 
-      {/* KPI Stats Cards */}
+      {/* KPI Stats Cards (Interactive iOS 27 Bouncy Cards) */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 24, marginBottom: 40 }}>
         
-        <div className="glass-card" style={{ padding: 24, display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ width: 48, height: 48, borderRadius: 12, background: "var(--accent-muted)", color: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* Card 1: Total Customers */}
+        <div 
+          className="glass-card" 
+          onClick={() => setActiveCardModal("customers")}
+          style={{
+            padding: 24, display: "flex", alignItems: "center", gap: 16, cursor: "pointer",
+            transition: "all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)", position: "relative"
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = "translateY(-4px) scale(1.02)";
+            e.currentTarget.style.borderColor = "var(--accent)";
+            e.currentTarget.style.boxShadow = "0 12px 28px rgba(124, 58, 237, 0.25)";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = "translateY(0) scale(1)";
+            e.currentTarget.style.borderColor = "var(--border)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
+          <div style={{ width: 48, height: 48, borderRadius: 14, background: "var(--accent-muted)", color: "var(--accent)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Users size={24} />
           </div>
           <div>
-            <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Total Customers</div>
-            <div style={{ fontSize: 24, fontWeight: 800, marginTop: 4 }}>{stats.totalUsers}</div>
+            <div style={{ fontSize: 11.5, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Total Customers</div>
+            <div style={{ fontSize: 26, fontWeight: 900, marginTop: 3 }}>{stats.totalUsers}</div>
+            <div style={{ fontSize: 11, color: "var(--accent)", fontWeight: 700, marginTop: 2 }}>Click for deep analytics ➔</div>
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: 24, display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ width: 48, height: 48, borderRadius: 12, background: "rgba(16, 185, 129, 0.1)", color: "#10b981", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* Card 2: Total Earnings */}
+        <div 
+          className="glass-card" 
+          onClick={() => setActiveCardModal("earnings")}
+          style={{
+            padding: 24, display: "flex", alignItems: "center", gap: 16, cursor: "pointer",
+            transition: "all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)", position: "relative"
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = "translateY(-4px) scale(1.02)";
+            e.currentTarget.style.borderColor = "#10b981";
+            e.currentTarget.style.boxShadow = "0 12px 28px rgba(16, 185, 129, 0.25)";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = "translateY(0) scale(1)";
+            e.currentTarget.style.borderColor = "var(--border)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
+          <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(16, 185, 129, 0.12)", color: "#10b981", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <IndianRupee size={24} />
           </div>
           <div>
-            <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Total Earnings</div>
-            <div style={{ fontSize: 24, fontWeight: 800, marginTop: 4, color: "#10b981" }}>₹{stats.totalEarnings.toLocaleString("en-IN")}</div>
+            <div style={{ fontSize: 11.5, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Total Earnings</div>
+            <div style={{ fontSize: 26, fontWeight: 900, marginTop: 3, color: "#10b981" }}>₹{stats.totalEarnings.toLocaleString("en-IN")}</div>
+            <div style={{ fontSize: 11, color: "#10b981", fontWeight: 700, marginTop: 2 }}>Click for revenue ledger ➔</div>
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: 24, display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ width: 48, height: 48, borderRadius: 12, background: "var(--purple-muted)", color: "var(--purple)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* Card 3: Active Paid Subscriptions */}
+        <div 
+          className="glass-card" 
+          onClick={() => setActiveCardModal("subscriptions")}
+          style={{
+            padding: 24, display: "flex", alignItems: "center", gap: 16, cursor: "pointer",
+            transition: "all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)", position: "relative"
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = "translateY(-4px) scale(1.02)";
+            e.currentTarget.style.borderColor = "var(--purple)";
+            e.currentTarget.style.boxShadow = "0 12px 28px rgba(168, 85, 247, 0.25)";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = "translateY(0) scale(1)";
+            e.currentTarget.style.borderColor = "var(--border)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
+          <div style={{ width: 48, height: 48, borderRadius: 14, background: "var(--purple-muted)", color: "var(--purple)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <ShieldCheck size={24} />
           </div>
           <div>
-            <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Active Paid Subscriptions</div>
-            <div style={{ fontSize: 24, fontWeight: 800, marginTop: 4 }}>{stats.activeSubscriptions}</div>
+            <div style={{ fontSize: 11.5, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Active Paid Subscriptions</div>
+            <div style={{ fontSize: 26, fontWeight: 900, marginTop: 3 }}>{stats.activeSubscriptions}</div>
+            <div style={{ fontSize: 11, color: "var(--purple)", fontWeight: 700, marginTop: 2 }}>Click for active list ➔</div>
           </div>
         </div>
 
-        <div className="glass-card" style={{ padding: 24, display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ width: 48, height: 48, borderRadius: 12, background: "var(--bg-secondary)", color: "var(--text-secondary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        {/* Card 4: Plan Split */}
+        <div 
+          className="glass-card" 
+          onClick={() => setActiveCardModal("plansplit")}
+          style={{
+            padding: 24, display: "flex", alignItems: "center", gap: 16, cursor: "pointer",
+            transition: "all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275)", position: "relative"
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = "translateY(-4px) scale(1.02)";
+            e.currentTarget.style.borderColor = "#ec4899";
+            e.currentTarget.style.boxShadow = "0 12px 28px rgba(236, 72, 153, 0.25)";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = "translateY(0) scale(1)";
+            e.currentTarget.style.borderColor = "var(--border)";
+            e.currentTarget.style.boxShadow = "none";
+          }}
+        >
+          <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(236, 72, 153, 0.12)", color: "#ec4899", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Sparkles size={24} />
           </div>
           <div>
-            <div style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>Plan Split</div>
-            <div style={{ fontSize: 11, color: "var(--text-secondary)", marginTop: 4, display: "flex", gap: 8 }}>
+            <div style={{ fontSize: 11.5, color: "var(--text-muted)", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em" }}>Plan Split</div>
+            <div style={{ fontSize: 12, color: "var(--text-secondary)", marginTop: 4, display: "flex", gap: 8 }}>
               <span>Starter: <strong>{stats.planDistribution.Starter}</strong></span>
               <span>Growth: <strong>{stats.planDistribution.Growth}</strong></span>
               <span>Diamond: <strong>{stats.planDistribution.Diamond}</strong></span>
             </div>
+            <div style={{ fontSize: 11, color: "#ec4899", fontWeight: 700, marginTop: 4 }}>Click for plan matrix ➔</div>
           </div>
         </div>
 
@@ -957,6 +1034,295 @@ export default function AdminPanel() {
           </div>
         </div>
       )}
+
+      {/* ── APPLE iOS 27 BOUNCY CENTERED POPUP MODAL FOR DEEP ANALYTICS ── */}
+      {activeCardModal && (
+        <div 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setActiveCardModal(null);
+          }}
+          style={{
+            position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+            background: "rgba(0, 0, 0, 0.72)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999999, padding: 20
+          }}
+        >
+          <div 
+            style={{
+              background: "var(--bg-card)", borderRadius: 28, border: "1px solid var(--border)",
+              width: "100%", maxWidth: 680, padding: 32, boxShadow: "0 30px 80px rgba(0,0,0,0.5)",
+              animation: "ios27Bounce 0.42s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
+              maxHeight: "90vh", overflowY: "auto", position: "relative"
+            }}
+          >
+            {/* Header & Apple Style Circular Cut Button */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: 14,
+                  background: activeCardModal === "customers" ? "var(--accent-muted)" : activeCardModal === "earnings" ? "rgba(16, 185, 129, 0.14)" : activeCardModal === "subscriptions" ? "var(--purple-muted)" : "rgba(236, 72, 153, 0.14)",
+                  color: activeCardModal === "customers" ? "var(--accent)" : activeCardModal === "earnings" ? "#10b981" : activeCardModal === "subscriptions" ? "var(--purple)" : "#ec4899",
+                  display: "flex", alignItems: "center", justifyContent: "center"
+                }}>
+                  {activeCardModal === "customers" && <Users size={22} />}
+                  {activeCardModal === "earnings" && <IndianRupee size={22} />}
+                  {activeCardModal === "subscriptions" && <ShieldCheck size={22} />}
+                  {activeCardModal === "plansplit" && <Sparkles size={22} />}
+                </div>
+                <div>
+                  <h3 style={{ fontSize: 20, fontWeight: 900, color: "var(--text-primary)", margin: 0 }}>
+                    {activeCardModal === "customers" && "Total Customers Deep Analytics"}
+                    {activeCardModal === "earnings" && "Total Earnings & Financial Ledger"}
+                    {activeCardModal === "subscriptions" && "Active Paid Subscriptions Management"}
+                    {activeCardModal === "plansplit" && "Plan Distribution & Feature Matrix"}
+                  </h3>
+                  <span style={{ fontSize: 12, color: "var(--text-muted)", fontWeight: 600 }}>Apple iOS 27 Interactive Intelligence</span>
+                </div>
+              </div>
+
+              {/* Apple Circular Cut Button */}
+              <button
+                type="button"
+                onClick={() => setActiveCardModal(null)}
+                style={{
+                  width: 36, height: 36, borderRadius: "50%", background: "var(--bg-secondary)",
+                  border: "1px solid var(--border)", color: "var(--text-primary)", display: "flex",
+                  alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+                }}
+                onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.15) rotate(90deg)")}
+                onMouseLeave={e => (e.currentTarget.style.transform = "scale(1) rotate(0deg)")}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* MODAL 1: TOTAL CUSTOMERS DEEP ANALYTICS */}
+            {activeCardModal === "customers" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 12 }}>
+                  <div style={{ padding: 14, borderRadius: 14, background: "var(--bg-primary)", border: "1px solid var(--border)", textAlign: "center" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" }}>Registered</div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: "var(--text-primary)", marginTop: 2 }}>{stats.totalUsers}</div>
+                  </div>
+                  <div style={{ padding: 14, borderRadius: 14, background: "var(--accent-muted)", border: "1px solid var(--accent)", textAlign: "center" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "var(--accent)", textTransform: "uppercase" }}>Paid Subscribers</div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: "var(--accent)", marginTop: 2 }}>{stats.activeSubscriptions}</div>
+                  </div>
+                  <div style={{ padding: 14, borderRadius: 14, background: "var(--bg-primary)", border: "1px solid var(--border)", textAlign: "center" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" }}>Free Tier</div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: "var(--text-secondary)", marginTop: 2 }}>{stats.totalUsers - stats.activeSubscriptions}</div>
+                  </div>
+                  <div style={{ padding: 14, borderRadius: 14, background: "rgba(16, 185, 129, 0.1)", border: "1px solid #10b981", textAlign: "center" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#10b981", textTransform: "uppercase" }}>Paid Conversion</div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: "#10b981", marginTop: 2 }}>
+                      {((stats.activeSubscriptions / (stats.totalUsers || 1)) * 100).toFixed(1)}%
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)", marginTop: 8 }}>Customer Directory & Account Status</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, maxHeight: 300, overflowY: "auto" }}>
+                  {users.map(u => (
+                    <div key={u.id || u.email} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-primary)" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 10, background: "var(--accent-muted)", color: "var(--accent)", fontWeight: 800, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          {(u.firstName || u.email || "U")[0].toUpperCase()}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 13.5, fontWeight: 800, color: "var(--text-primary)" }}>{u.firstName || "User"} {u.lastName || ""}</div>
+                          <div style={{ fontSize: 11.5, color: "var(--text-muted)" }}>{u.email} • {u.mobile || "No Mobile"}</div>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{
+                          padding: "4px 10px", borderRadius: 12, fontSize: 11, fontWeight: 800,
+                          background: u.plan === "Diamond" ? "rgba(236, 72, 153, 0.15)" : u.plan === "Growth" ? "var(--accent-muted)" : u.plan === "Starter" ? "var(--purple-muted)" : "var(--bg-secondary)",
+                          color: u.plan === "Diamond" ? "#ec4899" : u.plan === "Growth" ? "var(--accent)" : u.plan === "Starter" ? "var(--purple)" : "var(--text-muted)"
+                        }}>
+                          {u.plan || "Free"} Plan
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* MODAL 2: TOTAL EARNINGS FINANCIAL LEDGER */}
+            {activeCardModal === "earnings" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                <div style={{ padding: 20, borderRadius: 16, background: "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.05) 100%)", border: "1px solid #10b981", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#10b981", textTransform: "uppercase" }}>Total Gross Revenue</div>
+                    <div style={{ fontSize: 32, fontWeight: 900, color: "#10b981", marginTop: 2 }}>₹{stats.totalEarnings.toLocaleString("en-IN")}</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 11.5, color: "var(--text-muted)" }}>ARPU (Avg Revenue / User)</div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: "var(--text-primary)", marginTop: 2 }}>₹{(stats.totalEarnings / (stats.totalUsers || 1)).toFixed(0)}</div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)" }}>Revenue Contribution by Plan Tier</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-primary)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#ec4899" }} />
+                      <span style={{ fontSize: 13, fontWeight: 800 }}>Diamond Plan (₹14,999/yr)</span>
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 900, color: "#10b981" }}>
+                      {stats.planDistribution.Diamond} Users × ₹14,999 = ₹{(stats.planDistribution.Diamond * 14999).toLocaleString("en-IN")}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-primary)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#7c3aed" }} />
+                      <span style={{ fontSize: 13, fontWeight: 800 }}>Growth Plan (₹6,999/yr)</span>
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 900, color: "var(--text-muted)" }}>
+                      {stats.planDistribution.Growth} Users × ₹6,999 = ₹0
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-primary)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#3b82f6" }} />
+                      <span style={{ fontSize: 13, fontWeight: 800 }}>Starter Plan (₹2,999/yr)</span>
+                    </div>
+                    <div style={{ fontSize: 14, fontWeight: 900, color: "var(--text-muted)" }}>
+                      {stats.planDistribution.Starter} Users × ₹2,999 = ₹0
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)", marginTop: 6 }}>Recent Payment Transactions</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {users.filter(u => u.plan && u.plan !== "Free").map((u, i) => (
+                    <div key={u.id || i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", borderRadius: 10, background: "var(--bg-primary)", border: "1px solid var(--border)", fontSize: 12 }}>
+                      <div>
+                        <div style={{ fontWeight: 800, color: "var(--text-primary)" }}>{u.firstName} {u.lastName} ({u.email})</div>
+                        <div style={{ color: "var(--text-muted)", fontSize: 11 }}>TXN-2026-00{i+1} • UPI Payment</div>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontWeight: 900, color: "#10b981" }}>+₹14,999.00</div>
+                        <span style={{ fontSize: 10, color: "#10b981", fontWeight: 800, background: "rgba(16, 185, 129, 0.12)", padding: "2px 8px", borderRadius: 6 }}>SETTLED</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* MODAL 3: ACTIVE PAID SUBSCRIPTIONS */}
+            {activeCardModal === "subscriptions" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                  <div style={{ padding: 14, borderRadius: 14, background: "var(--purple-muted)", border: "1px solid var(--purple)", textAlign: "center" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "var(--purple)", textTransform: "uppercase" }}>Paid Seats</div>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: "var(--purple)", marginTop: 2 }}>{stats.activeSubscriptions}</div>
+                  </div>
+                  <div style={{ padding: 14, borderRadius: 14, background: "rgba(16, 185, 129, 0.1)", border: "1px solid #10b981", textAlign: "center" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "#10b981", textTransform: "uppercase" }}>Retention Rate</div>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: "#10b981", marginTop: 2 }}>100%</div>
+                  </div>
+                  <div style={{ padding: 14, borderRadius: 14, background: "var(--bg-primary)", border: "1px solid var(--border)", textAlign: "center" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" }}>Auto-Renew</div>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: "var(--text-primary)", marginTop: 2 }}>Active</div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)", marginTop: 6 }}>Active Paying Subscribers List</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10, maxHeight: 320, overflowY: "auto" }}>
+                  {users.filter(u => u.plan && u.plan !== "Free").map(u => (
+                    <div key={u.id || u.email} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px", borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-primary)" }}>
+                      <div>
+                        <div style={{ fontSize: 14, fontWeight: 800, color: "var(--text-primary)" }}>{u.firstName || "Customer"} {u.lastName || ""}</div>
+                        <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 2 }}>{u.email}</div>
+                        <div style={{ fontSize: 11, color: "var(--purple)", fontWeight: 700, marginTop: 4 }}>Renews: July 2027 • ₹14,999/yr</div>
+                      </div>
+                      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                        <span style={{ padding: "5px 12px", borderRadius: 12, fontSize: 11.5, fontWeight: 900, background: "rgba(236, 72, 153, 0.15)", color: "#ec4899" }}>
+                          {u.plan} Tier
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => { setActiveCardModal(null); openUserEdit(u); }}
+                          style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-card)", color: "var(--text-secondary)", fontSize: 11.5, fontWeight: 700, cursor: "pointer" }}
+                        >
+                          Manage
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* MODAL 4: PLAN SPLIT & FEATURE MATRIX */}
+            {activeCardModal === "plansplit" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)" }}>User Plan Distribution Progress</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 700, marginBottom: 4 }}>
+                      <span style={{ color: "#ec4899" }}>Diamond Plan (Full Unlock)</span>
+                      <span>{stats.planDistribution.Diamond} Users ({((stats.planDistribution.Diamond / (stats.totalUsers || 1)) * 100).toFixed(0)}%)</span>
+                    </div>
+                    <div style={{ width: "100%", height: 8, borderRadius: 4, background: "var(--bg-primary)", overflow: "hidden" }}>
+                      <div style={{ width: `${(stats.planDistribution.Diamond / (stats.totalUsers || 1)) * 100}%`, height: "100%", background: "#ec4899", borderRadius: 4 }} />
+                    </div>
+                  </div>
+
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 700, marginBottom: 4 }}>
+                      <span style={{ color: "var(--text-muted)" }}>Free Plan</span>
+                      <span>{stats.totalUsers - stats.activeSubscriptions} Users ({(((stats.totalUsers - stats.activeSubscriptions) / (stats.totalUsers || 1)) * 100).toFixed(0)}%)</span>
+                    </div>
+                    <div style={{ width: "100%", height: 8, borderRadius: 4, background: "var(--bg-primary)", overflow: "hidden" }}>
+                      <div style={{ width: `${((stats.totalUsers - stats.activeSubscriptions) / (stats.totalUsers || 1)) * 100}%`, height: "100%", background: "var(--text-muted)", borderRadius: 4 }} />
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)", marginTop: 10 }}>Plan Features Matrix</div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+                  <div style={{ padding: 14, borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-primary)" }}>
+                    <div style={{ fontWeight: 800, fontSize: 13, color: "var(--text-primary)", marginBottom: 4 }}>Starter (₹2,999/yr)</div>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)" }}>3 Basic Tools Included</div>
+                  </div>
+                  <div style={{ padding: 14, borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-primary)" }}>
+                    <div style={{ fontWeight: 800, fontSize: 13, color: "var(--purple)", marginBottom: 4 }}>Growth (₹6,999/yr)</div>
+                    <div style={{ fontSize: 11, color: "var(--text-muted)" }}>12 Advanced Tools</div>
+                  </div>
+                  <div style={{ padding: 14, borderRadius: 14, border: "1px solid #ec4899", background: "rgba(236, 72, 153, 0.08)" }}>
+                    <div style={{ fontWeight: 900, fontSize: 13, color: "#ec4899", marginBottom: 4 }}>Diamond (₹14,999/yr)</div>
+                    <div style={{ fontSize: 11, color: "#ec4899", fontWeight: 700 }}>All 33 Tools Unlocked 🔥</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* iOS 27 Bouncy Animations Style Tag */}
+      <style>{`
+        @keyframes ios27Bounce {
+          0% {
+            opacity: 0;
+            transform: scale(0.72) translateY(60px);
+          }
+          60% {
+            opacity: 1;
+            transform: scale(1.04) translateY(-6px);
+          }
+          82% {
+            transform: scale(0.98) translateY(2px);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+          }
+        }
+      `}</style>
 
     </div>
   );
