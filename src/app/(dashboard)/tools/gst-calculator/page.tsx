@@ -497,6 +497,9 @@ export default function GSTCalculatorPage() {
   const finalGrandTotal = Math.max(0, grandTotal - extraDiscount);
   const currencySymbol = currency.includes("₹") ? "₹" : currency.includes("$") ? "$" : currency.includes("€") ? "€" : "£";
 
+  // Build gridTemplateColumns string with safe minimum widths
+  const gridTemplate = `minmax(220px, 3fr)${isColVisible("hsn") ? " 90px" : ""}${isColVisible("gstRate") ? " 80px" : ""}${isColVisible("quantity") ? " 65px" : ""}${isColVisible("rate") ? " 100px" : ""}${isColVisible("amount") ? " 100px" : ""}${isColVisible("cgst") ? " 85px" : ""}${isColVisible("sgst") ? " 85px" : ""}${isColVisible("total") ? " 110px" : ""} 32px`;
+
   return (
     <div style={{ maxWidth: 1350, margin: "0 auto", padding: "16px 20px 100px" }}>
       
@@ -662,160 +665,165 @@ export default function GSTCalculatorPage() {
               </div>
             </div>
 
-            {/* ─── REFRENS PURPLE LINE ITEMS TABLE ─── */}
+            {/* ─── REFRENS PURPLE LINE ITEMS TABLE (WITH SCROLL CONTAINER TO PREVENT COLLAPSE) ─── */}
             <div style={{ borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-card)", overflow: "hidden" }}>
               
-              {/* Header Bar - Refrens Purple Signature */}
-              <div style={{
-                background: themeColor, color: "white", padding: "10px 14px", fontWeight: 700, fontSize: 12,
-                display: "grid",
-                gridTemplateColumns: `minmax(0, 3fr)${isColVisible("hsn") ? " 85px" : ""}${isColVisible("gstRate") ? " 75px" : ""}${isColVisible("quantity") ? " 60px" : ""}${isColVisible("rate") ? " 95px" : ""}${isColVisible("amount") ? " 95px" : ""}${isColVisible("cgst") ? " 75px" : ""}${isColVisible("sgst") ? " 75px" : ""}${isColVisible("total") ? " 100px" : ""} 32px`,
-                gap: 8, alignItems: "center"
-              }}>
-                <div>Item Description</div>
-                {isColVisible("hsn") && <div>{getColName("hsn", "HSN/SAC")}</div>}
-                {isColVisible("gstRate") && <div>{getColName("gstRate", "GST Rate")}</div>}
-                {isColVisible("quantity") && <div>{getColName("quantity", "Qty")}</div>}
-                {isColVisible("rate") && <div>{getColName("rate", "Rate")} ({currencySymbol})</div>}
-                {isColVisible("amount") && <div>{getColName("amount", "Amount")}</div>}
-                {isColVisible("cgst") && <div>{getColName("cgst", "CGST")}</div>}
-                {isColVisible("sgst") && <div>{getColName("sgst", "SGST")}</div>}
-                {isColVisible("total") && <div style={{ textAlign: "right" }}>{getColName("total", "Total")}</div>}
-                <div></div>
-              </div>
+              <div style={{ overflowX: "auto" }}>
+                <div style={{ minWidth: 840 }}>
+                  
+                  {/* Header Bar - Refrens Purple Signature */}
+                  <div style={{
+                    background: themeColor, color: "white", padding: "10px 14px", fontWeight: 700, fontSize: 12,
+                    display: "grid",
+                    gridTemplateColumns: gridTemplate,
+                    gap: 8, alignItems: "center"
+                  }}>
+                    <div>Item Description</div>
+                    {isColVisible("hsn") && <div>{getColName("hsn", "HSN/SAC")}</div>}
+                    {isColVisible("gstRate") && <div>{getColName("gstRate", "GST Rate")}</div>}
+                    {isColVisible("quantity") && <div>{getColName("quantity", "Qty")}</div>}
+                    {isColVisible("rate") && <div>{getColName("rate", "Rate")} ({currencySymbol})</div>}
+                    {isColVisible("amount") && <div>{getColName("amount", "Amount")}</div>}
+                    {isColVisible("cgst") && <div>{getColName("cgst", "CGST")}</div>}
+                    {isColVisible("sgst") && <div>{getColName("sgst", "SGST")}</div>}
+                    {isColVisible("total") && <div style={{ textAlign: "right" }}>{getColName("total", "Total")}</div>}
+                    <div></div>
+                  </div>
 
-              {/* Items Rows */}
-              <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 12 }}>
-                {items.map((item, idx) => {
-                  const rawVal = item.rateExcludingTax * item.qty;
-                  const discountAmt = rawVal * (item.discountPercent / 100);
-                  const taxable = rawVal - discountAmt;
-                  const gstTax = taxable * (item.gstPercent / 100);
-                  const cgstVal = gstTax / 2;
-                  const sgstVal = gstTax / 2;
-                  const lineTotal = taxable + gstTax;
+                  {/* Items Rows */}
+                  <div style={{ padding: 12, display: "flex", flexDirection: "column", gap: 12 }}>
+                    {items.map((item, idx) => {
+                      const rawVal = item.rateExcludingTax * item.qty;
+                      const discountAmt = rawVal * (item.discountPercent / 100);
+                      const taxable = rawVal - discountAmt;
+                      const gstTax = taxable * (item.gstPercent / 100);
+                      const cgstVal = gstTax / 2;
+                      const sgstVal = gstTax / 2;
+                      const lineTotal = taxable + gstTax;
 
-                  return (
-                    <div key={item.id} style={{
-                      padding: 12, borderRadius: 10, border: "1px solid var(--border)", background: "var(--bg-primary)",
-                      display: "flex", flexDirection: "column", gap: 8
-                    }}>
-                      <div style={{
-                        display: "grid",
-                        gridTemplateColumns: `minmax(0, 3fr)${isColVisible("hsn") ? " 85px" : ""}${isColVisible("gstRate") ? " 75px" : ""}${isColVisible("quantity") ? " 60px" : ""}${isColVisible("rate") ? " 95px" : ""}${isColVisible("amount") ? " 95px" : ""}${isColVisible("cgst") ? " 75px" : ""}${isColVisible("sgst") ? " 75px" : ""}${isColVisible("total") ? " 100px" : ""} 32px`,
-                        gap: 8, alignItems: "center"
-                      }}>
-                        <input
-                          type="text" value={item.description} placeholder="Item or Service Name..."
-                          onChange={e => { const n = [...items]; n[idx] = { ...n[idx], description: e.target.value }; setItems(n); }}
-                          className="input-field" style={{ width: "100%", fontWeight: 600, fontSize: 13 }}
-                        />
-                        {isColVisible("hsn") && (
-                          <input
-                            type="text" value={item.hsn} placeholder="HSN"
-                            onChange={e => { const n = [...items]; n[idx] = { ...n[idx], hsn: e.target.value }; setItems(n); }}
-                            className="input-field" style={{ width: "100%", fontSize: 12 }}
-                          />
-                        )}
-                        {isColVisible("gstRate") && (
-                          <select
-                            value={item.gstPercent}
-                            onChange={e => { const n = [...items]; n[idx] = { ...n[idx], gstPercent: Number(e.target.value) }; setItems(n); }}
-                            className="input-field" style={{ width: "100%", fontSize: 11.5, padding: "8px 4px" }}
-                          >
-                            <option value="0">0%</option>
-                            <option value="5">5%</option>
-                            <option value="12">12%</option>
-                            <option value="18">18%</option>
-                            <option value="28">28%</option>
-                          </select>
-                        )}
-                        {isColVisible("quantity") && (
-                          <input
-                            type="number" value={item.qty} min="1"
-                            onChange={e => { const n = [...items]; n[idx] = { ...n[idx], qty: Number(e.target.value) }; setItems(n); }}
-                            className="input-field" style={{ width: "100%", fontSize: 12.5 }}
-                          />
-                        )}
-                        {isColVisible("rate") && (
-                          <input
-                            type="number" value={item.rateExcludingTax} min="0"
-                            onChange={e => { const n = [...items]; n[idx] = { ...n[idx], rateExcludingTax: Number(e.target.value) }; setItems(n); }}
-                            className="input-field" style={{ width: "100%", fontSize: 12.5 }}
-                          />
-                        )}
-                        {isColVisible("amount") && (
-                          <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--text-secondary)" }}>
-                            {currencySymbol}{taxable.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                      return (
+                        <div key={item.id} style={{
+                          padding: 12, borderRadius: 10, border: "1px solid var(--border)", background: "var(--bg-primary)",
+                          display: "flex", flexDirection: "column", gap: 8
+                        }}>
+                          <div style={{
+                            display: "grid",
+                            gridTemplateColumns: gridTemplate,
+                            gap: 8, alignItems: "center"
+                          }}>
+                            <input
+                              type="text" value={item.description} placeholder="Item or Service Name..."
+                              onChange={e => { const n = [...items]; n[idx] = { ...n[idx], description: e.target.value }; setItems(n); }}
+                              className="input-field" style={{ width: "100%", fontWeight: 600, fontSize: 13, minWidth: 0 }}
+                            />
+                            {isColVisible("hsn") && (
+                              <input
+                                type="text" value={item.hsn} placeholder="HSN"
+                                onChange={e => { const n = [...items]; n[idx] = { ...n[idx], hsn: e.target.value }; setItems(n); }}
+                                className="input-field" style={{ width: "100%", fontSize: 12, minWidth: 0 }}
+                              />
+                            )}
+                            {isColVisible("gstRate") && (
+                              <select
+                                value={item.gstPercent}
+                                onChange={e => { const n = [...items]; n[idx] = { ...n[idx], gstPercent: Number(e.target.value) }; setItems(n); }}
+                                className="input-field" style={{ width: "100%", fontSize: 11.5, padding: "8px 4px" }}
+                              >
+                                <option value="0">0%</option>
+                                <option value="5">5%</option>
+                                <option value="12">12%</option>
+                                <option value="18">18%</option>
+                                <option value="28">28%</option>
+                              </select>
+                            )}
+                            {isColVisible("quantity") && (
+                              <input
+                                type="number" value={item.qty} min="1"
+                                onChange={e => { const n = [...items]; n[idx] = { ...n[idx], qty: Number(e.target.value) }; setItems(n); }}
+                                className="input-field" style={{ width: "100%", fontSize: 12.5 }}
+                              />
+                            )}
+                            {isColVisible("rate") && (
+                              <input
+                                type="number" value={item.rateExcludingTax} min="0"
+                                onChange={e => { const n = [...items]; n[idx] = { ...n[idx], rateExcludingTax: Number(e.target.value) }; setItems(n); }}
+                                className="input-field" style={{ width: "100%", fontSize: 12.5 }}
+                              />
+                            )}
+                            {isColVisible("amount") && (
+                              <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--text-secondary)" }}>
+                                {currencySymbol}{taxable.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                              </div>
+                            )}
+                            {isColVisible("cgst") && (
+                              <div style={{ fontSize: 11.5, color: "var(--text-muted)" }}>
+                                {currencySymbol}{cgstVal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                              </div>
+                            )}
+                            {isColVisible("sgst") && (
+                              <div style={{ fontSize: 11.5, color: "var(--text-muted)" }}>
+                                {currencySymbol}{sgstVal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                              </div>
+                            )}
+                            {isColVisible("total") && (
+                              <div style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)", textAlign: "right" }}>
+                                {currencySymbol}{lineTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                              </div>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => { if (items.length > 1) setItems(items.filter(i => i.id !== item.id)); }}
+                              style={{ background: "var(--danger-muted)", border: "none", color: "var(--danger)", width: 28, height: 28, borderRadius: 7, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+                            >
+                              <Trash2 size={13} />
+                            </button>
                           </div>
-                        )}
-                        {isColVisible("cgst") && (
-                          <div style={{ fontSize: 11.5, color: "var(--text-muted)" }}>
-                            {currencySymbol}{cgstVal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                          </div>
-                        )}
-                        {isColVisible("sgst") && (
-                          <div style={{ fontSize: 11.5, color: "var(--text-muted)" }}>
-                            {currencySymbol}{sgstVal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                          </div>
-                        )}
-                        {isColVisible("total") && (
-                          <div style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)", textAlign: "right" }}>
-                            {currencySymbol}{lineTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                          </div>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => { if (items.length > 1) setItems(items.filter(i => i.id !== item.id)); }}
-                          style={{ background: "var(--danger-muted)", border: "none", color: "var(--danger)", width: 28, height: 28, borderRadius: 7, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
 
-                      {/* Item Sub-actions (Refrens + Add Description / + Add Image) */}
-                      <div style={{ display: "flex", gap: 12, alignItems: "center", paddingTop: 2 }}>
-                        <button
-                          type="button"
-                          onClick={() => { const n = [...items]; n[idx] = { ...n[idx], showDesc: !n[idx].showDesc }; setItems(n); }}
-                          style={{ border: "none", background: "transparent", color: themeColor, fontSize: 11.5, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}
-                        >
-                          + {item.showDesc ? "Hide Description" : "Add Description"}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => { const n = [...items]; n[idx] = { ...n[idx], showImage: !n[idx].showImage }; setItems(n); }}
-                          style={{ border: "none", background: "transparent", color: themeColor, fontSize: 11.5, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}
-                        >
-                          <ImageIcon size={12} /> + {item.showImage ? "Remove Image" : "Add Image"}
-                        </button>
-                      </div>
+                          {/* Item Sub-actions (Refrens + Add Description / + Add Image) */}
+                          <div style={{ display: "flex", gap: 12, alignItems: "center", paddingTop: 2 }}>
+                            <button
+                              type="button"
+                              onClick={() => { const n = [...items]; n[idx] = { ...n[idx], showDesc: !n[idx].showDesc }; setItems(n); }}
+                              style={{ border: "none", background: "transparent", color: themeColor, fontSize: 11.5, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}
+                            >
+                              + {item.showDesc ? "Hide Description" : "Add Description"}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { const n = [...items]; n[idx] = { ...n[idx], showImage: !n[idx].showImage }; setItems(n); }}
+                              style={{ border: "none", background: "transparent", color: themeColor, fontSize: 11.5, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}
+                            >
+                              <ImageIcon size={12} /> + {item.showImage ? "Remove Image" : "Add Image"}
+                            </button>
+                          </div>
 
-                      {/* Expandable Extra Description */}
-                      {item.showDesc && (
-                        <textarea
-                          placeholder="Detailed item notes, terms or serial numbers..."
-                          value={item.extraDesc || ""}
-                          onChange={e => { const n = [...items]; n[idx] = { ...n[idx], extraDesc: e.target.value }; setItems(n); }}
-                          className="input-field" rows={2} style={{ width: "100%", fontSize: 12, resize: "vertical" }}
-                        />
-                      )}
-                    </div>
-                  );
-                })}
+                          {/* Expandable Extra Description */}
+                          {item.showDesc && (
+                            <textarea
+                              placeholder="Detailed item notes, terms or serial numbers..."
+                              value={item.extraDesc || ""}
+                              onChange={e => { const n = [...items]; n[idx] = { ...n[idx], extraDesc: e.target.value }; setItems(n); }}
+                              className="input-field" rows={2} style={{ width: "100%", fontSize: 12, resize: "vertical" }}
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
 
-                {/* Refrens Style Dashed Add New Line Button */}
-                <button
-                  type="button"
-                  onClick={() => setItems([...items, { id: Date.now().toString(), description: "", hsn: "9983", qty: 1, rateExcludingTax: 0, discountPercent: 0, gstPercent: 18 }])}
-                  style={{
-                    width: "100%", padding: "12px", borderRadius: 10, border: `2px dashed ${themeColor}`, background: "var(--bg-primary)",
-                    color: themeColor, fontWeight: 800, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
-                    transition: "all 0.2s"
-                  }}
-                >
-                  <Plus size={16} /> Add New Line
-                </button>
+                    {/* Refrens Style Dashed Add New Line Button */}
+                    <button
+                      type="button"
+                      onClick={() => setItems([...items, { id: Date.now().toString(), description: "", hsn: "9983", qty: 1, rateExcludingTax: 0, discountPercent: 0, gstPercent: 18 }])}
+                      style={{
+                        width: "100%", padding: "12px", borderRadius: 10, border: `2px dashed ${themeColor}`, background: "var(--bg-primary)",
+                        color: themeColor, fontWeight: 800, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      <Plus size={16} /> Add New Line
+                    </button>
+                  </div>
+                </div>
               </div>
 
               {/* ─── Show Total in PDF Box (Refrens Right Summary Layout) ─── */}
