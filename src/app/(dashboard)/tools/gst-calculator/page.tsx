@@ -282,7 +282,6 @@ interface InvoiceData {
 
 export default function GSTCalculatorPage() {
   const [activeTab, setActiveTab] = useState<"invoice" | "calculator" | "history">("invoice");
-  const [viewMode, setViewMode] = useState<"edit" | "preview">("edit");
   const [history, setHistory] = useState<InvoiceData[]>([]);
 
   // ─── Calculator State ──────────────────────────────────────────────────────
@@ -437,7 +436,6 @@ export default function GSTCalculatorPage() {
     setExtraDiscount(inv.extraDiscount || 0);
     if (inv.columns && Array.isArray(inv.columns)) setColumns(inv.columns);
     setActiveTab("invoice");
-    setViewMode("edit");
   };
 
   const deleteFromHistory = (id: string) => {
@@ -500,35 +498,33 @@ export default function GSTCalculatorPage() {
   const finalGrandTotal = Math.max(0, grandTotal - extraDiscount);
   const currencySymbol = currency.includes("₹") ? "₹" : currency.includes("$") ? "$" : currency.includes("€") ? "€" : "£";
 
-  // Dynamic grid template for Refrens table
-  const gridTemplate = `minmax(260px, 3.5fr)${isColVisible("hsn") ? " 100px" : ""}${isColVisible("gstRate") ? " 85px" : ""}${isColVisible("quantity") ? " 70px" : ""}${isColVisible("rate") ? " 110px" : ""}${isColVisible("amount") ? " 110px" : ""}${isColVisible("cgst") ? " 95px" : ""}${isColVisible("sgst") ? " 95px" : ""}${isColVisible("total") ? " 120px" : ""} 36px`;
-
   return (
-    <div style={{ maxWidth: 1400, margin: "0 auto", padding: "16px 20px 100px" }}>
+    <div style={{ maxWidth: 1250, margin: "0 auto", padding: "16px 20px 100px" }}>
       
-      {/* ─── Refrens Top Navigation Bar ─── */}
+      {/* ─── Refrens Header Nav ─── */}
       <div style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20, flexWrap: "wrap", gap: 16,
-        padding: "14px 20px", background: "var(--bg-card)", borderRadius: 14, border: "1px solid var(--border)"
+        display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 16,
+        padding: "16px 24px", background: "var(--bg-card)", borderRadius: 16, border: "1px solid var(--border)",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.03)"
       }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <div style={{
-            width: 38, height: 38, borderRadius: 10, background: "linear-gradient(135deg, #7c3aed 0%, #ec4899 100%)",
-            display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 900, fontSize: 18
+            width: 42, height: 42, borderRadius: 12, background: "linear-gradient(135deg, #7c3aed 0%, #ec4899 100%)",
+            display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 900, fontSize: 20
           }}>
             R
           </div>
           <div>
-            <h1 style={{ fontSize: 20, fontWeight: 900, color: "var(--text-primary)", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
+            <h1 style={{ fontSize: 22, fontWeight: 900, color: "var(--text-primary)", margin: 0 }}>
               Refrens GST Invoice Generator
             </h1>
-            <p style={{ fontSize: 12, color: "var(--text-secondary)", margin: 0 }}>
+            <p style={{ fontSize: 13, color: "var(--text-secondary)", margin: "2px 0 0 0" }}>
               Create, customize, print and edit professional GST invoices instantly
             </p>
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: 8, background: "var(--bg-primary)", borderRadius: 10, padding: 4, border: "1px solid var(--border)" }}>
+        <div style={{ display: "flex", gap: 8, background: "var(--bg-primary)", borderRadius: 12, padding: 5, border: "1px solid var(--border)" }}>
           {[
             { key: "invoice", label: "Create Invoice" },
             { key: "history", label: `Saved Invoices (${history.length})` },
@@ -536,9 +532,10 @@ export default function GSTCalculatorPage() {
           ].map(tab => (
             <button
               key={tab.key}
+              type="button"
               onClick={() => setActiveTab(tab.key as "invoice" | "history" | "calculator")}
               style={{
-                padding: "7px 16px", borderRadius: 8, border: "none", fontWeight: 700, fontSize: 13, cursor: "pointer",
+                padding: "8px 18px", borderRadius: 9, border: "none", fontWeight: 800, fontSize: 13, cursor: "pointer",
                 background: activeTab === tab.key ? themeColor : "transparent",
                 color: activeTab === tab.key ? "white" : "var(--text-secondary)", transition: "all 0.18s"
               }}
@@ -551,59 +548,39 @@ export default function GSTCalculatorPage() {
 
       {/* ─── TAB 1: REFRENS INVOICE BUILDER ─── */}
       {activeTab === "invoice" && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 
-          {/* Refrens Top Control Actions Toolbar */}
+          {/* Refrens Action Toolbar */}
           <div style={{
-            display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12, flexWrap: "wrap",
-            padding: "14px 20px", borderRadius: 14, background: "var(--bg-card)", border: "1px solid var(--border)"
+            display: "flex", justifyContent: "space-between", alignItems: "center", gap: 14, flexWrap: "wrap",
+            padding: "16px 22px", borderRadius: 16, background: "var(--bg-card)", border: "1px solid var(--border)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.03)"
           }}>
-            {/* Left Tools */}
             <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
               
-              {/* View Mode Selector (Builder vs Preview) */}
-              <div style={{ display: "flex", gap: 4, background: "var(--bg-primary)", borderRadius: 9, padding: 3, border: "1px solid var(--border)" }}>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("edit")}
-                  style={{
-                    padding: "6px 14px", borderRadius: 7, border: "none", fontSize: 12.5, fontWeight: 700, cursor: "pointer",
-                    background: viewMode === "edit" ? themeColor : "transparent",
-                    color: viewMode === "edit" ? "white" : "var(--text-secondary)", display: "flex", alignItems: "center", gap: 6
-                  }}
-                >
-                  <Edit3 size={14} /> 📝 Edit Invoice
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("preview")}
-                  style={{
-                    padding: "6px 14px", borderRadius: 7, border: "none", fontSize: 12.5, fontWeight: 700, cursor: "pointer",
-                    background: viewMode === "preview" ? themeColor : "transparent",
-                    color: viewMode === "preview" ? "white" : "var(--text-secondary)", display: "flex", alignItems: "center", gap: 6
-                  }}
-                >
-                  <Eye size={14} /> 👁 Live PDF Preview
-                </button>
-              </div>
-
+              {/* Customize Columns Button */}
               <button
                 type="button"
-                onClick={() => setShowColumnModal(true)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowColumnModal(true);
+                }}
                 style={{
-                  padding: "8px 14px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-primary)",
-                  color: "var(--text-primary)", fontSize: 12.5, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6
+                  padding: "9px 16px", borderRadius: 9, border: "1px solid var(--border)", background: "var(--bg-primary)",
+                  color: "var(--text-primary)", fontSize: 13, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 8
                 }}
               >
-                <SlidersHorizontal size={14} color={themeColor} /> Customize Columns & Formulas
+                <SlidersHorizontal size={15} color={themeColor} /> Customize Columns & Formulas 💡
               </button>
 
+              {/* Currency Switcher */}
               <select
                 value={currency}
                 onChange={e => setCurrency(e.target.value)}
                 style={{
-                  padding: "8px 12px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-primary)",
-                  color: "var(--text-primary)", fontSize: 12.5, fontWeight: 700, cursor: "pointer"
+                  padding: "9px 14px", borderRadius: 9, border: "1px solid var(--border)", background: "var(--bg-primary)",
+                  color: "var(--text-primary)", fontSize: 13, fontWeight: 800, cursor: "pointer"
                 }}
               >
                 <option value="Indian Rupee (INR, ₹)">Indian Rupee (INR, ₹)</option>
@@ -612,24 +589,24 @@ export default function GSTCalculatorPage() {
                 <option value="Pound (GBP, £)">Pound (GBP, £)</option>
               </select>
 
-              {/* Theme Color Quick Dots */}
-              <div style={{ display: "flex", gap: 6, alignItems: "center", marginLeft: 4 }}>
+              {/* Theme Color Dots */}
+              <div style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: 6 }}>
                 {["#7c3aed", "#1A56DB", "#0D9488", "#DC2626", "#D97706", "#ec4899"].map(color => (
                   <button key={color} type="button" onClick={() => setThemeColor(color)} style={{
-                    width: 20, height: 20, borderRadius: "50%", background: color, cursor: "pointer", border: "none",
-                    outline: themeColor === color ? `2px solid var(--text-primary)` : "2px solid transparent",
+                    width: 22, height: 22, borderRadius: "50%", background: color, cursor: "pointer", border: "none",
+                    outline: themeColor === color ? `2.5px solid var(--text-primary)` : "2.5px solid transparent",
                     outlineOffset: 2
                   }} />
                 ))}
               </div>
             </div>
 
-            {/* Right Action Buttons */}
+            {/* Action Buttons */}
             <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
               <button
                 type="button"
                 onClick={startNewInvoice}
-                style={{ padding: "8px 14px", borderRadius: 8, border: `1px solid ${themeColor}`, background: "transparent", color: themeColor, fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}
+                style={{ padding: "9px 16px", borderRadius: 9, border: `1.5px solid ${themeColor}`, background: "transparent", color: themeColor, fontSize: 13, fontWeight: 800, cursor: "pointer" }}
               >
                 + New Invoice
               </button>
@@ -637,121 +614,115 @@ export default function GSTCalculatorPage() {
               <button
                 type="button"
                 onClick={() => { saveToHistory(); alert("Invoice saved to history!"); }}
-                style={{ padding: "8px 14px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-primary)", color: "var(--text-primary)", fontSize: 12.5, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                style={{ padding: "9px 16px", borderRadius: 9, border: "1px solid var(--border)", background: "var(--bg-primary)", color: "var(--text-primary)", fontSize: 13, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
               >
-                <CheckCircle size={14} color="var(--success)" /> Save
+                <CheckCircle size={15} color="var(--success)" /> Save
               </button>
 
               <button
                 type="button"
                 onClick={handlePrint}
-                style={{ padding: "8px 18px", borderRadius: 8, border: "none", background: themeColor, color: "white", fontSize: 13, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                style={{ padding: "9px 20px", borderRadius: 9, border: "none", background: themeColor, color: "white", fontSize: 13.5, fontWeight: 900, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
               >
-                <Printer size={15} /> Print / Save PDF
+                <Printer size={16} /> Print / Save PDF
               </button>
             </div>
           </div>
 
-          {/* BUILDER CANVAS (FULL WIDTH FOR ZERO CLIPPING) */}
-          {viewMode === "edit" ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              
-              {/* Seller & Client Cards Grid */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }} className="builder-layout">
+          {/* Seller & Client Cards Grid */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
 
-                {/* Business / Seller Card */}
-                <div style={{ padding: 22, borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
-                  <h3 style={{ fontSize: 12.5, fontWeight: 800, color: "var(--text-muted)", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.06em", display: "flex", alignItems: "center", gap: 6 }}>
-                    <Building2 size={15} color={themeColor} /> Business / Seller Details
-                  </h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Company / Business Name</label>
-                      <input type="text" value={sellerName} onChange={e => setSellerName(e.target.value)} className="input-field" style={{ width: "100%" }} />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>GSTIN Number</label>
-                      <input type="text" value={sellerGSTIN} onChange={e => setSellerGSTIN(e.target.value)} className="input-field" style={{ width: "100%" }} />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Street Address</label>
-                      <textarea value={sellerAddress} onChange={e => setSellerAddress(e.target.value)} className="input-field" rows={2} style={{ width: "100%", resize: "vertical" }} />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>State</label>
-                      <select value={sellerState} onChange={e => setSellerState(e.target.value)} className="input-field" style={{ width: "100%" }}>
-                        {INDIAN_STATES.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
-                      </select>
-                    </div>
-                  </div>
+            {/* Seller Details */}
+            <div style={{ padding: 22, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
+              <h3 style={{ fontSize: 13, fontWeight: 800, color: "var(--text-muted)", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.06em", display: "flex", alignItems: "center", gap: 6 }}>
+                <Building2 size={16} color={themeColor} /> Business / Seller Details
+              </h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Company / Business Name</label>
+                  <input type="text" value={sellerName} onChange={e => setSellerName(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
-
-                {/* Client (Bill To) Card */}
-                <div style={{ padding: 22, borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
-                  <h3 style={{ fontSize: 12.5, fontWeight: 800, color: "var(--text-muted)", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.06em", display: "flex", alignItems: "center", gap: 6 }}>
-                    <User size={15} color={themeColor} /> Client (Bill To) Details
-                  </h3>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Client / Customer Name</label>
-                      <input type="text" value={buyerName} onChange={e => setBuyerName(e.target.value)} className="input-field" style={{ width: "100%" }} />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Client GSTIN</label>
-                      <input type="text" value={buyerGSTIN} onChange={e => setBuyerGSTIN(e.target.value)} className="input-field" style={{ width: "100%" }} />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Billing Address</label>
-                      <textarea value={buyerAddress} onChange={e => setBuyerAddress(e.target.value)} className="input-field" rows={2} style={{ width: "100%", resize: "vertical" }} />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Place of Supply State</label>
-                      <select value={placeOfSupply} onChange={e => setPlaceOfSupply(e.target.value)} className="input-field" style={{ width: "100%" }}>
-                        {INDIAN_STATES.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
-                      </select>
-                    </div>
-                  </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>GSTIN Number</label>
+                  <input type="text" value={sellerGSTIN} onChange={e => setSellerGSTIN(e.target.value)} className="input-field" style={{ width: "100%" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Street Address</label>
+                  <textarea value={sellerAddress} onChange={e => setSellerAddress(e.target.value)} className="input-field" rows={2} style={{ width: "100%", resize: "vertical" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>State</label>
+                  <select value={sellerState} onChange={e => setSellerState(e.target.value)} className="input-field" style={{ width: "100%" }}>
+                    {INDIAN_STATES.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+                  </select>
                 </div>
               </div>
+            </div>
 
-              {/* Invoice Meta Dates Card */}
-              <div style={{ padding: 18, borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-card)", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16 }}>
+            {/* Client Details */}
+            <div style={{ padding: 22, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
+              <h3 style={{ fontSize: 13, fontWeight: 800, color: "var(--text-muted)", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.06em", display: "flex", alignItems: "center", gap: 6 }}>
+                <User size={16} color={themeColor} /> Client (Bill To) Details
+              </h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 800, color: "var(--text-muted)", display: "block", marginBottom: 5, textTransform: "uppercase" }}>Invoice Number</label>
-                  <input type="text" value={invoiceNo} onChange={e => setInvoiceNo(e.target.value)} className="input-field" style={{ width: "100%", fontWeight: 700 }} />
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Client / Customer Name</label>
+                  <input type="text" value={buyerName} onChange={e => setBuyerName(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 800, color: "var(--text-muted)", display: "block", marginBottom: 5, textTransform: "uppercase" }}>Invoice Date</label>
-                  <input type="date" value={invoiceDate} onChange={e => setInvoiceDate(e.target.value)} className="input-field" style={{ width: "100%" }} />
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Client GSTIN</label>
+                  <input type="text" value={buyerGSTIN} onChange={e => setBuyerGSTIN(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div>
-                  <label style={{ fontSize: 11, fontWeight: 800, color: "var(--text-muted)", display: "block", marginBottom: 5, textTransform: "uppercase" }}>Due Date</label>
-                  <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="input-field" style={{ width: "100%" }} />
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Billing Address</label>
+                  <textarea value={buyerAddress} onChange={e => setBuyerAddress(e.target.value)} className="input-field" rows={2} style={{ width: "100%", resize: "vertical" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Place of Supply State</label>
+                  <select value={placeOfSupply} onChange={e => setPlaceOfSupply(e.target.value)} className="input-field" style={{ width: "100%" }}>
+                    {INDIAN_STATES.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
+                  </select>
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* ─── REFRENS PURPLE LINE ITEMS TABLE (FULL WIDTH) ─── */}
-              <div style={{ borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-card)", overflow: "hidden" }}>
-                
-                {/* Purple Table Header */}
-                <div style={{
-                  background: themeColor, color: "white", padding: "12px 18px", fontWeight: 800, fontSize: 12.5,
-                  display: "grid", gridTemplateColumns: gridTemplate, gap: 10, alignItems: "center"
-                }}>
-                  <div>Item Description</div>
-                  {isColVisible("hsn") && <div>{getColName("hsn", "HSN/SAC")}</div>}
-                  {isColVisible("gstRate") && <div>{getColName("gstRate", "GST Rate")}</div>}
-                  {isColVisible("quantity") && <div>{getColName("quantity", "Qty")}</div>}
-                  {isColVisible("rate") && <div>{getColName("rate", "Rate")} ({currencySymbol})</div>}
-                  {isColVisible("amount") && <div>{getColName("amount", "Amount")}</div>}
-                  {isColVisible("cgst") && <div>{getColName("cgst", "CGST")}</div>}
-                  {isColVisible("sgst") && <div>{getColName("sgst", "SGST")}</div>}
-                  {isColVisible("total") && <div style={{ textAlign: "right" }}>{getColName("total", "Total")}</div>}
-                  <div></div>
-                </div>
+          {/* Invoice Meta Dates */}
+          <div style={{ padding: 20, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 18 }}>
+            <div>
+              <label style={{ fontSize: 11.5, fontWeight: 800, color: "var(--text-muted)", display: "block", marginBottom: 6, textTransform: "uppercase" }}>Invoice Number</label>
+              <input type="text" value={invoiceNo} onChange={e => setInvoiceNo(e.target.value)} className="input-field" style={{ width: "100%", fontWeight: 800 }} />
+            </div>
+            <div>
+              <label style={{ fontSize: 11.5, fontWeight: 800, color: "var(--text-muted)", display: "block", marginBottom: 6, textTransform: "uppercase" }}>Invoice Date</label>
+              <input type="date" value={invoiceDate} onChange={e => setInvoiceDate(e.target.value)} className="input-field" style={{ width: "100%" }} />
+            </div>
+            <div>
+              <label style={{ fontSize: 11.5, fontWeight: 800, color: "var(--text-muted)", display: "block", marginBottom: 6, textTransform: "uppercase" }}>Due Date</label>
+              <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="input-field" style={{ width: "100%" }} />
+            </div>
+          </div>
 
-                {/* Items List Rows */}
-                <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 14 }}>
+          {/* ─── REFRENS PURPLE HTML LINE ITEMS TABLE (PERFECT CELL ALIGNMENT) ─── */}
+          <div style={{ borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)", overflow: "hidden", boxShadow: "0 4px 14px rgba(0,0,0,0.03)" }}>
+            
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
+                <thead>
+                  <tr style={{ background: themeColor, color: "white" }}>
+                    <th style={{ padding: "14px 18px", textAlign: "left", fontSize: 13, fontWeight: 800, width: "35%" }}>Item Description</th>
+                    {isColVisible("hsn") && <th style={{ padding: "14px 12px", textAlign: "left", fontSize: 13, fontWeight: 800, width: "10%" }}>{getColName("hsn", "HSN/SAC")}</th>}
+                    {isColVisible("gstRate") && <th style={{ padding: "14px 12px", textAlign: "left", fontSize: 13, fontWeight: 800, width: "9%" }}>{getColName("gstRate", "GST Rate")}</th>}
+                    {isColVisible("quantity") && <th style={{ padding: "14px 12px", textAlign: "left", fontSize: 13, fontWeight: 800, width: "8%" }}>{getColName("quantity", "Qty")}</th>}
+                    {isColVisible("rate") && <th style={{ padding: "14px 12px", textAlign: "left", fontSize: 13, fontWeight: 800, width: "12%" }}>{getColName("rate", "Rate")} ({currencySymbol})</th>}
+                    {isColVisible("amount") && <th style={{ padding: "14px 12px", textAlign: "left", fontSize: 13, fontWeight: 800, width: "12%" }}>{getColName("amount", "Amount")}</th>}
+                    {isColVisible("cgst") && <th style={{ padding: "14px 12px", textAlign: "left", fontSize: 13, fontWeight: 800, width: "9%" }}>{getColName("cgst", "CGST")}</th>}
+                    {isColVisible("sgst") && <th style={{ padding: "14px 12px", textAlign: "left", fontSize: 13, fontWeight: 800, width: "9%" }}>{getColName("sgst", "SGST")}</th>}
+                    {isColVisible("total") && <th style={{ padding: "14px 18px", textAlign: "right", fontSize: 13, fontWeight: 800, width: "12%" }}>{getColName("total", "Total")}</th>}
+                    <th style={{ padding: "14px 12px", width: "40px" }}></th>
+                  </tr>
+                </thead>
+                <tbody>
                   {items.map((item, idx) => {
                     const rawVal = item.rateExcludingTax * item.qty;
                     const discountAmt = rawVal * (item.discountPercent / 100);
@@ -762,30 +733,53 @@ export default function GSTCalculatorPage() {
                     const lineTotal = taxable + gstTax;
 
                     return (
-                      <div key={item.id} style={{
-                        padding: 14, borderRadius: 12, border: "1px solid var(--border)", background: "var(--bg-primary)",
-                        display: "flex", flexDirection: "column", gap: 10
-                      }}>
-                        <div style={{
-                          display: "grid", gridTemplateColumns: gridTemplate, gap: 10, alignItems: "center"
-                        }}>
+                      <tr key={item.id} style={{ borderBottom: "1px solid var(--border)", background: idx % 2 === 0 ? "var(--bg-card)" : "var(--bg-primary)" }}>
+                        <td style={{ padding: "14px 18px", verticalAlign: "top" }}>
                           <input
-                            type="text" value={item.description} placeholder="Item or Service Description..."
+                            type="text" value={item.description} placeholder="Item or Service Name..."
                             onChange={e => { const n = [...items]; n[idx] = { ...n[idx], description: e.target.value }; setItems(n); }}
-                            className="input-field" style={{ width: "100%", fontWeight: 700, fontSize: 13.5 }}
+                            className="input-field" style={{ width: "100%", fontWeight: 700, fontSize: 13.5, marginBottom: 6 }}
                           />
-                          {isColVisible("hsn") && (
+                          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+                            <button
+                              type="button"
+                              onClick={() => { const n = [...items]; n[idx] = { ...n[idx], showDesc: !n[idx].showDesc }; setItems(n); }}
+                              style={{ border: "none", background: "transparent", color: themeColor, fontSize: 12, fontWeight: 800, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}
+                            >
+                              + {item.showDesc ? "Hide Description" : "Add Description"}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => { const n = [...items]; n[idx] = { ...n[idx], showImage: !n[idx].showImage }; setItems(n); }}
+                              style={{ border: "none", background: "transparent", color: themeColor, fontSize: 12, fontWeight: 800, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}
+                            >
+                              <ImageIcon size={13} /> + {item.showImage ? "Remove Image" : "Add Image"}
+                            </button>
+                          </div>
+                          {item.showDesc && (
+                            <textarea
+                              placeholder="Detailed item description, specifications or notes..."
+                              value={item.extraDesc || ""}
+                              onChange={e => { const n = [...items]; n[idx] = { ...n[idx], extraDesc: e.target.value }; setItems(n); }}
+                              className="input-field" rows={2} style={{ width: "100%", fontSize: 12.5, marginTop: 8, resize: "vertical" }}
+                            />
+                          )}
+                        </td>
+                        {isColVisible("hsn") && (
+                          <td style={{ padding: "14px 12px", verticalAlign: "top" }}>
                             <input
                               type="text" value={item.hsn} placeholder="HSN"
                               onChange={e => { const n = [...items]; n[idx] = { ...n[idx], hsn: e.target.value }; setItems(n); }}
-                              className="input-field" style={{ width: "100%", fontSize: 12 }}
+                              className="input-field" style={{ width: "100%", fontSize: 12.5 }}
                             />
-                          )}
-                          {isColVisible("gstRate") && (
+                          </td>
+                        )}
+                        {isColVisible("gstRate") && (
+                          <td style={{ padding: "14px 12px", verticalAlign: "top" }}>
                             <select
                               value={item.gstPercent}
                               onChange={e => { const n = [...items]; n[idx] = { ...n[idx], gstPercent: Number(e.target.value) }; setItems(n); }}
-                              className="input-field" style={{ width: "100%", fontSize: 12, padding: "8px 6px" }}
+                              className="input-field" style={{ width: "100%", fontSize: 12.5, padding: "8px 4px" }}
                             >
                               <option value="0">0%</option>
                               <option value="5">5%</option>
@@ -793,41 +787,47 @@ export default function GSTCalculatorPage() {
                               <option value="18">18%</option>
                               <option value="28">28%</option>
                             </select>
-                          )}
-                          {isColVisible("quantity") && (
+                          </td>
+                        )}
+                        {isColVisible("quantity") && (
+                          <td style={{ padding: "14px 12px", verticalAlign: "top" }}>
                             <input
                               type="number" value={item.qty} min="1"
                               onChange={e => { const n = [...items]; n[idx] = { ...n[idx], qty: Number(e.target.value) }; setItems(n); }}
                               className="input-field" style={{ width: "100%", fontSize: 13 }}
                             />
-                          )}
-                          {isColVisible("rate") && (
+                          </td>
+                        )}
+                        {isColVisible("rate") && (
+                          <td style={{ padding: "14px 12px", verticalAlign: "top" }}>
                             <input
                               type="number" value={item.rateExcludingTax} min="0"
                               onChange={e => { const n = [...items]; n[idx] = { ...n[idx], rateExcludingTax: Number(e.target.value) }; setItems(n); }}
                               className="input-field" style={{ width: "100%", fontSize: 13 }}
                             />
-                          )}
-                          {isColVisible("amount") && (
-                            <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text-secondary)" }}>
-                              {currencySymbol}{taxable.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                            </div>
-                          )}
-                          {isColVisible("cgst") && (
-                            <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                              {currencySymbol}{cgstVal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                            </div>
-                          )}
-                          {isColVisible("sgst") && (
-                            <div style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                              {currencySymbol}{sgstVal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                            </div>
-                          )}
-                          {isColVisible("total") && (
-                            <div style={{ fontSize: 13.5, fontWeight: 900, color: "var(--text-primary)", textAlign: "right" }}>
-                              {currencySymbol}{lineTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                            </div>
-                          )}
+                          </td>
+                        )}
+                        {isColVisible("amount") && (
+                          <td style={{ padding: "14px 12px", verticalAlign: "top", fontSize: 13, fontWeight: 700, color: "var(--text-secondary)", paddingTop: 22 }}>
+                            {currencySymbol}{taxable.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          </td>
+                        )}
+                        {isColVisible("cgst") && (
+                          <td style={{ padding: "14px 12px", verticalAlign: "top", fontSize: 12.5, color: "var(--text-muted)", paddingTop: 22 }}>
+                            {currencySymbol}{cgstVal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          </td>
+                        )}
+                        {isColVisible("sgst") && (
+                          <td style={{ padding: "14px 12px", verticalAlign: "top", fontSize: 12.5, color: "var(--text-muted)", paddingTop: 22 }}>
+                            {currencySymbol}{sgstVal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          </td>
+                        )}
+                        {isColVisible("total") && (
+                          <td style={{ padding: "14px 18px", textAlign: "right", verticalAlign: "top", fontSize: 14, fontWeight: 900, color: "var(--text-primary)", paddingTop: 22 }}>
+                            {currencySymbol}{lineTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          </td>
+                        )}
+                        <td style={{ padding: "14px 12px", verticalAlign: "top", paddingTop: 18 }}>
                           <button
                             type="button"
                             onClick={() => { if (items.length > 1) setItems(items.filter(i => i.id !== item.id)); }}
@@ -835,307 +835,294 @@ export default function GSTCalculatorPage() {
                           >
                             <Trash2 size={14} />
                           </button>
-                        </div>
-
-                        {/* Sub-actions (+ Add Description / + Add Image) */}
-                        <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
-                          <button
-                            type="button"
-                            onClick={() => { const n = [...items]; n[idx] = { ...n[idx], showDesc: !n[idx].showDesc }; setItems(n); }}
-                            style={{ border: "none", background: "transparent", color: themeColor, fontSize: 12, fontWeight: 800, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}
-                          >
-                            + {item.showDesc ? "Hide Description" : "Add Description"}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => { const n = [...items]; n[idx] = { ...n[idx], showImage: !n[idx].showImage }; setItems(n); }}
-                            style={{ border: "none", background: "transparent", color: themeColor, fontSize: 12, fontWeight: 800, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}
-                          >
-                            <ImageIcon size={13} /> + {item.showImage ? "Remove Image" : "Add Image"}
-                          </button>
-                        </div>
-
-                        {/* Full Width Description Textarea */}
-                        {item.showDesc && (
-                          <textarea
-                            placeholder="Detailed product descriptions, specifications, terms or serial numbers..."
-                            value={item.extraDesc || ""}
-                            onChange={e => { const n = [...items]; n[idx] = { ...n[idx], extraDesc: e.target.value }; setItems(n); }}
-                            className="input-field" rows={2} style={{ width: "100%", fontSize: 12.5, resize: "vertical" }}
-                          />
-                        )}
-                      </div>
+                        </td>
+                      </tr>
                     );
                   })}
-
-                  {/* Refrens Dashed "+ Add New Line" Button */}
-                  <button
-                    type="button"
-                    onClick={() => setItems([...items, { id: Date.now().toString(), description: "", hsn: "9983", qty: 1, rateExcludingTax: 0, discountPercent: 0, gstPercent: 18 }])}
-                    style={{
-                      width: "100%", padding: "14px", borderRadius: 12, border: `2px dashed ${themeColor}`, background: "var(--bg-primary)",
-                      color: themeColor, fontWeight: 800, fontSize: 13.5, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-                      transition: "all 0.2s"
-                    }}
-                  >
-                    <Plus size={18} /> Add New Line Item
-                  </button>
-                </div>
-
-                {/* ─── Show Total in PDF Box (Refrens Bottom Right Card) ─── */}
-                <div style={{ padding: 22, borderTop: "1px solid var(--border)", background: "var(--bg-card)", display: "flex", justifyContent: "flex-end" }}>
-                  <div style={{ width: 360, padding: 18, borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-primary)", display: "flex", flexDirection: "column", gap: 12 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border)", paddingBottom: 10 }}>
-                      <span style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 6 }}>
-                        <Eye size={15} color={themeColor} /> Show Total in PDF
-                      </span>
-                    </div>
-
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--text-secondary)" }}>
-                      <span>Amount Subtotal</span>
-                      <span style={{ fontWeight: 700, color: "var(--text-primary)" }}>{currencySymbol}{totalTaxableValue.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
-                    </div>
-
-                    {isInterState ? (
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--text-secondary)" }}>
-                        <span>IGST Total</span>
-                        <span style={{ fontWeight: 700, color: "var(--text-primary)" }}>{currencySymbol}{totalTaxAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
-                      </div>
-                    ) : (
-                      <>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--text-secondary)" }}>
-                          <span>SGST Total</span>
-                          <span>{currencySymbol}{(totalTaxAmount / 2).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--text-secondary)" }}>
-                          <span>CGST Total</span>
-                          <span>{currencySymbol}{(totalTaxAmount / 2).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
-                        </div>
-                      </>
-                    )}
-
-                    {!showExtraDiscount ? (
-                      <button type="button" onClick={() => setShowExtraDiscount(true)} style={{ border: "none", background: "transparent", color: themeColor, fontSize: 12.5, fontWeight: 800, cursor: "pointer", textAlign: "left" }}>
-                        + Add Discounts ∨
-                      </button>
-                    ) : (
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-                        <span style={{ fontSize: 12.5, color: "var(--text-secondary)" }}>Additional Discount</span>
-                        <input
-                          type="number" value={extraDiscount} onChange={e => setExtraDiscount(Number(e.target.value))}
-                          className="input-field" style={{ width: 110, padding: "5px 10px", fontSize: 12.5 }}
-                        />
-                      </div>
-                    )}
-
-                    <div style={{ borderTop: "2px solid var(--border)", paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontSize: 15, fontWeight: 900, color: "var(--text-primary)" }}>Total ({currencySymbol})</span>
-                      <span style={{ fontSize: 20, fontWeight: 900, color: themeColor }}>{currencySymbol}{finalGrandTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Details Grid (Terms & Bank Account) */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }} className="builder-layout">
-
-                {/* Terms & Conditions */}
-                <div style={{ padding: 22, borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-card)", display: "flex", flexDirection: "column", gap: 14 }}>
-                  <h3 style={{ fontSize: 12.5, fontWeight: 800, color: "var(--text-muted)", margin: 0, textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                    Terms & Notes
-                  </h3>
-                  <div>
-                    <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Terms & Conditions</label>
-                    <textarea value={terms} onChange={e => setTerms(e.target.value)} className="input-field" rows={3} style={{ width: "100%", resize: "vertical" }} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Additional Notes</label>
-                    <textarea value={notes} onChange={e => setNotes(e.target.value)} className="input-field" rows={2} style={{ width: "100%", resize: "vertical" }} />
-                  </div>
-                </div>
-
-                {/* Bank Account & Payment QR */}
-                <div style={{ padding: 22, borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
-                  <h3 style={{ fontSize: 12.5, fontWeight: 800, color: "var(--text-muted)", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.06em", display: "flex", alignItems: "center", gap: 6 }}>
-                    <Landmark size={15} color={themeColor} /> Bank Account & UPI
-                  </h3>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Bank Name</label>
-                      <input type="text" value={bankName} onChange={e => setBankName(e.target.value)} className="input-field" style={{ width: "100%" }} />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Account Holder</label>
-                      <input type="text" value={bankHolder} onChange={e => setBankHolder(e.target.value)} className="input-field" style={{ width: "100%" }} />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Account Number</label>
-                      <input type="text" value={bankAccNo} onChange={e => setBankAccNo(e.target.value)} className="input-field" style={{ width: "100%" }} />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>IFSC Code</label>
-                      <input type="text" value={bankIFSC} onChange={e => setBankIFSC(e.target.value)} className="input-field" style={{ width: "100%" }} />
-                    </div>
-                    <div style={{ gridColumn: "1 / -1" }}>
-                      <label style={{ fontSize: 11.5, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>UPI ID (Generates Dynamic Payment QR code)</label>
-                      <input type="text" value={upiId} onChange={e => setUpiId(e.target.value)} className="input-field" style={{ width: "100%" }} />
-                    </div>
-                  </div>
-                </div>
-              </div>
+                </tbody>
+              </table>
             </div>
-          ) : (
-            /* LIVE A4 INVOICE SHEET PREVIEW (VIEW MODE = PREVIEW) */
-            <div style={{ display: "flex", justifyContent: "center", padding: "20px 0" }}>
-              <div id="invoice-sheet-container" style={{
-                width: 800, background: "#ffffff", color: "#111827", borderRadius: 14, overflow: "hidden",
-                boxShadow: "0 10px 40px rgba(0,0,0,0.18)", fontFamily: "'Arial', sans-serif",
-                fontSize: 11, lineHeight: "1.5", borderTop: `8px solid ${themeColor}`
-              }}>
-                {/* Header */}
-                <div style={{ padding: "28px 32px 18px", borderBottom: "2px solid #f1f5f9" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                    <div style={{ flex: 1, paddingRight: 20 }}>
-                      <div style={{ fontSize: 18, fontWeight: 900, color: "#111827", marginBottom: 4 }}>{sellerName || "Your Business"}</div>
-                      <div style={{ fontSize: 11, color: "#6b7280" }}>GSTIN: {sellerGSTIN}</div>
-                      <div style={{ fontSize: 11, color: "#6b7280", marginTop: 3, lineHeight: 1.4 }}>{sellerAddress}</div>
-                    </div>
-                    <div style={{ textAlign: "right", flexShrink: 0 }}>
-                      <div style={{ fontSize: 22, fontWeight: 900, color: themeColor, marginBottom: 6 }}>TAX INVOICE</div>
-                      <div style={{ fontSize: 11 }}>
-                        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-                          <span style={{ color: "#9ca3af" }}>Invoice #:</span>
-                          <span style={{ fontWeight: 800, color: "#111827" }}>{invoiceNo}</span>
-                        </div>
-                        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-                          <span style={{ color: "#9ca3af" }}>Date:</span>
-                          <span style={{ color: "#374151" }}>{invoiceDate}</span>
-                        </div>
-                        <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-                          <span style={{ color: "#9ca3af" }}>Due Date:</span>
-                          <span style={{ color: "#374151" }}>{dueDate}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+
+            {/* Refrens Style Dashed Add New Line Button */}
+            <div style={{ padding: 14, background: "var(--bg-card)", borderTop: "1px solid var(--border)" }}>
+              <button
+                type="button"
+                onClick={() => setItems([...items, { id: Date.now().toString(), description: "", hsn: "9983", qty: 1, rateExcludingTax: 0, discountPercent: 0, gstPercent: 18 }])}
+                style={{
+                  width: "100%", padding: "14px", borderRadius: 12, border: `2px dashed ${themeColor}`, background: "var(--bg-primary)",
+                  color: themeColor, fontWeight: 800, fontSize: 13.5, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                  transition: "all 0.2s"
+                }}
+              >
+                <Plus size={18} /> Add New Line Item
+              </button>
+            </div>
+
+            {/* ─── Show Total in PDF Box (Refrens Bottom Right Card) ─── */}
+            <div style={{ padding: 22, borderTop: "1px solid var(--border)", background: "var(--bg-card)", display: "flex", justifyContent: "flex-end" }}>
+              <div style={{ width: 380, padding: 20, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-primary)", display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border)", paddingBottom: 10 }}>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: 6 }}>
+                    <Eye size={15} color={themeColor} /> Show Total in PDF
+                  </span>
                 </div>
 
-                {/* Bill To & Supply Details */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: "2px solid #f1f5f9" }}>
-                  <div style={{ padding: "16px 32px", borderRight: "1px solid #f1f5f9" }}>
-                    <div style={{ fontSize: 9, fontWeight: 800, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 5 }}>Bill To</div>
-                    <div style={{ fontWeight: 800, fontSize: 13.5, color: "#111827" }}>{buyerName || "Client Name"}</div>
-                    {buyerGSTIN && <div style={{ fontSize: 11, color: "#6b7280" }}>GSTIN: {buyerGSTIN}</div>}
-                    {buyerAddress && <div style={{ fontSize: 11, color: "#6b7280", marginTop: 3 }}>{buyerAddress}</div>}
-                  </div>
-                  <div style={{ padding: "16px 32px" }}>
-                    <div style={{ fontSize: 9, fontWeight: 800, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 5 }}>Supply Details</div>
-                    <div style={{ fontSize: 11, color: "#374151", marginBottom: 3 }}>Place of Supply: <b>{placeOfSupply}</b></div>
-                    <div style={{ fontSize: 11, color: "#374151" }}>Tax Type: <b style={{ color: isInterState ? "#7c3aed" : "#0891b2" }}>{isInterState ? "IGST (Inter-state)" : "CGST + SGST (Intra-state)"}</b></div>
-                  </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, color: "var(--text-secondary)" }}>
+                  <span>Amount Subtotal</span>
+                  <span style={{ fontWeight: 800, color: "var(--text-primary)" }}>{currencySymbol}{totalTaxableValue.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
                 </div>
 
-                {/* Items Table */}
-                <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ background: "#f8fafc" }}>
-                      <th style={{ padding: "10px 32px", textAlign: "left", fontSize: 9.5, fontWeight: 800, color: "#6b7280", textTransform: "uppercase" }}>Item</th>
-                      {isColVisible("hsn") && <th style={{ padding: "10px 8px", textAlign: "left", fontSize: 9.5, fontWeight: 800, color: "#6b7280" }}>{getColName("hsn", "HSN")}</th>}
-                      {isColVisible("quantity") && <th style={{ padding: "10px 8px", textAlign: "right", fontSize: 9.5, fontWeight: 800, color: "#6b7280" }}>{getColName("quantity", "Qty")}</th>}
-                      {isColVisible("rate") && <th style={{ padding: "10px 8px", textAlign: "right", fontSize: 9.5, fontWeight: 800, color: "#6b7280" }}>{getColName("rate", "Rate")}</th>}
-                      {isColVisible("gstRate") && <th style={{ padding: "10px 8px", textAlign: "right", fontSize: 9.5, fontWeight: 800, color: "#6b7280" }}>{getColName("gstRate", "GST")}</th>}
-                      {isColVisible("total") && <th style={{ padding: "10px 32px 10px 8px", textAlign: "right", fontSize: 9.5, fontWeight: 800, color: "#6b7280" }}>{getColName("total", "Total")}</th>}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {processedItems.map((item, idx) => (
-                      <tr key={item.id} style={{ background: idx % 2 === 0 ? "#fff" : "#f9fafb" }}>
-                        <td style={{ padding: "10px 32px", fontWeight: 700, color: "#111827", fontSize: 11, borderBottom: "1px solid #f3f4f6" }}>
-                          {item.description}
-                          {item.extraDesc && <div style={{ fontSize: 9.5, color: "#6b7280", fontWeight: 400, marginTop: 2 }}>{item.extraDesc}</div>}
-                        </td>
-                        {isColVisible("hsn") && <td style={{ padding: "10px 8px", color: "#6b7280", fontSize: 10, borderBottom: "1px solid #f3f4f6" }}>{item.hsn}</td>}
-                        {isColVisible("quantity") && <td style={{ padding: "10px 8px", textAlign: "right", color: "#374151", fontSize: 10.5, borderBottom: "1px solid #f3f4f6" }}>{item.qty}</td>}
-                        {isColVisible("rate") && <td style={{ padding: "10px 8px", textAlign: "right", color: "#374151", fontSize: 10.5, borderBottom: "1px solid #f3f4f6" }}>{currencySymbol}{item.rateExcludingTax.toLocaleString("en-IN")}</td>}
-                        {isColVisible("gstRate") && <td style={{ padding: "10px 8px", textAlign: "right", color: "#374151", fontSize: 10.5, borderBottom: "1px solid #f3f4f6" }}>{item.gstPercent}%</td>}
-                        {isColVisible("total") && <td style={{ padding: "10px 32px 10px 8px", textAlign: "right", fontWeight: 800, color: "#111827", fontSize: 11.5, borderBottom: "1px solid #f3f4f6" }}>{currencySymbol}{item.total.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {/* Totals & Payment Details */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderTop: "2px solid #e5e7eb" }}>
-                  <div style={{ padding: "18px 32px", borderRight: "1px solid #e5e7eb" }}>
-                    <div style={{ fontSize: 9, fontWeight: 800, color: "#9ca3af", textTransform: "uppercase", marginBottom: 8 }}>Bank Details & UPI</div>
-                    <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                      {upiId && (
-                        <img
-                          src={`https://api.qrserver.com/v1/create-qr-code/?size=64x64&margin=0&data=${encodeURIComponent(`upi://pay?pa=${upiId}&pn=${encodeURIComponent(bankHolder)}&am=${finalGrandTotal.toFixed(2)}&cu=INR`)}`}
-                          alt="UPI QR" style={{ width: 56, height: 56, borderRadius: 6, border: "1px solid #e5e7eb" }}
-                        />
-                      )}
-                      <div style={{ fontSize: 10, color: "#4b5563" }}>
-                        <div style={{ fontWeight: 800, color: "#111827" }}>{bankName}</div>
-                        <div>A/c: {bankAccNo}</div>
-                        <div>IFSC: {bankIFSC}</div>
-                        {upiId && <div>UPI: {upiId}</div>}
-                      </div>
-                    </div>
+                {isInterState ? (
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, color: "var(--text-secondary)" }}>
+                    <span>IGST Total</span>
+                    <span style={{ fontWeight: 800, color: "var(--text-primary)" }}>{currencySymbol}{totalTaxAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
                   </div>
-
-                  <div style={{ padding: "18px 32px", display: "flex", flexDirection: "column", gap: 5 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#6b7280" }}>
-                      <span>Taxable Subtotal</span>
-                      <span>{currencySymbol}{totalTaxableValue.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                ) : (
+                  <>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, color: "var(--text-secondary)" }}>
+                      <span>SGST Total</span>
+                      <span>{currencySymbol}{(totalTaxAmount / 2).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
                     </div>
-                    {isInterState ? (
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#6b7280" }}>
-                        <span>IGST</span>
-                        <span>{currencySymbol}{totalTaxAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
-                      </div>
-                    ) : (
-                      <>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#6b7280" }}>
-                          <span>CGST</span>
-                          <span>{currencySymbol}{(totalTaxAmount / 2).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#6b7280" }}>
-                          <span>SGST</span>
-                          <span>{currencySymbol}{(totalTaxAmount / 2).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
-                        </div>
-                      </>
-                    )}
-                    {extraDiscount > 0 && (
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#dc2626" }}>
-                        <span>Discount</span>
-                        <span>-{currencySymbol}{extraDiscount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
-                      </div>
-                    )}
-                    <div style={{ borderTop: "2px solid #111827", marginTop: 6, paddingTop: 6, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontSize: 11, fontWeight: 900, color: "#111827" }}>Grand Total</span>
-                      <span style={{ fontSize: 16, fontWeight: 900, color: themeColor }}>{currencySymbol}{finalGrandTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13.5, color: "var(--text-secondary)" }}>
+                      <span>CGST Total</span>
+                      <span>{currencySymbol}{(totalTaxAmount / 2).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
                     </div>
-                    <div style={{ fontSize: 9, color: "#9ca3af", fontStyle: "italic" }}>{numberToIndianWords(finalGrandTotal)}</div>
-                  </div>
-                </div>
+                  </>
+                )}
 
-                {/* Terms & Footer */}
-                {terms && (
-                  <div style={{ padding: "14px 32px", background: "#f8fafc", borderTop: "1px solid #e5e7eb" }}>
-                    <div style={{ fontSize: 9, fontWeight: 800, color: "#9ca3af", textTransform: "uppercase", marginBottom: 3 }}>Terms & Conditions</div>
-                    <div style={{ fontSize: 9.5, color: "#6b7280", whiteSpace: "pre-line" }}>{terms}</div>
+                {!showExtraDiscount ? (
+                  <button type="button" onClick={() => setShowExtraDiscount(true)} style={{ border: "none", background: "transparent", color: themeColor, fontSize: 13, fontWeight: 800, cursor: "pointer", textAlign: "left" }}>
+                    + Add Discounts ∨
+                  </button>
+                ) : (
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>Additional Discount</span>
+                    <input
+                      type="number" value={extraDiscount} onChange={e => setExtraDiscount(Number(e.target.value))}
+                      className="input-field" style={{ width: 120, padding: "6px 10px", fontSize: 13 }}
+                    />
                   </div>
                 )}
+
+                <div style={{ borderTop: "2px solid var(--border)", paddingTop: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: 16, fontWeight: 900, color: "var(--text-primary)" }}>Total ({currencySymbol})</span>
+                  <span style={{ fontSize: 22, fontWeight: 900, color: themeColor }}>{currencySymbol}{finalGrandTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                </div>
               </div>
             </div>
-          )}
+          </div>
+
+          {/* Bottom Grid (Terms & Bank Account) */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+
+            {/* Terms & Conditions */}
+            <div style={{ padding: 22, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)", display: "flex", flexDirection: "column", gap: 14 }}>
+              <h3 style={{ fontSize: 13, fontWeight: 800, color: "var(--text-muted)", margin: 0, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                Terms & Notes
+              </h3>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Terms & Conditions</label>
+                <textarea value={terms} onChange={e => setTerms(e.target.value)} className="input-field" rows={3} style={{ width: "100%", resize: "vertical" }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Additional Notes</label>
+                <textarea value={notes} onChange={e => setNotes(e.target.value)} className="input-field" rows={2} style={{ width: "100%", resize: "vertical" }} />
+              </div>
+            </div>
+
+            {/* Bank Account & Payment QR */}
+            <div style={{ padding: 22, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
+              <h3 style={{ fontSize: 13, fontWeight: 800, color: "var(--text-muted)", margin: "0 0 16px 0", textTransform: "uppercase", letterSpacing: "0.06em", display: "flex", alignItems: "center", gap: 6 }}>
+                <Landmark size={16} color={themeColor} /> Bank Account & UPI
+              </h3>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Bank Name</label>
+                  <input type="text" value={bankName} onChange={e => setBankName(e.target.value)} className="input-field" style={{ width: "100%" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Account Holder</label>
+                  <input type="text" value={bankHolder} onChange={e => setBankHolder(e.target.value)} className="input-field" style={{ width: "100%" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Account Number</label>
+                  <input type="text" value={bankAccNo} onChange={e => setBankAccNo(e.target.value)} className="input-field" style={{ width: "100%" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>IFSC Code</label>
+                  <input type="text" value={bankIFSC} onChange={e => setBankIFSC(e.target.value)} className="input-field" style={{ width: "100%" }} />
+                </div>
+                <div style={{ gridColumn: "1 / -1" }}>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>UPI ID (Generates Dynamic Payment QR code)</label>
+                  <input type="text" value={upiId} onChange={e => setUpiId(e.target.value)} className="input-field" style={{ width: "100%" }} />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ─── LIVE A4 INVOICE SHEET PREVIEW (ALWAYS RENDERS BELOW FOR REALTIME VIEWING) ─── */}
+          <div style={{ marginTop: 30, display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+            <div style={{ width: "100%", maxWidth: 850, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ fontSize: 18, fontWeight: 900, color: "var(--text-primary)", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
+                <Eye size={20} color={themeColor} /> Live Tax Invoice PDF Preview
+              </h3>
+              <button
+                type="button"
+                onClick={handlePrint}
+                style={{ padding: "8px 18px", borderRadius: 9, border: "none", background: themeColor, color: "white", fontSize: 13, fontWeight: 800, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+              >
+                <Printer size={15} /> Print / Save PDF
+              </button>
+            </div>
+
+            <div id="invoice-sheet-container" style={{
+              width: "100%", maxWidth: 850, background: "#ffffff", color: "#111827", borderRadius: 16, overflow: "hidden",
+              boxShadow: "0 10px 40px rgba(0,0,0,0.14)", fontFamily: "'Arial', sans-serif",
+              fontSize: 11, lineHeight: "1.5", borderTop: `8px solid ${themeColor}`
+            }}>
+              {/* Header */}
+              <div style={{ padding: "28px 32px 18px", borderBottom: "2px solid #f1f5f9" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <div style={{ flex: 1, paddingRight: 20 }}>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: "#111827", marginBottom: 4 }}>{sellerName || "Your Business"}</div>
+                    <div style={{ fontSize: 11, color: "#6b7280" }}>GSTIN: {sellerGSTIN}</div>
+                    <div style={{ fontSize: 11, color: "#6b7280", marginTop: 3, lineHeight: 1.4 }}>{sellerAddress}</div>
+                  </div>
+                  <div style={{ textAlign: "right", flexShrink: 0 }}>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: themeColor, marginBottom: 6 }}>TAX INVOICE</div>
+                    <div style={{ fontSize: 11 }}>
+                      <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                        <span style={{ color: "#9ca3af" }}>Invoice #:</span>
+                        <span style={{ fontWeight: 800, color: "#111827" }}>{invoiceNo}</span>
+                      </div>
+                      <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                        <span style={{ color: "#9ca3af" }}>Date:</span>
+                        <span style={{ color: "#374151" }}>{invoiceDate}</span>
+                      </div>
+                      <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
+                        <span style={{ color: "#9ca3af" }}>Due Date:</span>
+                        <span style={{ color: "#374151" }}>{dueDate}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bill To & Supply Details */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: "2px solid #f1f5f9" }}>
+                <div style={{ padding: "16px 32px", borderRight: "1px solid #f1f5f9" }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 5 }}>Bill To</div>
+                  <div style={{ fontWeight: 800, fontSize: 13.5, color: "#111827" }}>{buyerName || "Client Name"}</div>
+                  {buyerGSTIN && <div style={{ fontSize: 11, color: "#6b7280" }}>GSTIN: {buyerGSTIN}</div>}
+                  {buyerAddress && <div style={{ fontSize: 11, color: "#6b7280", marginTop: 3 }}>{buyerAddress}</div>}
+                </div>
+                <div style={{ padding: "16px 32px" }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 5 }}>Supply Details</div>
+                  <div style={{ fontSize: 11, color: "#374151", marginBottom: 3 }}>Place of Supply: <b>{placeOfSupply}</b></div>
+                  <div style={{ fontSize: 11, color: "#374151" }}>Tax Type: <b style={{ color: isInterState ? "#7c3aed" : "#0891b2" }}>{isInterState ? "IGST (Inter-state)" : "CGST + SGST (Intra-state)"}</b></div>
+                </div>
+              </div>
+
+              {/* Items Table */}
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr style={{ background: "#f8fafc" }}>
+                    <th style={{ padding: "10px 32px", textAlign: "left", fontSize: 9.5, fontWeight: 800, color: "#6b7280", textTransform: "uppercase" }}>Item</th>
+                    {isColVisible("hsn") && <th style={{ padding: "10px 8px", textAlign: "left", fontSize: 9.5, fontWeight: 800, color: "#6b7280" }}>{getColName("hsn", "HSN")}</th>}
+                    {isColVisible("quantity") && <th style={{ padding: "10px 8px", textAlign: "right", fontSize: 9.5, fontWeight: 800, color: "#6b7280" }}>{getColName("quantity", "Qty")}</th>}
+                    {isColVisible("rate") && <th style={{ padding: "10px 8px", textAlign: "right", fontSize: 9.5, fontWeight: 800, color: "#6b7280" }}>{getColName("rate", "Rate")}</th>}
+                    {isColVisible("gstRate") && <th style={{ padding: "10px 8px", textAlign: "right", fontSize: 9.5, fontWeight: 800, color: "#6b7280" }}>{getColName("gstRate", "GST")}</th>}
+                    {isColVisible("total") && <th style={{ padding: "10px 32px 10px 8px", textAlign: "right", fontSize: 9.5, fontWeight: 800, color: "#6b7280" }}>{getColName("total", "Total")}</th>}
+                  </tr>
+                </thead>
+                <tbody>
+                  {processedItems.map((item, idx) => (
+                    <tr key={item.id} style={{ background: idx % 2 === 0 ? "#fff" : "#f9fafb" }}>
+                      <td style={{ padding: "10px 32px", fontWeight: 700, color: "#111827", fontSize: 11, borderBottom: "1px solid #f3f4f6" }}>
+                        {item.description}
+                        {item.extraDesc && <div style={{ fontSize: 9.5, color: "#6b7280", fontWeight: 400, marginTop: 2 }}>{item.extraDesc}</div>}
+                      </td>
+                      {isColVisible("hsn") && <td style={{ padding: "10px 8px", color: "#6b7280", fontSize: 10, borderBottom: "1px solid #f3f4f6" }}>{item.hsn}</td>}
+                      {isColVisible("quantity") && <td style={{ padding: "10px 8px", textAlign: "right", color: "#374151", fontSize: 10.5, borderBottom: "1px solid #f3f4f6" }}>{item.qty}</td>}
+                      {isColVisible("rate") && <td style={{ padding: "10px 8px", textAlign: "right", color: "#374151", fontSize: 10.5, borderBottom: "1px solid #f3f4f6" }}>{currencySymbol}{item.rateExcludingTax.toLocaleString("en-IN")}</td>}
+                      {isColVisible("gstRate") && <td style={{ padding: "10px 8px", textAlign: "right", color: "#374151", fontSize: 10.5, borderBottom: "1px solid #f3f4f6" }}>{item.gstPercent}%</td>}
+                      {isColVisible("total") && <td style={{ padding: "10px 32px 10px 8px", textAlign: "right", fontWeight: 800, color: "#111827", fontSize: 11.5, borderBottom: "1px solid #f3f4f6" }}>{currencySymbol}{item.total.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Totals & Payment Details */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderTop: "2px solid #e5e7eb" }}>
+                <div style={{ padding: "18px 32px", borderRight: "1px solid #e5e7eb" }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "#9ca3af", textTransform: "uppercase", marginBottom: 8 }}>Bank Details & UPI</div>
+                  <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                    {upiId && (
+                      <img
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=64x64&margin=0&data=${encodeURIComponent(`upi://pay?pa=${upiId}&pn=${encodeURIComponent(bankHolder)}&am=${finalGrandTotal.toFixed(2)}&cu=INR`)}`}
+                        alt="UPI QR" style={{ width: 56, height: 56, borderRadius: 6, border: "1px solid #e5e7eb" }}
+                      />
+                    )}
+                    <div style={{ fontSize: 10, color: "#4b5563" }}>
+                      <div style={{ fontWeight: 800, color: "#111827" }}>{bankName}</div>
+                      <div>A/c: {bankAccNo}</div>
+                      <div>IFSC: {bankIFSC}</div>
+                      {upiId && <div>UPI: {upiId}</div>}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ padding: "18px 32px", display: "flex", flexDirection: "column", gap: 5 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#6b7280" }}>
+                    <span>Taxable Subtotal</span>
+                    <span>{currencySymbol}{totalTaxableValue.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                  </div>
+                  {isInterState ? (
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#6b7280" }}>
+                      <span>IGST</span>
+                      <span>{currencySymbol}{totalTaxAmount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                    </div>
+                  ) : (
+                    <>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#6b7280" }}>
+                        <span>CGST</span>
+                        <span>{currencySymbol}{(totalTaxAmount / 2).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#6b7280" }}>
+                        <span>SGST</span>
+                        <span>{currencySymbol}{(totalTaxAmount / 2).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                      </div>
+                    </>
+                  )}
+                  {extraDiscount > 0 && (
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#dc2626" }}>
+                      <span>Discount</span>
+                      <span>-{currencySymbol}{extraDiscount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                    </div>
+                  )}
+                  <div style={{ borderTop: "2px solid #111827", marginTop: 6, paddingTop: 6, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: 11, fontWeight: 900, color: "#111827" }}>Grand Total</span>
+                    <span style={{ fontSize: 16, fontWeight: 900, color: themeColor }}>{currencySymbol}{finalGrandTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                  </div>
+                  <div style={{ fontSize: 9, color: "#9ca3af", fontStyle: "italic" }}>{numberToIndianWords(finalGrandTotal)}</div>
+                </div>
+              </div>
+
+              {/* Terms & Footer */}
+              {terms && (
+                <div style={{ padding: "14px 32px", background: "#f8fafc", borderTop: "1px solid #e5e7eb" }}>
+                  <div style={{ fontSize: 9, fontWeight: 800, color: "#9ca3af", textTransform: "uppercase", marginBottom: 3 }}>Terms & Conditions</div>
+                  <div style={{ fontSize: 9.5, color: "#6b7280", whiteSpace: "pre-line" }}>{terms}</div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
       {/* ─── TAB 2: INVOICE HISTORY ─── */}
       {activeTab === "history" && (
-        <div style={{ padding: 26, borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
+        <div style={{ padding: 26, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
             <h3 style={{ fontSize: 18, fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>Saved Invoice History</h3>
             <span style={{ fontSize: 12, color: "var(--text-secondary)", background: "var(--bg-primary)", padding: "4px 12px", borderRadius: 20, fontWeight: 600, border: "1px solid var(--border)" }}>{history.length} saved</span>
@@ -1190,7 +1177,7 @@ export default function GSTCalculatorPage() {
 
       {/* ─── TAB 3: GST CALCULATOR ─── */}
       {activeTab === "calculator" && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }} className="builder-layout">
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
           <div style={{ padding: 24, borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
             <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", margin: "0 0 20px 0", display: "flex", alignItems: "center", gap: 8 }}>
               <Calculator size={17} color={themeColor} /> Quick GST Calculator
@@ -1244,23 +1231,32 @@ export default function GSTCalculatorPage() {
         </div>
       )}
 
-      {/* ─── REFRENS 100% PARITY "CUSTOMIZE COLUMNS & FORMULAS 💡" MODAL ─── */}
+      {/* ─── REFRENS "CUSTOMIZE COLUMNS & FORMULAS 💡" MODAL ─── */}
       {showColumnModal && (
-        <div style={{
-          position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)",
-          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 99999, padding: 20
-        }}>
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowColumnModal(false);
+          }}
+          style={{
+            position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.65)", backdropFilter: "blur(6px)",
+            display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999999, padding: 20
+          }}
+        >
           <div style={{
             background: "var(--bg-card)", borderRadius: 18, border: "1px solid var(--border)",
             width: "100%", maxWidth: 620, padding: 26, boxShadow: "0 25px 50px -12px rgba(0,0,0,0.4)",
             display: "flex", flexDirection: "column", gap: 20
           }}>
-            {/* Header */}
+            {/* Modal Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <h3 style={{ fontSize: 19, fontWeight: 900, color: "var(--text-primary)", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
                 Customize Columns & Formulas 💡
               </h3>
-              <button type="button" onClick={() => setShowColumnModal(false)} style={{ border: "none", background: "transparent", color: "var(--text-muted)", cursor: "pointer", padding: 4 }}>
+              <button
+                type="button"
+                onClick={() => setShowColumnModal(false)}
+                style={{ border: "none", background: "transparent", color: "var(--text-muted)", cursor: "pointer", padding: 4 }}
+              >
                 <X size={22} />
               </button>
             </div>
@@ -1319,7 +1315,7 @@ export default function GSTCalculatorPage() {
               ))}
             </div>
 
-            {/* Action Buttons */}
+            {/* Modal Action Buttons */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 6, borderTop: "1px solid var(--border)" }}>
               <button
                 type="button"
@@ -1362,9 +1358,6 @@ export default function GSTCalculatorPage() {
             border-radius: 0 !important;
           }
           #invoice-sheet-container * { visibility: visible !important; }
-        }
-        @media (max-width: 900px) {
-          .builder-layout { grid-template-columns: 1fr !important; }
         }
         .input-field:focus {
           outline: none;
