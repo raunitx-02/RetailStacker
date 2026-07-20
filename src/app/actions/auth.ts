@@ -222,34 +222,41 @@ const TWOFACTOR_API_KEY = process.env.TWOFACTOR_API_KEY || "f32709e2-8023-11f1-8
 const TWOFACTOR_TEMPLATE_NAME = process.env.TWOFACTOR_TEMPLATE_NAME || "RetailStacker AI";
 
 async function sendSmsOtp(phoneNumber: string, otp: string, templateName?: string) {
-  // 2factor OTP API expects 10-digit Indian mobile number (without 91 country code)
   let cleanNumber = phoneNumber.replace(/[^\d]/g, "");
   if (cleanNumber.startsWith("91") && cleanNumber.length === 12) {
-    cleanNumber = cleanNumber.slice(2); // strip country code
+    cleanNumber = cleanNumber.slice(2);
   }
   if (cleanNumber.length !== 10) {
     console.error("Invalid mobile number length:", cleanNumber);
     return false;
   }
 
-  // Use the approved OTP template registered on 2factor.
-  // Template names (both APPROVED on 2factor DLT):
+  // Approved DLT Templates on 2factor (Sender ID: TPSYIN):
   //   Signup: "RetailStacker AI"
   //   Login:  "RetailStacker AI login"
   const template = templateName || TWOFACTOR_TEMPLATE_NAME;
-  // Use + for spaces in the template name (more reliable than %20 for 2factor)
-  const encodedTemplate = encodeURIComponent(template).replace(/%20/g, "+");
-  const url = `https://2factor.in/API/V1/${TWOFACTOR_API_KEY}/SMS/${cleanNumber}/${otp}/${encodedTemplate}`;
+  const url = `https://2factor.in/API/V1/${TWOFACTOR_API_KEY}/ADDON_SERVICES/SEND/TSMS`;
 
-  console.log("Sending OTP via 2factor URL:", url);
+  const body = new URLSearchParams({
+    From: "TPSYIN",
+    To: cleanNumber,
+    TemplateName: template,
+    VAR1: otp,
+  });
+
+  console.log("Sending TSMS via 2factor to:", cleanNumber, "Template:", template, "OTP:", otp);
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString(),
+    });
     const data = await res.json();
-    console.log("2factor OTP SMS Status:", data.Status, "Details:", data.Details, "Number:", cleanNumber);
+    console.log("2factor TSMS Status:", data.Status, "Details:", data.Details, "Number:", cleanNumber);
     return data.Status === "Success";
   } catch (err) {
-    console.error("Failed to send 2factor SMS:", err);
+    console.error("Failed to send 2factor TSMS:", err);
     return false;
   }
 }
