@@ -464,7 +464,7 @@ export default function GSTCalculatorPage() {
     <div style={{ maxWidth: 1280, margin: "0 auto", padding: "12px 24px 60px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28, flexWrap: "wrap", gap: 16 }}>
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 900, color: "white", margin: 0, display: "flex", alignItems: "center", gap: 10 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 900, color: "var(--text-primary)", margin: 0, display: "flex", alignItems: "center", gap: 10 }}>
             <FileText size={28} color="var(--accent)" /> Professional GST Invoice Maker
           </h1>
           <p style={{ fontSize: 14, color: "var(--text-secondary)", margin: "4px 0 0 0" }}>
@@ -476,9 +476,9 @@ export default function GSTCalculatorPage() {
           <button 
             onClick={() => setActiveTab("invoice")}
             style={{
-              padding: "10px 18px", borderRadius: 12, border: "none", fontWeight: 700, fontSize: 13.5, cursor: "pointer",
-              background: activeTab === "invoice" ? "var(--accent)" : "rgba(255,255,255,0.06)",
-              color: "white", transition: "all 0.2s"
+              padding: "10px 18px", borderRadius: 12, border: activeTab === "invoice" ? "none" : "1px solid var(--border)", fontWeight: 700, fontSize: 13.5, cursor: "pointer",
+              background: activeTab === "invoice" ? "var(--accent)" : "var(--bg-card)",
+              color: activeTab === "invoice" ? "white" : "var(--text-primary)", transition: "all 0.2s"
             }}
           >
             Create Invoice
@@ -486,9 +486,9 @@ export default function GSTCalculatorPage() {
           <button 
             onClick={() => setActiveTab("history")}
             style={{
-              padding: "10px 18px", borderRadius: 12, border: "none", fontWeight: 700, fontSize: 13.5, cursor: "pointer",
-              background: activeTab === "history" ? "var(--accent)" : "rgba(255,255,255,0.06)",
-              color: "white", transition: "all 0.2s"
+              padding: "10px 18px", borderRadius: 12, border: activeTab === "history" ? "none" : "1px solid var(--border)", fontWeight: 700, fontSize: 13.5, cursor: "pointer",
+              background: activeTab === "history" ? "var(--accent)" : "var(--bg-card)",
+              color: activeTab === "history" ? "white" : "var(--text-primary)", transition: "all 0.2s"
             }}
           >
             Invoice History ({history.length})
@@ -496,9 +496,9 @@ export default function GSTCalculatorPage() {
           <button 
             onClick={() => setActiveTab("calculator")}
             style={{
-              padding: "10px 18px", borderRadius: 12, border: "none", fontWeight: 700, fontSize: 13.5, cursor: "pointer",
-              background: activeTab === "calculator" ? "var(--accent)" : "rgba(255,255,255,0.06)",
-              color: "white", transition: "all 0.2s"
+              padding: "10px 18px", borderRadius: 12, border: activeTab === "calculator" ? "none" : "1px solid var(--border)", fontWeight: 700, fontSize: 13.5, cursor: "pointer",
+              background: activeTab === "calculator" ? "var(--accent)" : "var(--bg-card)",
+              color: activeTab === "calculator" ? "white" : "var(--text-primary)", transition: "all 0.2s"
             }}
           >
             GST Calculator
@@ -514,7 +514,7 @@ export default function GSTCalculatorPage() {
             {/* Step 1: Business Profile */}
             <div className="glass-card" style={{ padding: 24, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: "white", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
                   <Building2 size={18} color="var(--accent)" /> 1. Business & Sender Profile
                 </h3>
                 <button 
@@ -528,19 +528,19 @@ export default function GSTCalculatorPage() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Business Name</label>
-                  <input type="text" value={sellerName} onChange={e => setSellerName(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="text" value={sellerName} onChange={e => setSellerName(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>GSTIN Number</label>
-                  <input type="text" value={sellerGSTIN} onChange={e => setSellerGSTIN(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="text" value={sellerGSTIN} onChange={e => setSellerGSTIN(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div style={{ gridColumn: "span 2" }}>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Billing Address</label>
-                  <textarea value={sellerAddress} onChange={e => setSellerAddress(e.target.value)} className="input-field" rows={2} style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white", fontFamily: "inherit" }} />
+                  <textarea value={sellerAddress} onChange={e => setSellerAddress(e.target.value)} className="input-field" rows={2} style={{ width: "100%", fontFamily: "inherit" }} />
                 </div>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>State of Supply</label>
-                  <select value={sellerState} onChange={e => setSellerState(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(10,15,30,0.8)", border: "1px solid var(--border)", color: "white" }}>
+                  <select value={sellerState} onChange={e => setSellerState(e.target.value)} className="input-field" style={{ width: "100%" }}>
                     {INDIAN_STATES.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
                   </select>
                 </div>
@@ -549,26 +549,26 @@ export default function GSTCalculatorPage() {
 
             {/* Step 2: Client Profile */}
             <div className="glass-card" style={{ padding: 24, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
-              <h3 style={{ fontSize: 16, fontWeight: 800, color: "white", margin: "0 0 16px 0", display: "flex", alignItems: "center", gap: 8 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", margin: "0 0 16px 0", display: "flex", alignItems: "center", gap: 8 }}>
                 <User size={18} color="var(--accent)" /> 2. Client Details (Bill To)
               </h3>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Client Company Name</label>
-                  <input type="text" value={buyerName} onChange={e => setBuyerName(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="text" value={buyerName} onChange={e => setBuyerName(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Client GSTIN</label>
-                  <input type="text" value={buyerGSTIN} onChange={e => setBuyerGSTIN(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="text" value={buyerGSTIN} onChange={e => setBuyerGSTIN(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div style={{ gridColumn: "span 2" }}>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Client Shipping/Billing Address</label>
-                  <textarea value={buyerAddress} onChange={e => setBuyerAddress(e.target.value)} className="input-field" rows={2} style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white", fontFamily: "inherit" }} />
+                  <textarea value={buyerAddress} onChange={e => setBuyerAddress(e.target.value)} className="input-field" rows={2} style={{ width: "100%", fontFamily: "inherit" }} />
                 </div>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Place of Supply</label>
-                  <select value={placeOfSupply} onChange={e => setPlaceOfSupply(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(10,15,30,0.8)", border: "1px solid var(--border)", color: "white" }}>
+                  <select value={placeOfSupply} onChange={e => setPlaceOfSupply(e.target.value)} className="input-field" style={{ width: "100%" }}>
                     {INDIAN_STATES.map(s => <option key={s.name} value={s.name}>{s.name}</option>)}
                   </select>
                 </div>
@@ -577,35 +577,35 @@ export default function GSTCalculatorPage() {
 
             {/* Step 3: Metadata */}
             <div className="glass-card" style={{ padding: 24, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
-              <h3 style={{ fontSize: 16, fontWeight: 800, color: "white", margin: "0 0 16px 0", display: "flex", alignItems: "center", gap: 8 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", margin: "0 0 16px 0", display: "flex", alignItems: "center", gap: 8 }}>
                 <Settings size={18} color="var(--accent)" /> 3. Invoice Info & Customization
               </h3>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 20 }}>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Invoice No</label>
-                  <input type="text" value={invoiceNo} onChange={e => setInvoiceNo(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="text" value={invoiceNo} onChange={e => setInvoiceNo(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Invoice Date</label>
-                  <input type="date" value={invoiceDate} onChange={e => setInvoiceDate(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="date" value={invoiceDate} onChange={e => setInvoiceDate(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Due Date</label>
-                  <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
               </div>
 
               <div style={{ borderTop: "1px solid var(--border)", paddingTop: 16 }}>
                 <span style={{ fontSize: 13, color: "var(--text-secondary)", display: "block", marginBottom: 12, fontWeight: 700 }}>Custom Columns (Refrens Customizations)</span>
                 <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: 8, color: "white", fontSize: 13.5, cursor: "pointer" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--text-primary)", fontSize: 13.5, cursor: "pointer" }}>
                     <input type="checkbox" checked={showHsn} onChange={e => setShowHsn(e.target.checked)} /> Show HSN Code Column
                   </label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 8, color: "white", fontSize: 13.5, cursor: "pointer" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--text-primary)", fontSize: 13.5, cursor: "pointer" }}>
                     <input type="checkbox" checked={showDiscount} onChange={e => setShowDiscount(e.target.checked)} /> Show Discount Column
                   </label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 8, color: "white", fontSize: 13.5, cursor: "pointer" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--text-primary)", fontSize: 13.5, cursor: "pointer" }}>
                     <input type="checkbox" checked={showGst} onChange={e => setShowGst(e.target.checked)} /> Show GST% Column
                   </label>
                 </div>
@@ -615,14 +615,14 @@ export default function GSTCalculatorPage() {
             {/* Step 4: Line Items */}
             <div className="glass-card" style={{ padding: 24, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: "white", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
                   <Package size={18} color="var(--accent)" /> 4. Line Items
                 </h3>
                 <button 
                   onClick={() => setItems([...items, { id: Date.now().toString(), description: "New Item", hsn: "9018", qty: 1, rateExcludingTax: 1000, discountPercent: 0, gstPercent: 18 }])}
                   style={{
                     padding: "6px 12px", borderRadius: 8, border: "none", cursor: "pointer", fontWeight: 700, fontSize: 12,
-                    background: "rgba(255,255,255,0.08)", color: "white", display: "inline-flex", alignItems: "center", gap: 6
+                    background: "var(--accent-muted)", color: "var(--accent)", display: "inline-flex", alignItems: "center", gap: 6
                   }}
                 >
                   <Plus size={14} /> Add Item
@@ -631,14 +631,14 @@ export default function GSTCalculatorPage() {
 
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {items.map((item, idx) => (
-                  <div key={item.id} style={{ display: "grid", gridTemplateColumns: `3fr ${showHsn ? '1fr' : ''} 1fr 1fr ${showDiscount ? '1fr' : ''} ${showGst ? '1.2fr' : ''} auto`, gap: 10, alignItems: "center", borderBottom: idx !== items.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none", paddingBottom: 14 }}>
+                  <div key={item.id} style={{ display: "grid", gridTemplateColumns: `3fr ${showHsn ? '1fr' : ''} 1fr 1fr ${showDiscount ? '1fr' : ''} ${showGst ? '1.2fr' : ''} auto`, gap: 10, alignItems: "center", borderBottom: idx !== items.length - 1 ? "1px solid var(--border)" : "none", paddingBottom: 14 }}>
                     <div>
                       <label style={{ fontSize: 11, color: "var(--text-secondary)", display: "block", marginBottom: 4 }}>Description</label>
                       <input type="text" value={item.description} onChange={e => {
                         const newItems = [...items];
                         newItems[idx].description = e.target.value;
                         setItems(newItems);
-                      }} className="input-field" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", color: "white" }} />
+                      }} className="input-field" style={{ width: "100%", padding: "8px 10px" }} />
                     </div>
 
                     {showHsn && (
@@ -648,7 +648,7 @@ export default function GSTCalculatorPage() {
                           const newItems = [...items];
                           newItems[idx].hsn = e.target.value;
                           setItems(newItems);
-                        }} className="input-field" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", color: "white" }} />
+                        }} className="input-field" style={{ width: "100%", padding: "8px 10px" }} />
                       </div>
                     )}
 
@@ -658,7 +658,7 @@ export default function GSTCalculatorPage() {
                         const newItems = [...items];
                         newItems[idx].qty = Number(e.target.value);
                         setItems(newItems);
-                      }} className="input-field" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", color: "white" }} />
+                      }} className="input-field" style={{ width: "100%", padding: "8px 10px" }} />
                     </div>
 
                     <div>
@@ -667,7 +667,7 @@ export default function GSTCalculatorPage() {
                         const newItems = [...items];
                         newItems[idx].rateExcludingTax = Number(e.target.value);
                         setItems(newItems);
-                      }} className="input-field" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", color: "white" }} />
+                      }} className="input-field" style={{ width: "100%", padding: "8px 10px" }} />
                     </div>
 
                     {showDiscount && (
@@ -677,7 +677,7 @@ export default function GSTCalculatorPage() {
                           const newItems = [...items];
                           newItems[idx].discountPercent = Number(e.target.value);
                           setItems(newItems);
-                        }} className="input-field" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)", color: "white" }} />
+                        }} className="input-field" style={{ width: "100%", padding: "8px 10px" }} />
                       </div>
                     )}
 
@@ -688,7 +688,7 @@ export default function GSTCalculatorPage() {
                           const newItems = [...items];
                           newItems[idx].gstPercent = Number(e.target.value);
                           setItems(newItems);
-                        }} className="input-field" style={{ width: "100%", padding: "8px 10px", borderRadius: 8, background: "rgba(10,15,30,0.8)", border: "1px solid var(--border)", color: "white" }}>
+                        }} className="input-field" style={{ width: "100%", padding: "8px 10px" }}>
                           <option value="0">0%</option>
                           <option value="5">5%</option>
                           <option value="12">12%</option>
@@ -717,30 +717,30 @@ export default function GSTCalculatorPage() {
 
             {/* Step 5: Bank details */}
             <div className="glass-card" style={{ padding: 24, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
-              <h3 style={{ fontSize: 16, fontWeight: 800, color: "white", margin: "0 0 16px 0", display: "flex", alignItems: "center", gap: 8 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, color: "var(--text-primary)", margin: "0 0 16px 0", display: "flex", alignItems: "center", gap: 8 }}>
                 <Landmark size={18} color="var(--accent)" /> 5. Bank / Payment Details
               </h3>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Bank Name</label>
-                  <input type="text" value={bankName} onChange={e => setBankName(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="text" value={bankName} onChange={e => setBankName(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Account Holder Name</label>
-                  <input type="text" value={bankHolder} onChange={e => setBankHolder(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="text" value={bankHolder} onChange={e => setBankHolder(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Account Number</label>
-                  <input type="text" value={bankAccNo} onChange={e => setBankAccNo(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="text" value={bankAccNo} onChange={e => setBankAccNo(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>IFSC Code</label>
-                  <input type="text" value={bankIFSC} onChange={e => setBankIFSC(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="text" value={bankIFSC} onChange={e => setBankIFSC(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
                 <div style={{ gridColumn: "span 2" }}>
                   <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>UPI ID (Generates Dynamic Payment QR)</label>
-                  <input type="text" value={upiId} onChange={e => setUpiId(e.target.value)} className="input-field" style={{ width: "100%", padding: 10, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} />
+                  <input type="text" value={upiId} onChange={e => setUpiId(e.target.value)} className="input-field" style={{ width: "100%" }} />
                 </div>
               </div>
             </div>
@@ -750,7 +750,7 @@ export default function GSTCalculatorPage() {
           <div style={{ position: "sticky", top: 100, display: "flex", flexDirection: "column", gap: 20 }}>
             {/* Design Customizations */}
             <div className="glass-card" style={{ padding: 20, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
-              <span style={{ fontSize: 14, fontWeight: 800, color: "white", display: "block", marginBottom: 12 }}>Template Customization</span>
+              <span style={{ fontSize: 14, fontWeight: 800, color: "var(--text-primary)", display: "block", marginBottom: 12 }}>Template Customization</span>
               <div>
                 <label className="input-label" style={{ fontSize: 12, color: "var(--text-secondary)", display: "block", marginBottom: 6 }}>Branding Theme Color</label>
                 <div style={{ display: "flex", gap: 10 }}>
@@ -759,7 +759,7 @@ export default function GSTCalculatorPage() {
                       key={color} 
                       onClick={() => setThemeColor(color)}
                       style={{
-                        width: 32, height: 32, borderRadius: "50%", border: themeColor === color ? "3px solid white" : "none",
+                        width: 32, height: 32, borderRadius: "50%", border: themeColor === color ? "3px solid var(--text-primary)" : "none",
                         background: color, cursor: "pointer", transition: "all 0.2s"
                       }}
                     />
@@ -774,13 +774,13 @@ export default function GSTCalculatorPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: 12, margin: "16px 0", borderBottom: "1px solid var(--border)", paddingBottom: 16 }}>
                 <div style={{ display: "flex", justifyContent: "space-between", color: "var(--text-secondary)" }}>
                   <span>Taxable Subtotal:</span>
-                  <span style={{ fontWeight: 600, color: "white" }}>{fmt(totalTaxableValue)}</span>
+                  <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{fmt(totalTaxableValue)}</span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", color: "var(--text-secondary)" }}>
                   <span>GST Total Amount:</span>
-                  <span style={{ fontWeight: 600, color: "white" }}>{fmt(totalTaxAmount)}</span>
+                  <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{fmt(totalTaxAmount)}</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", color: "white", fontSize: 18, fontWeight: 800, paddingTop: 6 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", color: "var(--text-primary)", fontSize: 18, fontWeight: 800, paddingTop: 6 }}>
                   <span>Grand Total:</span>
                   <span style={{ color: "var(--accent)" }}>{fmt(grandTotal)}</span>
                 </div>
@@ -803,7 +803,7 @@ export default function GSTCalculatorPage() {
                   }}
                   style={{
                     width: "100%", padding: 12, borderRadius: 10, border: "1px solid var(--border)", cursor: "pointer", fontWeight: 700,
-                    background: "rgba(255,255,255,0.04)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", gap: 8
+                    background: "rgba(0,0,0,0.02)", color: "var(--text-primary)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8
                   }}
                 >
                   <CheckCircle size={16} color="#34d399" /> Save To Local History
@@ -813,7 +813,7 @@ export default function GSTCalculatorPage() {
 
             {/* A4 Mini-Sheet Preview */}
             <div id="invoice-sheet-container" style={{
-              background: "white", color: "#333333", borderRadius: 8, padding: 24, boxShadow: "0 10px 30px rgba(0,0,0,0.5)",
+              background: "white", color: "#333333", borderRadius: 8, padding: 24, boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
               fontSize: 10, fontFamily: "sans-serif", borderTop: `6px solid ${themeColor}`
             }}>
               {/* Header */}
@@ -916,7 +916,7 @@ export default function GSTCalculatorPage() {
       {activeTab === "history" && (
         <div className="glass-card" style={{ padding: 24, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-            <h3 style={{ fontSize: 18, fontWeight: 800, color: "white", margin: 0 }}>Invoice History</h3>
+            <h3 style={{ fontSize: 18, fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>Invoice History</h3>
             <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>Total Saved Invoices: {history.length}</span>
           </div>
 
@@ -930,10 +930,10 @@ export default function GSTCalculatorPage() {
               {history.map(item => (
                 <div key={item.id} style={{
                   display: "flex", justifyContent: "space-between", alignItems: "center", padding: 16, borderRadius: 12,
-                  background: "rgba(255,255,255,0.02)", border: "1px solid var(--border)"
+                  background: "rgba(0,0,0,0.02)", border: "1px solid var(--border)"
                 }}>
                   <div>
-                    <h4 style={{ fontSize: 15, fontWeight: 800, color: "white", margin: "0 0 4px 0" }}>{item.invoiceNo}</h4>
+                    <h4 style={{ fontSize: 15, fontWeight: 800, color: "var(--text-primary)", margin: "0 0 4px 0" }}>{item.invoiceNo}</h4>
                     <div style={{ display: "flex", gap: 16, fontSize: 12.5, color: "var(--text-secondary)" }}>
                       <span>Date: {item.invoiceDate}</span>
                       <span>Client: <b>{item.buyerName}</b></span>
@@ -952,10 +952,16 @@ export default function GSTCalculatorPage() {
                       <Edit3 size={13} /> Edit / Open
                     </button>
                     <button 
-                      onClick={() => deleteFromHistory(item.id)}
+                      onClick={() => {
+                        if (confirm("Delete this invoice from local history?")) {
+                          const updated = history.filter(h => h.id !== item.id);
+                          setHistory(updated);
+                          localStorage.setItem("retailstacker_invoice_history", JSON.stringify(updated));
+                        }
+                      }}
                       style={{
                         padding: "8px 14px", borderRadius: 8, border: "1px solid var(--border)", cursor: "pointer", fontWeight: 700, fontSize: 12,
-                        background: "rgba(255,50,50,0.08)", color: "var(--danger)", display: "inline-flex", alignItems: "center", gap: 6
+                        background: "transparent", color: "var(--danger)", display: "inline-flex", alignItems: "center", gap: 6
                       }}
                     >
                       <Trash2 size={13} /> Delete
@@ -973,7 +979,7 @@ export default function GSTCalculatorPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 28 }} className="builder-layout">
           {/* Calculator Inputs Card */}
           <div className="glass-card" style={{ padding: 24, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
-            <h3 style={{ fontSize: 18, fontWeight: 800, color: "white", margin: "0 0 20px 0", display: "flex", alignItems: "center", gap: 8 }}>
+            <h3 style={{ fontSize: 18, fontWeight: 800, color: "var(--text-primary)", margin: "0 0 20px 0", display: "flex", alignItems: "center", gap: 8 }}>
               <Calculator size={20} color="var(--accent)" /> GST Calculator Inputs
             </h3>
 
@@ -984,7 +990,7 @@ export default function GSTCalculatorPage() {
                   value={inputs.productCategory} 
                   onChange={e => setInputs(prev => ({ ...prev, productCategory: e.target.value }))}
                   className="input-field" 
-                  style={{ width: "100%", padding: 12, borderRadius: 8, background: "rgba(10,15,30,0.8)", border: "1px solid var(--border)", color: "white" }}
+                  style={{ width: "100%" }}
                 >
                   {Object.keys(GST_RATES).map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
@@ -997,7 +1003,7 @@ export default function GSTCalculatorPage() {
                   value={inputs.sellingPrice} 
                   onChange={e => setInputs(prev => ({ ...prev, sellingPrice: Number(e.target.value) }))}
                   className="input-field" 
-                  style={{ width: "100%", padding: 12, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} 
+                  style={{ width: "100%" }} 
                 />
               </div>
 
@@ -1008,7 +1014,7 @@ export default function GSTCalculatorPage() {
                   value={inputs.cogs} 
                   onChange={e => setInputs(prev => ({ ...prev, cogs: Number(e.target.value) }))}
                   className="input-field" 
-                  style={{ width: "100%", padding: 12, borderRadius: 8, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "white" }} 
+                  style={{ width: "100%" }} 
                 />
               </div>
             </div>
@@ -1016,12 +1022,12 @@ export default function GSTCalculatorPage() {
 
           {/* Calculator Output Breakdown Card */}
           <div className="glass-card" style={{ padding: 24, borderRadius: 16, border: "1px solid var(--border)", background: "var(--bg-card)" }}>
-            <h3 style={{ fontSize: 18, fontWeight: 800, color: "white", margin: "0 0 20px 0" }}>Unit Economics Summary</h3>
+            <h3 style={{ fontSize: 18, fontWeight: 800, color: "var(--text-primary)", margin: "0 0 20px 0" }}>Unit Economics Summary</h3>
             
             {(() => {
               const res = calculate(inputs);
               const econ = [
-                { label: "MRP Selling Price", val: res.unitEconomics.revenue, color: "white" },
+                { label: "MRP Selling Price", val: res.unitEconomics.revenue, color: "var(--text-primary)" },
                 { label: `GST Collected (${res.gstRate}%)`, val: -res.unitEconomics.gstCollected, color: "var(--warning)" },
                 { label: "COGS / Landed Cost", val: -res.unitEconomics.cogs, color: "var(--danger)" },
                 { label: "Net Economic Profit", val: res.netProfit, color: res.netProfit > 0 ? "var(--success)" : "var(--danger)", bold: true }
@@ -1029,7 +1035,7 @@ export default function GSTCalculatorPage() {
               return (
                 <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                   {econ.map((item, idx) => (
-                    <div key={idx} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid rgba(255,255,255,0.04)", paddingBottom: 8, fontSize: item.bold ? 16 : 14, fontWeight: item.bold ? 800 : 500 }}>
+                    <div key={idx} style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--border)", paddingBottom: 8, fontSize: item.bold ? 16 : 14, fontWeight: item.bold ? 800 : 500 }}>
                       <span style={{ color: "var(--text-secondary)" }}>{item.label}</span>
                       <span style={{ color: item.color }}>{fmt(item.val)}</span>
                     </div>
