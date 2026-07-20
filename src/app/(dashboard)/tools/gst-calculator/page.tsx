@@ -5,7 +5,7 @@ import {
   Calculator, IndianRupee, Package, Globe, AlertTriangle, CheckCircle,
   Info, Download, Plus, Trash2, Printer, FileText, User, MapPin,
   Building2, Landmark, Check, HelpCircle, ArrowRight, Edit3, Settings, Columns, Sparkles,
-  Eye, EyeOff, Image as ImageIcon, X, SlidersHorizontal, Bold, Italic, List, ListOrdered, Link as LinkIcon
+  Eye, EyeOff, Image as ImageIcon, X, SlidersHorizontal, Bold, Italic, List, ListOrdered, GripVertical, RotateCcw
 } from "lucide-react";
 
 // ─── GST rate database (India) ───────────────────────────────────────────────
@@ -217,6 +217,25 @@ function numberToIndianWords(num: number): string {
   return word + " Only";
 }
 
+interface ColumnSetting {
+  id: string;
+  name: string;
+  type: string;
+  formula: string;
+  visible: boolean;
+}
+
+const DEFAULT_COLUMNS: ColumnSetting[] = [
+  { id: "quantity", name: "Quantity", type: "NUMBER", formula: "Input", visible: true },
+  { id: "rate", name: "Rate", type: "CURRENCY", formula: "Input", visible: true },
+  { id: "amount", name: "Amount", type: "CURRENCY", formula: "(Quantity * Rate)", visible: true },
+  { id: "cgst", name: "CGST", type: "CURRENCY", formula: "(Amount * (GST/2) / 100)", visible: true },
+  { id: "sgst", name: "SGST", type: "CURRENCY", formula: "(Amount * (GST/2) / 100)", visible: true },
+  { id: "total", name: "Total", type: "CURRENCY", formula: "(Amount + Tax)", visible: true },
+  { id: "hsn", name: "HSN/SAC", type: "TEXT", formula: "Input", visible: true },
+  { id: "gstRate", name: "GST Rate %", type: "PERCENT", formula: "Input", visible: true },
+];
+
 interface InvoiceItem {
   id: string;
   description: string;
@@ -256,10 +275,8 @@ interface InvoiceData {
   notes: string;
   themeColor: string;
   currency: string;
-  showHsn: boolean;
-  showDiscount: boolean;
-  showGst: boolean;
   extraDiscount: number;
+  columns: ColumnSetting[];
 }
 
 export default function GSTCalculatorPage() {
@@ -306,7 +323,7 @@ export default function GSTCalculatorPage() {
   const [bankIFSC, setBankIFSC] = useState("HDFC0000240");
   const [upiId, setUpiId] = useState("refrens@hdfcbank");
 
-  const [notes, setNotes] = useState("Thank you for using Refrens style GST Invoice Maker!");
+  const [notes, setNotes] = useState("Thank you for your business!");
   const [terms, setTerms] = useState<string>([
     "Payment is due within 15 days from invoice date.",
     "Interest @ 18% p.a. will be charged on overdue payments."
@@ -314,7 +331,6 @@ export default function GSTCalculatorPage() {
 
   const [extraDiscount, setExtraDiscount] = useState(0);
   const [showExtraDiscount, setShowExtraDiscount] = useState(false);
-  const [showTotalInPdf, setShowTotalInPdf] = useState(true);
 
   const [items, setItems] = useState<InvoiceItem[]>([
     {
@@ -333,22 +349,7 @@ export default function GSTCalculatorPage() {
   // Refrens customization toggles & modal
   const [themeColor, setThemeColor] = useState("#7c3aed"); // Refrens Signature Purple
   const [showColumnModal, setShowColumnModal] = useState(false);
-  const [columnConfig, setColumnConfig] = useState({
-    hsn: true,
-    gstRate: true,
-    quantity: true,
-    rate: true,
-    amount: true,
-    cgst: true,
-    sgst: true,
-    total: true,
-    discount: true,
-  });
-
-  // Additional Optional Fields visibility
-  const [showTerms, setShowTerms] = useState(true);
-  const [showContact, setShowContact] = useState(false);
-  const [showNotes, setShowNotes] = useState(true);
+  const [columns, setColumns] = useState<ColumnSetting[]>(DEFAULT_COLUMNS);
 
   // Load history from localStorage
   useEffect(() => {
@@ -389,10 +390,8 @@ export default function GSTCalculatorPage() {
       notes,
       themeColor,
       currency,
-      showHsn: columnConfig.hsn,
-      showDiscount: columnConfig.discount,
-      showGst: columnConfig.gstRate,
-      extraDiscount
+      extraDiscount,
+      columns,
     };
 
     let updatedHistory = [...history];
@@ -434,17 +433,7 @@ export default function GSTCalculatorPage() {
     setThemeColor(inv.themeColor || "#7c3aed");
     setCurrency(inv.currency || "Indian Rupee (INR, ₹)");
     setExtraDiscount(inv.extraDiscount || 0);
-    setColumnConfig({
-      hsn: inv.showHsn !== undefined ? inv.showHsn : true,
-      gstRate: inv.showGst !== undefined ? inv.showGst : true,
-      quantity: true,
-      rate: true,
-      amount: true,
-      cgst: true,
-      sgst: true,
-      total: true,
-      discount: inv.showDiscount !== undefined ? inv.showDiscount : true,
-    });
+    if (inv.columns && Array.isArray(inv.columns)) setColumns(inv.columns);
     setActiveTab("invoice");
   };
 
@@ -475,6 +464,10 @@ export default function GSTCalculatorPage() {
     saveToHistory();
     window.print();
   };
+
+  // Helper getters for column settings
+  const isColVisible = (id: string) => columns.find(c => c.id === id)?.visible ?? true;
+  const getColName = (id: string, defaultName: string) => columns.find(c => c.id === id)?.name || defaultName;
 
   // Calculations
   const isInterState = sellerState !== placeOfSupply;
@@ -550,7 +543,7 @@ export default function GSTCalculatorPage() {
         </div>
       </div>
 
-      {/* ─── TAB 1: REFENS INVOICE BUILDER ─── */}
+      {/* ─── TAB 1: REFRENS INVOICE BUILDER ─── */}
       {activeTab === "invoice" && (
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 420px", gap: 24, alignItems: "start" }} className="builder-layout">
 
@@ -564,6 +557,7 @@ export default function GSTCalculatorPage() {
             }}>
               <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
                 <button
+                  type="button"
                   onClick={() => setShowColumnModal(true)}
                   style={{
                     padding: "8px 14px", borderRadius: 8, border: "1px solid var(--border)", background: "var(--bg-primary)",
@@ -588,7 +582,7 @@ export default function GSTCalculatorPage() {
               </div>
 
               <div style={{ display: "flex", gap: 8 }}>
-                <button onClick={startNewInvoice} style={{ padding: "8px 14px", borderRadius: 8, border: `1px solid ${themeColor}`, background: "transparent", color: themeColor, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
+                <button type="button" onClick={startNewInvoice} style={{ padding: "8px 14px", borderRadius: 8, border: `1px solid ${themeColor}`, background: "transparent", color: themeColor, fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                   + New Invoice
                 </button>
               </div>
@@ -668,25 +662,25 @@ export default function GSTCalculatorPage() {
               </div>
             </div>
 
-            {/* ─── REFENS PURPLE LINE ITEMS TABLE ─── */}
+            {/* ─── REFRENS PURPLE LINE ITEMS TABLE ─── */}
             <div style={{ borderRadius: 14, border: "1px solid var(--border)", background: "var(--bg-card)", overflow: "hidden" }}>
               
               {/* Header Bar - Refrens Purple Signature */}
               <div style={{
                 background: themeColor, color: "white", padding: "10px 14px", fontWeight: 700, fontSize: 12,
                 display: "grid",
-                gridTemplateColumns: `minmax(0, 3fr)${columnConfig.hsn ? " 85px" : ""}${columnConfig.gstRate ? " 75px" : ""} 60px 95px 95px${columnConfig.cgst ? " 75px" : ""}${columnConfig.sgst ? " 75px" : ""} 100px 32px`,
+                gridTemplateColumns: `minmax(0, 3fr)${isColVisible("hsn") ? " 85px" : ""}${isColVisible("gstRate") ? " 75px" : ""}${isColVisible("quantity") ? " 60px" : ""}${isColVisible("rate") ? " 95px" : ""}${isColVisible("amount") ? " 95px" : ""}${isColVisible("cgst") ? " 75px" : ""}${isColVisible("sgst") ? " 75px" : ""}${isColVisible("total") ? " 100px" : ""} 32px`,
                 gap: 8, alignItems: "center"
               }}>
                 <div>Item Description</div>
-                {columnConfig.hsn && <div>HSN/SAC</div>}
-                {columnConfig.gstRate && <div>GST Rate</div>}
-                <div>Qty</div>
-                <div>Rate ({currencySymbol})</div>
-                <div>Amount</div>
-                {columnConfig.cgst && <div>CGST</div>}
-                {columnConfig.sgst && <div>SGST</div>}
-                <div style={{ textAlign: "right" }}>Total</div>
+                {isColVisible("hsn") && <div>{getColName("hsn", "HSN/SAC")}</div>}
+                {isColVisible("gstRate") && <div>{getColName("gstRate", "GST Rate")}</div>}
+                {isColVisible("quantity") && <div>{getColName("quantity", "Qty")}</div>}
+                {isColVisible("rate") && <div>{getColName("rate", "Rate")} ({currencySymbol})</div>}
+                {isColVisible("amount") && <div>{getColName("amount", "Amount")}</div>}
+                {isColVisible("cgst") && <div>{getColName("cgst", "CGST")}</div>}
+                {isColVisible("sgst") && <div>{getColName("sgst", "SGST")}</div>}
+                {isColVisible("total") && <div style={{ textAlign: "right" }}>{getColName("total", "Total")}</div>}
                 <div></div>
               </div>
 
@@ -708,7 +702,7 @@ export default function GSTCalculatorPage() {
                     }}>
                       <div style={{
                         display: "grid",
-                        gridTemplateColumns: `minmax(0, 3fr)${columnConfig.hsn ? " 85px" : ""}${columnConfig.gstRate ? " 75px" : ""} 60px 95px 95px${columnConfig.cgst ? " 75px" : ""}${columnConfig.sgst ? " 75px" : ""} 100px 32px`,
+                        gridTemplateColumns: `minmax(0, 3fr)${isColVisible("hsn") ? " 85px" : ""}${isColVisible("gstRate") ? " 75px" : ""}${isColVisible("quantity") ? " 60px" : ""}${isColVisible("rate") ? " 95px" : ""}${isColVisible("amount") ? " 95px" : ""}${isColVisible("cgst") ? " 75px" : ""}${isColVisible("sgst") ? " 75px" : ""}${isColVisible("total") ? " 100px" : ""} 32px`,
                         gap: 8, alignItems: "center"
                       }}>
                         <input
@@ -716,14 +710,14 @@ export default function GSTCalculatorPage() {
                           onChange={e => { const n = [...items]; n[idx] = { ...n[idx], description: e.target.value }; setItems(n); }}
                           className="input-field" style={{ width: "100%", fontWeight: 600, fontSize: 13 }}
                         />
-                        {columnConfig.hsn && (
+                        {isColVisible("hsn") && (
                           <input
                             type="text" value={item.hsn} placeholder="HSN"
                             onChange={e => { const n = [...items]; n[idx] = { ...n[idx], hsn: e.target.value }; setItems(n); }}
                             className="input-field" style={{ width: "100%", fontSize: 12 }}
                           />
                         )}
-                        {columnConfig.gstRate && (
+                        {isColVisible("gstRate") && (
                           <select
                             value={item.gstPercent}
                             onChange={e => { const n = [...items]; n[idx] = { ...n[idx], gstPercent: Number(e.target.value) }; setItems(n); }}
@@ -736,33 +730,42 @@ export default function GSTCalculatorPage() {
                             <option value="28">28%</option>
                           </select>
                         )}
-                        <input
-                          type="number" value={item.qty} min="1"
-                          onChange={e => { const n = [...items]; n[idx] = { ...n[idx], qty: Number(e.target.value) }; setItems(n); }}
-                          className="input-field" style={{ width: "100%", fontSize: 12.5 }}
-                        />
-                        <input
-                          type="number" value={item.rateExcludingTax} min="0"
-                          onChange={e => { const n = [...items]; n[idx] = { ...n[idx], rateExcludingTax: Number(e.target.value) }; setItems(n); }}
-                          className="input-field" style={{ width: "100%", fontSize: 12.5 }}
-                        />
-                        <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--text-secondary)" }}>
-                          {currencySymbol}{taxable.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                        </div>
-                        {columnConfig.cgst && (
+                        {isColVisible("quantity") && (
+                          <input
+                            type="number" value={item.qty} min="1"
+                            onChange={e => { const n = [...items]; n[idx] = { ...n[idx], qty: Number(e.target.value) }; setItems(n); }}
+                            className="input-field" style={{ width: "100%", fontSize: 12.5 }}
+                          />
+                        )}
+                        {isColVisible("rate") && (
+                          <input
+                            type="number" value={item.rateExcludingTax} min="0"
+                            onChange={e => { const n = [...items]; n[idx] = { ...n[idx], rateExcludingTax: Number(e.target.value) }; setItems(n); }}
+                            className="input-field" style={{ width: "100%", fontSize: 12.5 }}
+                          />
+                        )}
+                        {isColVisible("amount") && (
+                          <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--text-secondary)" }}>
+                            {currencySymbol}{taxable.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          </div>
+                        )}
+                        {isColVisible("cgst") && (
                           <div style={{ fontSize: 11.5, color: "var(--text-muted)" }}>
                             {currencySymbol}{cgstVal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                           </div>
                         )}
-                        {columnConfig.sgst && (
+                        {isColVisible("sgst") && (
                           <div style={{ fontSize: 11.5, color: "var(--text-muted)" }}>
                             {currencySymbol}{sgstVal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                           </div>
                         )}
-                        <div style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)", textAlign: "right" }}>
-                          {currencySymbol}{lineTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
-                        </div>
+                        {isColVisible("total") && (
+                          <div style={{ fontSize: 13, fontWeight: 800, color: "var(--text-primary)", textAlign: "right" }}>
+                            {currencySymbol}{lineTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                          </div>
+                        )}
                         <button
+                          type="button"
                           onClick={() => { if (items.length > 1) setItems(items.filter(i => i.id !== item.id)); }}
                           style={{ background: "var(--danger-muted)", border: "none", color: "var(--danger)", width: 28, height: 28, borderRadius: 7, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
                         >
@@ -773,12 +776,14 @@ export default function GSTCalculatorPage() {
                       {/* Item Sub-actions (Refrens + Add Description / + Add Image) */}
                       <div style={{ display: "flex", gap: 12, alignItems: "center", paddingTop: 2 }}>
                         <button
+                          type="button"
                           onClick={() => { const n = [...items]; n[idx] = { ...n[idx], showDesc: !n[idx].showDesc }; setItems(n); }}
                           style={{ border: "none", background: "transparent", color: themeColor, fontSize: 11.5, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}
                         >
                           + {item.showDesc ? "Hide Description" : "Add Description"}
                         </button>
                         <button
+                          type="button"
                           onClick={() => { const n = [...items]; n[idx] = { ...n[idx], showImage: !n[idx].showImage }; setItems(n); }}
                           style={{ border: "none", background: "transparent", color: themeColor, fontSize: 11.5, fontWeight: 700, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4 }}
                         >
@@ -801,6 +806,7 @@ export default function GSTCalculatorPage() {
 
                 {/* Refrens Style Dashed Add New Line Button */}
                 <button
+                  type="button"
                   onClick={() => setItems([...items, { id: Date.now().toString(), description: "", hsn: "9983", qty: 1, rateExcludingTax: 0, discountPercent: 0, gstPercent: 18 }])}
                   style={{
                     width: "100%", padding: "12px", borderRadius: 10, border: `2px dashed ${themeColor}`, background: "var(--bg-primary)",
@@ -846,7 +852,7 @@ export default function GSTCalculatorPage() {
 
                   {/* Add Extra Discounts Toggle */}
                   {!showExtraDiscount ? (
-                    <button onClick={() => setShowExtraDiscount(true)} style={{ border: "none", background: "transparent", color: themeColor, fontSize: 12, fontWeight: 700, cursor: "pointer", textAlign: "left" }}>
+                    <button type="button" onClick={() => setShowExtraDiscount(true)} style={{ border: "none", background: "transparent", color: themeColor, fontSize: 12, fontWeight: 700, cursor: "pointer", textAlign: "left" }}>
                       + Add Discounts ∨
                     </button>
                   ) : (
@@ -860,7 +866,7 @@ export default function GSTCalculatorPage() {
                   )}
 
                   <div style={{ borderTop: "2px solid var(--border)", paddingTop: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <span style={{ fontSize: 14, fontWeight: 900, color: "var(--text-primary)" }}>Total (INR)</span>
+                    <span style={{ fontSize: 14, fontWeight: 900, color: "var(--text-primary)" }}>Total ({currencySymbol})</span>
                     <span style={{ fontSize: 18, fontWeight: 900, color: themeColor }}>{currencySymbol}{finalGrandTotal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
                   </div>
                 </div>
@@ -924,7 +930,7 @@ export default function GSTCalculatorPage() {
                 <span style={{ fontSize: 12, fontWeight: 800, color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Brand Theme Color</span>
                 <div style={{ display: "flex", gap: 8 }}>
                   {["#7c3aed", "#1A56DB", "#0D9488", "#DC2626", "#D97706", "#ec4899"].map(color => (
-                    <button key={color} onClick={() => setThemeColor(color)} style={{
+                    <button key={color} type="button" onClick={() => setThemeColor(color)} style={{
                       width: 24, height: 24, borderRadius: "50%", background: color, cursor: "pointer", border: "none",
                       outline: themeColor === color ? `2.5px solid var(--text-primary)` : "2.5px solid transparent",
                       outlineOffset: 2, transition: "outline 0.12s"
@@ -935,10 +941,10 @@ export default function GSTCalculatorPage() {
 
               {/* Action Buttons */}
               <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 14 }}>
-                <button onClick={handlePrint} style={{ width: "100%", padding: "12px", borderRadius: 10, border: "none", cursor: "pointer", fontWeight: 800, fontSize: 13.5, background: themeColor, color: "white", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <button type="button" onClick={handlePrint} style={{ width: "100%", padding: "12px", borderRadius: 10, border: "none", cursor: "pointer", fontWeight: 800, fontSize: 13.5, background: themeColor, color: "white", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                   <Printer size={16} /> Print / Save PDF Invoice
                 </button>
-                <button onClick={() => { saveToHistory(); alert("Invoice saved to history!"); }} style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid var(--border)", cursor: "pointer", fontWeight: 700, fontSize: 13, background: "transparent", color: "var(--text-primary)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <button type="button" onClick={() => { saveToHistory(); alert("Invoice saved to history!"); }} style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid var(--border)", cursor: "pointer", fontWeight: 700, fontSize: 13, background: "transparent", color: "var(--text-primary)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                   <CheckCircle size={15} color="var(--success)" /> Save to History
                 </button>
               </div>
@@ -998,11 +1004,11 @@ export default function GSTCalculatorPage() {
                 <thead>
                   <tr style={{ background: "#f8fafc" }}>
                     <th style={{ padding: "8px 22px", textAlign: "left", fontSize: 8.5, fontWeight: 800, color: "#6b7280", textTransform: "uppercase" }}>Item</th>
-                    {columnConfig.hsn && <th style={{ padding: "8px 6px", textAlign: "left", fontSize: 8.5, fontWeight: 800, color: "#6b7280" }}>HSN</th>}
-                    <th style={{ padding: "8px 6px", textAlign: "right", fontSize: 8.5, fontWeight: 800, color: "#6b7280" }}>Qty</th>
-                    <th style={{ padding: "8px 6px", textAlign: "right", fontSize: 8.5, fontWeight: 800, color: "#6b7280" }}>Rate</th>
-                    {columnConfig.gstRate && <th style={{ padding: "8px 6px", textAlign: "right", fontSize: 8.5, fontWeight: 800, color: "#6b7280" }}>GST</th>}
-                    <th style={{ padding: "8px 22px 8px 6px", textAlign: "right", fontSize: 8.5, fontWeight: 800, color: "#6b7280" }}>Amount</th>
+                    {isColVisible("hsn") && <th style={{ padding: "8px 6px", textAlign: "left", fontSize: 8.5, fontWeight: 800, color: "#6b7280" }}>{getColName("hsn", "HSN")}</th>}
+                    {isColVisible("quantity") && <th style={{ padding: "8px 6px", textAlign: "right", fontSize: 8.5, fontWeight: 800, color: "#6b7280" }}>{getColName("quantity", "Qty")}</th>}
+                    {isColVisible("rate") && <th style={{ padding: "8px 6px", textAlign: "right", fontSize: 8.5, fontWeight: 800, color: "#6b7280" }}>{getColName("rate", "Rate")}</th>}
+                    {isColVisible("gstRate") && <th style={{ padding: "8px 6px", textAlign: "right", fontSize: 8.5, fontWeight: 800, color: "#6b7280" }}>{getColName("gstRate", "GST")}</th>}
+                    {isColVisible("total") && <th style={{ padding: "8px 22px 8px 6px", textAlign: "right", fontSize: 8.5, fontWeight: 800, color: "#6b7280" }}>{getColName("total", "Total")}</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -1012,11 +1018,11 @@ export default function GSTCalculatorPage() {
                         {item.description}
                         {item.extraDesc && <div style={{ fontSize: 8.5, color: "#6b7280", fontWeight: 400, marginTop: 1 }}>{item.extraDesc}</div>}
                       </td>
-                      {columnConfig.hsn && <td style={{ padding: "8px 6px", color: "#6b7280", fontSize: 9, borderBottom: "1px solid #f3f4f6" }}>{item.hsn}</td>}
-                      <td style={{ padding: "8px 6px", textAlign: "right", color: "#374151", fontSize: 9.5, borderBottom: "1px solid #f3f4f6" }}>{item.qty}</td>
-                      <td style={{ padding: "8px 6px", textAlign: "right", color: "#374151", fontSize: 9.5, borderBottom: "1px solid #f3f4f6" }}>{currencySymbol}{item.rateExcludingTax.toLocaleString("en-IN")}</td>
-                      {columnConfig.gstRate && <td style={{ padding: "8px 6px", textAlign: "right", color: "#374151", fontSize: 9.5, borderBottom: "1px solid #f3f4f6" }}>{item.gstPercent}%</td>}
-                      <td style={{ padding: "8px 22px 8px 6px", textAlign: "right", fontWeight: 800, color: "#111827", fontSize: 10.5, borderBottom: "1px solid #f3f4f6" }}>{currencySymbol}{item.total.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>
+                      {isColVisible("hsn") && <td style={{ padding: "8px 6px", color: "#6b7280", fontSize: 9, borderBottom: "1px solid #f3f4f6" }}>{item.hsn}</td>}
+                      {isColVisible("quantity") && <td style={{ padding: "8px 6px", textAlign: "right", color: "#374151", fontSize: 9.5, borderBottom: "1px solid #f3f4f6" }}>{item.qty}</td>}
+                      {isColVisible("rate") && <td style={{ padding: "8px 6px", textAlign: "right", color: "#374151", fontSize: 9.5, borderBottom: "1px solid #f3f4f6" }}>{currencySymbol}{item.rateExcludingTax.toLocaleString("en-IN")}</td>}
+                      {isColVisible("gstRate") && <td style={{ padding: "8px 6px", textAlign: "right", color: "#374151", fontSize: 9.5, borderBottom: "1px solid #f3f4f6" }}>{item.gstPercent}%</td>}
+                      {isColVisible("total") && <td style={{ padding: "8px 22px 8px 6px", textAlign: "right", fontWeight: 800, color: "#111827", fontSize: 10.5, borderBottom: "1px solid #f3f4f6" }}>{currencySymbol}{item.total.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>}
                     </tr>
                   ))}
                 </tbody>
@@ -1130,10 +1136,10 @@ export default function GSTCalculatorPage() {
                       </div>
                     </div>
                     <div style={{ display: "flex", gap: 8, flexShrink: 0, marginLeft: 12 }}>
-                      <button onClick={() => loadFromHistory(item)} style={{ padding: "7px 14px", borderRadius: 8, border: "none", cursor: "pointer", fontWeight: 700, fontSize: 12, background: themeColor, color: "white", display: "inline-flex", alignItems: "center", gap: 5 }}>
+                      <button type="button" onClick={() => loadFromHistory(item)} style={{ padding: "7px 14px", borderRadius: 8, border: "none", cursor: "pointer", fontWeight: 700, fontSize: 12, background: themeColor, color: "white", display: "inline-flex", alignItems: "center", gap: 5 }}>
                         <Edit3 size={12} /> Open & Edit
                       </button>
-                      <button onClick={() => { if (confirm("Delete this invoice from history?")) deleteFromHistory(item.id); }} style={{ padding: "7px 12px", borderRadius: 8, border: "1px solid var(--danger-muted)", cursor: "pointer", fontWeight: 700, fontSize: 12, background: "var(--danger-muted)", color: "var(--danger)" }}>
+                      <button type="button" onClick={() => { if (confirm("Delete this invoice from history?")) deleteFromHistory(item.id); }} style={{ padding: "7px 12px", borderRadius: 8, border: "1px solid var(--danger-muted)", cursor: "pointer", fontWeight: 700, fontSize: 12, background: "var(--danger-muted)", color: "var(--danger)" }}>
                         <Trash2 size={12} />
                       </button>
                     </div>
@@ -1201,58 +1207,107 @@ export default function GSTCalculatorPage() {
         </div>
       )}
 
-      {/* ─── REFENS EDIT COLUMNS MODAL ─── */}
+      {/* ─── REFRENS 100% PARITY "CUSTOMIZE COLUMNS & FORMULAS 💡" MODAL ─── */}
       {showColumnModal && (
         <div style={{
-          position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)",
-          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, padding: 20
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)",
+          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 99999, padding: 20
         }}>
           <div style={{
-            background: "var(--bg-card)", borderRadius: 16, border: "1px solid var(--border)",
-            width: "100%", maxWidth: 540, padding: 24, boxShadow: "0 20px 40px rgba(0,0,0,0.3)"
+            background: "var(--bg-card)", borderRadius: 18, border: "1px solid var(--border)",
+            width: "100%", maxWidth: 620, padding: 26, boxShadow: "0 25px 50px -12px rgba(0,0,0,0.4)",
+            display: "flex", flexDirection: "column", gap: 20
           }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <h3 style={{ fontSize: 18, fontWeight: 900, color: "var(--text-primary)", margin: 0 }}>
+            {/* Header */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ fontSize: 19, fontWeight: 900, color: "var(--text-primary)", margin: 0, display: "flex", alignItems: "center", gap: 8 }}>
                 Customize Columns & Formulas 💡
               </h3>
-              <button onClick={() => setShowColumnModal(false)} style={{ border: "none", background: "transparent", color: "var(--text-muted)", cursor: "pointer" }}>
-                <X size={20} />
+              <button type="button" onClick={() => setShowColumnModal(false)} style={{ border: "none", background: "transparent", color: "var(--text-muted)", cursor: "pointer", padding: 4 }}>
+                <X size={22} />
               </button>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
-              {[
-                { key: "hsn", label: "HSN / SAC Code Column" },
-                { key: "gstRate", label: "GST Rate (%) Column" },
-                { key: "cgst", label: "CGST Breakdown Column" },
-                { key: "sgst", label: "SGST Breakdown Column" },
-                { key: "discount", label: "Discount Column" },
-              ].map(col => (
-                <label key={col.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "var(--bg-primary)", cursor: "pointer" }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)" }}>{col.label}</span>
+            {/* Column List */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, maxHeight: 380, overflowY: "auto", paddingRight: 4 }}>
+              {columns.map((col, idx) => (
+                <div key={col.id} style={{
+                  display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", borderRadius: 12,
+                  border: "1px solid var(--border)", background: "var(--bg-primary)"
+                }}>
+                  <GripVertical size={16} color="var(--text-muted)" style={{ cursor: "grab" }} />
+                  
+                  {/* Name Input */}
                   <input
-                    type="checkbox"
-                    checked={columnConfig[col.key as keyof typeof columnConfig]}
-                    onChange={e => setColumnConfig({ ...columnConfig, [col.key]: e.target.checked })}
-                    style={{ accentColor: themeColor, width: 16, height: 16 }}
+                    type="text"
+                    value={col.name}
+                    onChange={e => {
+                      const updated = [...columns];
+                      updated[idx].name = e.target.value;
+                      setColumns(updated);
+                    }}
+                    className="input-field"
+                    style={{ flex: 1, fontSize: 13, fontWeight: 700, padding: "6px 10px" }}
                   />
-                </label>
+
+                  {/* Formula / Format badge */}
+                  <div style={{ fontSize: 11, fontWeight: 600, color: "var(--text-muted)", width: 140, textAlign: "right" }}>
+                    {col.formula}
+                  </div>
+
+                  {/* Eye Visibility Toggle */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const updated = [...columns];
+                      updated[idx].visible = !updated[idx].visible;
+                      setColumns(updated);
+                    }}
+                    style={{ border: "none", background: "transparent", cursor: "pointer", color: col.visible ? themeColor : "var(--text-muted)", padding: 4 }}
+                  >
+                    {col.visible ? <Eye size={18} /> : <EyeOff size={18} />}
+                  </button>
+                </div>
               ))}
             </div>
 
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
+            {/* Live Column Header Preview */}
+            <div style={{
+              background: themeColor, color: "white", padding: "10px 14px", borderRadius: 10, fontSize: 11, fontWeight: 800,
+              display: "flex", gap: 12, overflowX: "auto", whiteSpace: "nowrap"
+            }}>
+              <span>Item</span>
+              {columns.filter(c => c.visible).map(c => (
+                <span key={c.id}>• {c.name}</span>
+              ))}
+            </div>
+
+            {/* Action Buttons */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: 6, borderTop: "1px solid var(--border)" }}>
               <button
-                onClick={() => setShowColumnModal(false)}
-                style={{ padding: "10px 20px", borderRadius: 10, border: "1px solid var(--border)", background: "transparent", color: "var(--text-secondary)", fontWeight: 700, cursor: "pointer" }}
+                type="button"
+                onClick={() => setColumns(DEFAULT_COLUMNS)}
+                style={{ padding: "9px 14px", borderRadius: 9, border: "1px solid var(--border)", background: "transparent", color: "var(--text-secondary)", fontWeight: 700, fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
               >
-                Cancel
+                <RotateCcw size={13} /> Reset to Default
               </button>
-              <button
-                onClick={() => setShowColumnModal(false)}
-                style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: themeColor, color: "white", fontWeight: 800, cursor: "pointer" }}
-              >
-                Save Changes
-              </button>
+
+              <div style={{ display: "flex", gap: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowColumnModal(false)}
+                  style={{ padding: "9px 18px", borderRadius: 9, border: "1px solid var(--border)", background: "transparent", color: "var(--text-secondary)", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowColumnModal(false)}
+                  style={{ padding: "9px 22px", borderRadius: 9, border: "none", background: themeColor, color: "white", fontWeight: 900, fontSize: 12.5, cursor: "pointer" }}
+                >
+                  Save Changes
+                </button>
+              </div>
             </div>
           </div>
         </div>
