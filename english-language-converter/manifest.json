@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "English Language Converter",
+  "version": "1.0.0",
+  "description": "Instantly convert any website in the world into English (US, UK, India) with dynamic auto-translation.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "https://retailstacker.com/*",
+    "https://www.retailstacker.com/*",
+    "https://translate.googleapis.com/*",
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "English Language Converter",
+    "default_icon": "icons/icon128.png"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_end"
+    }
+  ]
+}
