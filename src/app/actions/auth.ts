@@ -221,16 +221,20 @@ export async function resetPasswordAction(email: string, otp: string, newPasswor
 const TWOFACTOR_API_KEY = process.env.TWOFACTOR_API_KEY || "f32709e2-8023-11f1-803e-0200cd936042";
 const TWOFACTOR_TEMPLATE_NAME = process.env.TWOFACTOR_TEMPLATE_NAME || "RetailStacker AI";
 
-async function sendSmsOtp(phoneNumber: string, otp: string) {
+async function sendSmsOtp(phoneNumber: string, otp: string, templateName?: string) {
   let cleanNumber = phoneNumber.replace(/[^\d]/g, "");
   if (cleanNumber.length === 10) {
     cleanNumber = "91" + cleanNumber;
   }
 
-  // Use the basic OTP API (no custom template) — 2factor's default templates are
-  // pre-approved on DLT so they always deliver. Custom templates need manual DLT approval
-  // in 2factor's portal before they can be used, which causes "Unknown" delivery.
-  const url = `https://2factor.in/API/V1/${TWOFACTOR_API_KEY}/SMS/${cleanNumber}/${otp}`;
+  // Use the approved OTP template registered on 2factor.
+  // Template names (both APPROVED on 2factor DLT):
+  //   Signup: "RetailStacker AI"
+  //   Login:  "RetailStacker AI login"
+  const template = templateName || TWOFACTOR_TEMPLATE_NAME;
+  const url = `https://2factor.in/API/V1/${TWOFACTOR_API_KEY}/SMS/${cleanNumber}/${otp}/${encodeURIComponent(template)}`;
+
+  console.log("Sending OTP via 2factor:", url);
 
   try {
     const res = await fetch(url);
@@ -242,8 +246,6 @@ async function sendSmsOtp(phoneNumber: string, otp: string) {
     return false;
   }
 }
-
-
 
 export async function sendMobileOtpAction(mobileNumber: string, isSignUp: boolean, emailForSignUp?: string) {
   const user = findUserByMobile(mobileNumber);
@@ -269,14 +271,16 @@ export async function sendMobileOtpAction(mobileNumber: string, isSignUp: boolea
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   setOtp(mobileNumber, otp);
 
-  const smsSent = await sendSmsOtp(mobileNumber, otp);
+  // Use the correct approved template based on flow
+  const templateName = isSignUp ? "RetailStacker AI" : "RetailStacker AI login";
+  const smsSent = await sendSmsOtp(mobileNumber, otp, templateName);
   if (!smsSent) {
-    // Local fallback/sandbox print if API fails or in dev
     console.log(`\n==============================================\n[SMS DEV OTP FALLBACK] Verification Code for ${mobileNumber}: ${otp}\n==============================================\n`);
   }
 
   return { success: true };
 }
+
 
 export async function verifyMobileOtpAction(mobileNumber: string, otp: string) {
   // Direct backdoor override for test number in development
