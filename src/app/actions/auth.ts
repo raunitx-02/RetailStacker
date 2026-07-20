@@ -227,29 +227,22 @@ async function sendSmsOtp(phoneNumber: string, otp: string) {
     cleanNumber = "91" + cleanNumber;
   }
 
-  // Use Transactional SMS API so the exact DLT-approved template text is delivered.
-  // The OTP API sends its own default message body which doesn't match the carrier's
-  // registered DLT template, causing "Unknown" delivery status.
-  const message = encodeURIComponent(
-    `Welcome to RetailStacker AI! Your signup verification code is ${otp}. Valid for 10 minutes - please keep it confidential. Powered by Tapasya International`
-  );
-
-  const url = `https://2factor.in/API/V1/${TWOFACTOR_API_KEY}/ADDON_SERVICES/SEND/TSMS`;
+  // Use the basic OTP API (no custom template) — 2factor's default templates are
+  // pre-approved on DLT so they always deliver. Custom templates need manual DLT approval
+  // in 2factor's portal before they can be used, which causes "Unknown" delivery.
+  const url = `https://2factor.in/API/V1/${TWOFACTOR_API_KEY}/SMS/${cleanNumber}/${otp}`;
 
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `From=TPSYIN&To=${cleanNumber}&Msg=${message}&TemplateName=${encodeURIComponent(TWOFACTOR_TEMPLATE_NAME)}`,
-    });
+    const res = await fetch(url);
     const data = await res.json();
-    console.log("2factor Transactional SMS Status:", data.Status, "Details:", data.Details);
+    console.log("2factor OTP SMS Status:", data.Status, "Details:", data.Details);
     return data.Status === "Success";
   } catch (err) {
     console.error("Failed to send 2factor SMS:", err);
     return false;
   }
 }
+
 
 
 export async function sendMobileOtpAction(mobileNumber: string, isSignUp: boolean, emailForSignUp?: string) {
